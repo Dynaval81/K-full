@@ -1,0 +1,273 @@
+<a href="/admin/users" class="btn btn-link mb-3"><i class="bi bi-arrow-left"></i> Back to Users</a>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card p-4">
+      <div class="text-center mb-3">
+        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px;">
+          <%= user.username.charAt(0).toUpperCase() %>
+        </div>
+      </div>
+      <h4 class="text-center"><%= user.username %></h4>
+      <div class="text-center mb-3">
+        <a href="/admin/users/<%= user.id %>/edit" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-pencil"></i> Edit User
+        </a>
+      </div>
+      <p class="text-center text-muted"><code><%= user.vtNumber %></code></p>
+      
+      <% if (user.isBanned) { %>
+        <div class="alert alert-danger text-center">
+          <strong>⛔ USER IS BANNED</strong>
+        </div>
+      <% } %>
+      
+      <hr>
+      
+      <p><strong>Email:</strong> <%= user.email %></p>
+      <p><strong>Matrix ID:</strong> <small><%= user.matrixUserId %></small></p>
+      <p><strong>Registered:</strong> <%= new Date(user.createdAt).toLocaleDateString() %></p>
+      <p><strong>Last Login:</strong> <%= user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never' %></p>
+      <p><strong>Last IP:</strong> <%= user.lastLoginIp || 'N/A' %></p>
+      <p><strong>Country:</strong> <%= user.country || 'Unknown' %></p>
+      
+      <hr>
+      
+      <!-- Permissions Toggles -->
+      <h6 class="mb-3"><i class="bi bi-toggles"></i> Permissions</h6>
+      
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span>Premium Access</span>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" <%= user.isPremium ? 'checked' : '' %> 
+                 onchange="togglePermission('<%= user.id %>', 'premium', this.checked)">
+        </div>
+      </div>
+      
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span>VPN Access</span>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" <%= user.hasVpnAccess ? 'checked' : '' %> 
+                 onchange="togglePermission('<%= user.id %>', 'vpn', this.checked)">
+        </div>
+      </div>
+      
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span>AI Access</span>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" <%= user.hasAiAccess ? 'checked' : '' %> 
+                 onchange="togglePermission('<%= user.id %>', 'ai', this.checked)">
+        </div>
+      </div>
+      
+      <% if (user.isPremium && user.premiumExpiresAt) { %>
+        <small class="text-muted">Premium expires: <%= new Date(user.premiumExpiresAt).toLocaleDateString() %></small>
+      <% } %>
+      
+      <hr>
+      
+      <div class="d-grid gap-2">
+        <button class="btn btn-success" onclick="setCustomPassword('<%= user.id %>')">
+          <i class="bi bi-pencil"></i> Set Custom Password
+        </button>
+        
+        <button class="btn btn-info" onclick="resetPassword('<%= user.id %>')">
+          <i class="bi bi-key"></i> Reset Password (Random)
+        </button>
+        
+        <% if (user.isBanned) { %>
+          <button class="btn btn-success" onclick="unbanUser('<%= user.id %>')">
+            <i class="bi bi-unlock"></i> Unban User
+          </button>
+        <% } else { %>
+          <button class="btn btn-warning" onclick="banUser('<%= user.id %>')">
+            <i class="bi bi-ban"></i> Ban User (Add to Blacklist)
+          </button>
+        <% } %>
+        
+        <button class="btn btn-danger" onclick="deleteUser('<%= user.id %>')">
+          <i class="bi bi-trash"></i> Delete User Permanently
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card p-4 mb-4">
+      <h5><i class="bi bi-shield-check"></i> VPN Statistics</h5>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <h6>Total Connections</h6>
+          <h3><%= stats.vpn.totalConnections %></h3>
+        </div>
+        <div class="col-md-4">
+          <h6>Total Time</h6>
+          <h3><%= Math.floor(stats.vpn.totalTime / 3600) %>h</h3>
+        </div>
+        <div class="col-md-4">
+          <h6>Favorite Node</h6>
+          <h3><%= stats.vpn.byNode[0]?.nodeId || 'N/A' %></h3>
+        </div>
+      </div>
+      
+      <h6 class="mt-4">Recent Connections</h6>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Node</th>
+            <th>IP</th>
+            <th>Connected</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% user.vpnConnections.slice(0, 5).forEach(conn => { %>
+          <tr>
+            <td><code><%= conn.nodeId %></code></td>
+            <td><%= conn.ip %></td>
+            <td><%= new Date(conn.connectedAt).toLocaleString() %></td>
+            <td><%= conn.duration ? Math.floor(conn.duration / 60) + 'm' : 'Active' %></td>
+          </tr>
+          <% }); %>
+          <% if (user.vpnConnections.length === 0) { %>
+          <tr><td colspan="4" class="text-center text-muted">No VPN connections yet</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-4">
+      <h5><i class="bi bi-clock-history"></i> Login History</h5>
+      <table class="table table-sm mt-3">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>IP</th>
+            <th>Device</th>
+            <th>Platform</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% user.loginHistory.slice(0, 10).forEach(login => { %>
+          <tr>
+            <td><%= new Date(login.timestamp).toLocaleString() %></td>
+            <td><%= login.ip %></td>
+            <td><small><%= login.userAgent ? login.userAgent.substring(0, 50) + '...' : 'N/A' %></small></td>
+            <td><%= login.platform %></td>
+          </tr>
+          <% }); %>
+          <% if (user.loginHistory.length === 0) { %>
+          <tr><td colspan="4" class="text-center text-muted">No login history</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePermission(userId, permission, enabled) {
+  fetch(`/admin/users/${userId}/permission/${permission}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      const icon = enabled ? '✅' : '❌';
+      const status = enabled ? 'enabled' : 'disabled';
+      alert(`${icon} ${permission.toUpperCase()} ${status}`);
+    } else {
+      alert(`❌ Error: ${data.error}`);
+      location.reload();
+    }
+  });
+}
+
+function setCustomPassword(userId) {
+  const password = prompt('Enter new password (min 6 characters):');
+  if (!password || password.length < 6) {
+    alert('Password must be at least 6 characters!');
+    return;
+  }
+  
+  fetch(`/admin/users/${userId}/set-password`, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      alert(`✅ Password set to: ${password}`);
+    } else {
+      alert(`❌ Error: ${data.error}`);
+    }
+  });
+}
+
+function resetPassword(userId) {
+  if (!confirm('Reset password to random?')) return;
+  fetch(`/admin/users/${userId}/reset-password`, { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      alert(`New random password: ${data.data.tempPassword}\n\nSave this password!`);
+    });
+}
+
+function banUser(userId) {
+  const reason = prompt('Reason for ban (optional):');
+  if (reason === null) return;
+  
+  if (!confirm('⚠️ Ban this user and add email to blacklist?')) return;
+  
+  fetch(`/admin/users/${userId}/ban`, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reason })
+  })
+  .then(r => r.json())
+  .then(() => location.reload());
+}
+
+function unbanUser(userId) {
+  if (!confirm('Unban this user and remove from blacklist?')) return;
+  fetch(`/admin/users/${userId}/unban`, { method: 'POST' })
+    .then(r => r.json())
+    .then(() => location.reload());
+}
+
+function deleteUser(userId) {
+  const confirm1 = confirm('⚠️ DELETE USER PERMANENTLY?\n\nThis will:\n- Delete all user data\n- Delete all chats\n- Delete all sessions\n- Add email to blacklist\n\nThis CANNOT be undone!');
+  
+  if (!confirm1) return;
+  
+  const reason = prompt('Reason for deletion (required):');
+  if (!reason || reason.trim() === '') {
+    alert('Reason required!');
+    return;
+  }
+  
+  const confirm2 = prompt('Type DELETE to confirm:');
+  if (confirm2 !== 'DELETE') {
+    alert('Deletion cancelled');
+    return;
+  }
+  
+  fetch(`/admin/users/${userId}/delete`, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reason })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      alert('✅ User deleted and added to blacklist');
+      window.location.href = '/admin/users';
+    } else {
+      alert('❌ Error: ' + data.error);
+    }
+  });
+}
+</script>

@@ -1,0 +1,42 @@
+<h2 class="mb-4">VPN Nodes</h2>
+
+<div class="card">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Node ID</th>
+        <th>Location</th>
+        <th>Endpoint</th>
+        <th>Purpose</th>
+        <th>Load</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% nodes.forEach(node => { %>
+      <tr>
+        <td><code><%= node.nodeId %></code></td>
+        <td><%= node.location %></td>
+        <td><%= node.endpoint %></td>
+        <td>
+          <span class="badge bg-<%= node.purpose === 'general' ? 'primary' : 'warning' %>">
+            <%= node.purpose %>
+          </span>
+        </td>
+        <td>
+          <div class="progress" style="width: 100px;">
+            <div class="progress-bar" style="width: <%= (node.currentLoad / node.capacity) * 100 %>%">
+              <%= node.currentLoad %>/<%= node.capacity %>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="badge bg-<%= node.status === 'active' ? 'success' : 'danger' %>">
+            <%= node.status %>
+          </span>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

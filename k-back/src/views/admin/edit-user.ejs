@@ -1,0 +1,86 @@
+<a href="/admin/users/<%= user.id %>" class="btn btn-link mb-3"><i class="bi bi-arrow-left"></i> Back to User</a>
+
+<h2 class="mb-4">Edit User: <%= user.username %></h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <form id="editUserForm">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" value="<%= user.email %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" name="username" value="<%= user.username %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">VT-Number</label>
+          <div class="input-group">
+            <span class="input-group-text">VT-</span>
+            <input type="text" class="form-control" name="vtNumber" value="<%= user.vtNumber.replace('VT-', '') %>" pattern="[0-9]{5}" maxlength="5" required>
+          </div>
+          <small class="text-danger">⚠️ Changing VT-Number will break existing chats!</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Matrix User ID</label>
+          <input type="text" class="form-control" value="<%= user.matrixUserId %>" disabled>
+          <small class="text-muted">Cannot be changed (linked to Matrix)</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Region</label>
+          <select class="form-select" name="region">
+            <option value="RU" <%= user.region === 'RU' ? 'selected' : '' %>>Russia</option>
+            <option value="EU" <%= user.region === 'EU' ? 'selected' : '' %>>Europe</option>
+            <option value="US" <%= user.region === 'US' ? 'selected' : '' %>>USA</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Country</label>
+          <input type="text" class="form-control" name="country" value="<%= user.country || '' %>" placeholder="Poland">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-save"></i> Save Changes
+        </button>
+      </form>
+
+      <div id="result" class="mt-3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+  
+  // Add VT- prefix
+  data.vtNumber = 'VT-' + data.vtNumber;
+  
+  const response = await fetch('/admin/users/<%= user.id %>/edit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  const result = await response.json();
+  
+  if (result.success) {
+    document.getElementById('result').innerHTML = `
+      <div class="alert alert-success">✅ User updated successfully!</div>
+    `;
+    setTimeout(() => window.location.href = '/admin/users/<%= user.id %>', 1500);
+  } else {
+    document.getElementById('result').innerHTML = `
+      <div class="alert alert-danger">❌ ${result.error}</div>
+    `;
+  }
+});
+</script>

@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  username              String    @unique
+  vtNumber              String    @unique
+  emailVerified         Boolean   @default(false)
+  emailVerificationToken String?
+  
+  // Ban status
+  isBanned              Boolean   @default(false)
+  
+  // Premium
+  isPremium             Boolean   @default(false)
+  premiumPlan           String?
+  premiumExpiresAt      DateTime?
+  premiumActivatedWith  String?
+  
+  // VPN Access
+  hasVpnAccess          Boolean   @default(false)
+  vpnExpiresAt          DateTime?
+  
+  // AI Access
+  hasAiAccess           Boolean   @default(false)
+  aiExpiresAt           DateTime?
+  
+  // Username change tracking
+  lastUsernameChangeAt  DateTime?
+  
+  // Login tracking
+  lastLoginAt           DateTime?
+  lastLoginIp           String?
+  registrationIp        String?
+  
+  // Device Info
+  lastDevice            String?
+  lastPlatform          String?
+  appVersion            String?
+  
+  // Geo
+  country               String?
+  city                  String?
+  
+  // Matrix integration
+  matrixUserId          String?   @unique
+  matrixAccessToken     String?
+  
+  // Metadata
+  region                String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  loginHistory          LoginHistory[]
+  sessions              Session[]
+  vpnConnections        VpnConnection[]
+  
+  @@index([email])
+  @@index([vtNumber])
+  @@index([username])
+}
+
+model ActivationPassword {
+  id            String    @id @default(uuid())
+  password      String    @unique
+  plan          String
+  duration      Int
+  maxUses       Int       @default(1)
+  currentUses   Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdBy     String    @default("admin")
+  createdAt     DateTime  @default(now())
+  
+  @@index([password])
+}
+
+model LoginHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  ip          String
+  userAgent   String?
+  platform    String?
+  country     String?
+  city        String?
+  success     Boolean  @default(true)
+  
+  timestamp   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([timestamp])
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  token       String   @unique
+  ip          String
+  device      String?
+  platform    String?
+  
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  lastActive  DateTime @default(now())
+  isActive    Boolean  @default(true)
+  
+  @@index([userId])
+  @@index([token])
+}
+
+model VpnConnection {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  nodeId      String
+  ip          String
+  device      String?
+  
+  connectedAt DateTime @default(now())
+  disconnectedAt DateTime?
+  duration    Int?     // seconds
+  
+  bytesUp     BigInt?
+  bytesDown   BigInt?
+  
+  @@index([userId])
+  @@index([nodeId])
+  @@index([connectedAt])
+}
+
+model BannedEmail {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  previousUsername String?
+  previousVtNumber String?
+  reason          String?
+  bannedBy        String    @default("admin")
+  bannedAt        DateTime  @default(now())
+  
+  @@index([email])
+}
+
+model VpnNode {
+  id              String    @id @default(uuid())
+  nodeId          String    @unique
+  location        String
+  countryCode     String
+  endpoint        String
+  
+  purpose         String    @default("general")
+  capacity        Int       @default(1000)
+  currentLoad     Int       @default(0)
+  
+  configType      String    @default("vless")
+  vlessUri        String?
+  singboxConfig   String?
+  
+  status          String    @default("active")
+  healthCheckUrl  String?
+  lastHealthCheck DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([status])
+  @@index([purpose])
+  @@index([countryCode])
+}

@@ -1,0 +1,21 @@
+hypermax.duckdns.org {
+    # Matrix endpoints (приоритет!)
+    handle /_matrix/* {
+        reverse_proxy localhost:8008
+    }
+    
+    handle /_synapse/* {
+        reverse_proxy localhost:8008
+    }
+    
+    # Matrix well-known
+    handle /.well-known/matrix/* {
+        respond /client `{"m.homeserver": {"base_url": "https://hypermax.duckdns.org"}}`
+        respond /server `{"m.server": "hypermax.duckdns.org:443"}`
+    }
+    
+    # Всё остальное → Vtalk API
+    handle {
+        reverse_proxy localhost:3000
+    }
+}

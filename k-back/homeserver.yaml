@@ -1,0 +1,62 @@
+# Configuration file for Synapse.
+#
+# This is a YAML file: see [1] for a quick introduction. Note in particular
+# that *indentation is important*: all the elements of a list or dictionary
+# should have the same indentation.
+#
+# [1] https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+#
+# For more information on how to configure Synapse, including a complete accounting of
+# each option, go to docs/usage/configuration/config_documentation.md or
+# https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html
+server_name: "hypermax.duckdns.org"
+public_baseurl: "https://hypermax.duckdns.org"
+pid_file: /data/homeserver.pid
+listeners:
+  - port: 8008
+    resources:
+    - compress: false
+      names:
+      - client
+      - federation
+    tls: false
+    type: http
+    x_forwarded: true
+database:
+  name: psycopg2
+  allow_unsafe_locale: true
+  args:
+    user: synapse
+    password: "Matrix2025Pass"
+    database: synapse
+    host: postgres
+    port: 5432
+    cp_min: 5
+    cp_max: 10
+log_config: "/data/hypermax.duckdns.org.log.config"
+media_store_path: /data/media_store
+registration_shared_secret: "iS6Izyat1#APmH+k#GbkzeDmwtEZ&@H#4j_mQpnk1ME~.M^#3I"
+report_stats: false
+macaroon_secret_key: "Z,+7a=91AJ2-3V#P0t&zH-lo4NGZLxc46gV=orrI&befLf5Brt"
+form_secret: ":E2G9NjGNgyc=@AU2YVl&s~qo,~jY93=7MSY:v^Q3CSI9gceNn"
+signing_key_path: "/data/hypermax.duckdns.org.signing.key"
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+
+# vim:ft=yaml
+enable_registration: true
+enable_registration_without_verification: true
+turn_uris:
+  - "turn:hypermax.duckdns.org:3478?transport=udp"
+  - "turn:hypermax.duckdns.org:3478?transport=tcp"
+
+turn_shared_secret: "0a58eb1b41d0ffa8624df22bfb35cf2ef4bf491157084268a367ec7e69b2191e"
+turn_user_lifetime: 86400000
+turn_allow_guests: true
+experimental_features:
+  msc3401_enabled: true
+
+element_call:
+  url: "http://matrix-element-call:8080"
+  widget_url: "http://matrix-element-call:8080"

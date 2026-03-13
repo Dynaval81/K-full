@@ -1,0 +1,104 @@
+<h2 class="mb-4">Create New User</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <form id="createUserForm">
+        <div class="mb-3">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-control" name="email" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Username *</label>
+          <input type="text" class="form-control" name="username" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">VT-Number</label>
+          <div class="input-group">
+            <span class="input-group-text">VT-</span>
+            <input type="text" class="form-control" name="vtNumber" placeholder="12345" pattern="[0-9]{5}" maxlength="5">
+          </div>
+          <small class="text-muted">Leave empty to auto-generate (5 digits)</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password *</label>
+          <input type="text" class="form-control" name="password" minlength="6" required>
+          <small class="text-muted">Min 6 characters</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Region</label>
+          <select class="form-select" name="region">
+            <option value="RU">Russia</option>
+            <option value="EU">Europe</option>
+            <option value="US">USA</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="emailVerified" id="emailVerified">
+            <label class="form-check-label" for="emailVerified">
+              Email Verified
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="isPremium" id="isPremium">
+            <label class="form-check-label" for="isPremium">
+              Grant Premium (30 days)
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-plus-circle"></i> Create User
+        </button>
+      </form>
+
+      <div id="result" class="mt-3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('createUserForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+  
+  // Convert checkboxes to boolean
+  data.emailVerified = !!data.emailVerified;
+  data.isPremium = !!data.isPremium;
+  
+  const response = await fetch('/admin/users/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  const result = await response.json();
+  
+  if (result.success) {
+    document.getElementById('result').innerHTML = `
+      <div class="alert alert-success">
+        <strong>✅ User Created!</strong><br>
+        Email: ${result.data.email}<br>
+        VT-Number: <code>${result.data.vtNumber}</code><br>
+        Matrix ID: <code>${result.data.matrixUserId}</code><br>
+        <a href="/admin/users/${result.data.id}" class="btn btn-sm btn-primary mt-2">View User</a>
+      </div>
+    `;
+    e.target.reset();
+  } else {
+    document.getElementById('result').innerHTML = `
+      <div class="alert alert-danger">❌ ${result.error}</div>
+    `;
+  }
+});
+</script>
