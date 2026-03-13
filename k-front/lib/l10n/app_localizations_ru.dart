@@ -9,486 +9,595 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get splashTagline => 'Verbinde deine Schulwelt';
+  String get splashTagline => 'Объединяй свой школьный мир';
 
   @override
-  String get loginTitle => 'Anmelden';
+  String get loginTitle => 'Вход';
 
   @override
-  String get loginSubtitle => 'Melde dich bei deinem Konto an';
+  String get loginSubtitle => 'Войди в свой аккаунт';
 
   @override
-  String get loginMethodEmail => 'E-Mail';
+  String get loginMethodEmail => 'Email';
 
   @override
-  String get loginHintEmail => 'E-Mail eingeben';
+  String get loginHintEmail => 'Введи email';
 
   @override
-  String get loginPasswordLabel => 'Passwort';
+  String get loginPasswordLabel => 'Пароль';
 
   @override
-  String get loginPasswordHint => 'Passwort eingeben';
+  String get loginPasswordHint => 'Введи пароль';
 
   @override
-  String get loginEnterPassword => 'Passwort eingeben';
+  String get loginEnterPassword => 'Введи пароль';
 
   @override
-  String get loginButtonLogin => 'Anmelden';
+  String get loginButtonLogin => 'Войти';
 
   @override
-  String get loginForgotPassword => 'Passwort vergessen?';
+  String get loginForgotPassword => 'Забыл пароль?';
 
   @override
-  String get loginDividerOr => 'oder';
+  String get loginDividerOr => 'или';
 
   @override
-  String get loginGoogle => 'Mit Google anmelden';
+  String get loginGoogle => 'Войти через Google';
 
   @override
-  String get loginApple => 'Mit Apple anmelden';
+  String get loginApple => 'Войти через Apple';
 
   @override
-  String get loginGoogleSoon => 'Google Sign-In — demnächst verfügbar';
+  String get loginGoogleSoon => 'Google Sign-In — скоро';
 
   @override
-  String get loginAppleSoon => 'Apple Sign-In — demnächst verfügbar';
+  String get loginAppleSoon => 'Apple Sign-In — скоро';
 
   @override
-  String get loginNoAccount => 'Kein Konto? ';
+  String get loginNoAccount => 'Нет аккаунта? ';
 
   @override
-  String get loginRegister => 'Registrieren';
+  String get loginRegister => 'Зарегистрироваться';
 
   @override
-  String get loginErrorEmpty => 'E-Mail oder Nutzername eingeben';
+  String get loginErrorEmpty => 'Введи email';
 
   @override
-  String get loginErrorEmptyPassword => 'Bitte Passwort eingeben';
+  String get loginErrorEmptyPassword => 'Введи пароль';
 
   @override
-  String get loginErrorNetwork => 'Netzwerkfehler. Bitte erneut versuchen.';
+  String get loginErrorNetwork => 'Ошибка сети. Попробуй ещё раз.';
 
   @override
-  String get loginErrorEmailVerification =>
-      'Bitte bestätige deine E-Mail vor dem Login';
+  String get loginErrorEmailVerification => 'Подтверди email перед входом';
 
   @override
-  String get loginErrorGeneric => 'Anmeldefehler. Bitte erneut versuchen.';
+  String get loginErrorGeneric => 'Ошибка входа. Попробуй ещё раз.';
 
   @override
-  String get registerTitle => 'Registrieren';
+  String get registerTitle => 'Регистрация';
 
   @override
-  String get registerSubtitle => 'Konto erstellen';
+  String get registerSubtitle => 'Создать аккаунт';
 
   @override
-  String get registerEmailLabel => 'E-Mail';
+  String get registerEmailLabel => 'Email';
 
   @override
-  String get registerEmailHint => 'E-Mail eingeben';
+  String get registerEmailHint => 'Введи email';
 
   @override
-  String get registerPasswordLabel => 'Passwort';
+  String get registerPasswordLabel => 'Пароль';
 
   @override
-  String get registerPasswordHint => 'Mindestens 6 Zeichen';
+  String get registerPasswordHint => 'Минимум 6 символов';
 
   @override
-  String get registerNicknameLabel => 'Spitzname (optional)';
+  String get registerNicknameLabel => 'Никнейм (необязательно)';
 
   @override
-  String get registerNicknameHint => 'Spitznamen eingeben';
+  String get registerNicknameHint => 'Введи никнейм';
 
   @override
-  String get registerButton => 'Konto erstellen';
+  String get registerButton => 'Создать аккаунт';
 
   @override
-  String get registerHaveAccount => 'Bereits ein Konto? ';
+  String get registerHaveAccount => 'Уже есть аккаунт? ';
 
   @override
-  String get registerLogin => 'Anmelden';
+  String get registerLogin => 'Войти';
 
   @override
-  String get dashboardTitle => 'Dashboard';
+  String get dashboardTitle => 'Главная';
 
   @override
-  String get dashboardSettings => 'Einstellungen';
+  String get dashboardSettings => 'Настройки';
 
   @override
-  String get dashboardLogout => 'Abmelden';
+  String get dashboardLogout => 'Выйти';
 
   @override
-  String get dashboardReport => 'Fehler melden';
+  String get dashboardReport => 'Сообщить об ошибке';
 
   @override
-  String get dashboardReportHint =>
-      'Beschreibe was nicht funktioniert — wir kümmern uns darum.';
+  String get dashboardReportHint => 'Опиши что не работает — мы разберёмся.';
 
   @override
-  String get dashboardAppInfo => 'App-Info';
+  String get dashboardAppInfo => 'О приложении';
 
   @override
-  String get dashboardVersionDetails => 'Versionsdetails';
+  String get dashboardVersionDetails => 'Детали версии';
 
   @override
-  String get tabChats => 'Chats';
+  String get tabChats => 'Чаты';
 
   @override
-  String get tabAi => 'KI-Assistent';
+  String get tabAi => 'ИИ-помощник';
 
   @override
-  String get tabSchedule => 'Stundenplan';
+  String get tabSchedule => 'Расписание';
 
   @override
-  String get tabDashboard => 'Dashboard';
+  String get tabDashboard => 'Главная';
 
   @override
-  String get settingsTitle => 'Einstellungen';
+  String get settingsTitle => 'Настройки';
 
   @override
-  String get settingsTheme => 'Design';
+  String get settingsTheme => 'Тема';
 
   @override
-  String get settingsThemeLight => 'Hell';
+  String get settingsThemeLight => 'Светлая';
 
   @override
-  String get settingsThemeDark => 'Dunkel';
+  String get settingsThemeDark => 'Тёмная';
 
   @override
-  String get settingsLanguage => 'Sprache';
+  String get settingsLanguage => 'Язык';
 
   @override
-  String get settingsAccount => 'Konto';
+  String get settingsAccount => 'Аккаунт';
 
   @override
-  String get settingsNotifications => 'Benachrichtigungen';
+  String get settingsNotifications => 'Уведомления';
 
   @override
-  String get settingsLogout => 'Abmelden';
+  String get settingsLogout => 'Выйти';
 
   @override
-  String get settingsVersion => 'Version';
+  String get settingsVersion => 'Версия';
 
   @override
-  String get scheduleTitle => 'Stundenplan';
+  String get scheduleTitle => 'Расписание';
 
   @override
-  String get scheduleComingSoon => 'Dein Stundenplan wird bald verfügbar sein.';
+  String get scheduleComingSoon => 'Твоё расписание скоро появится.';
 
   @override
-  String get pendingTitle => 'Konto wird geprüft';
+  String get pendingTitle => 'Аккаунт проверяется';
 
   @override
-  String get pendingMessage =>
-      'Deine Anfrage wird vom Schuladministrator geprüft.';
+  String get pendingMessage => 'Твою заявку проверяет администратор школы.';
 
   @override
-  String get pendingAvailable => 'Du kannst bereits mit Freunden chatten!';
+  String get pendingAvailable => 'Ты уже можешь общаться с друзьями!';
 
   @override
-  String get comingSoon => 'Demnächst verfügbar';
+  String get comingSoon => 'Скоро';
 
   @override
-  String get comingSoonAi => 'KI-Assistent wird entwickelt';
+  String get comingSoonAi => 'ИИ-помощник в разработке';
 
   @override
-  String get comingSoonChats => 'Chats kommen bald';
+  String get comingSoonChats => 'Чаты скоро появятся';
 
   @override
-  String get errorNetwork => 'Netzwerkfehler';
+  String get errorNetwork => 'Ошибка сети';
 
   @override
-  String get errorUnknown => 'Unbekannter Fehler';
+  String get errorUnknown => 'Неизвестная ошибка';
 
   @override
-  String get buttonOk => 'OK';
+  String get buttonOk => 'ОК';
 
   @override
-  String get buttonCancel => 'Abbrechen';
+  String get buttonCancel => 'Отмена';
 
   @override
-  String get buttonSave => 'Speichern';
+  String get buttonSave => 'Сохранить';
 
   @override
-  String get buttonClose => 'Schließen';
+  String get buttonClose => 'Закрыть';
 
   @override
-  String get sandboxLimitChats => 'Nach Schulverifizierung verfügbar';
+  String get sandboxLimitChats => 'Доступно после верификации школы';
 
   @override
-  String get sandboxLimitSchedule => 'Nach Schulverifizierung verfügbar';
+  String get sandboxLimitSchedule => 'Доступно после верификации школы';
 
   @override
-  String get sandboxLimitPasswordVault => 'Nach Elternverknüpfung verfügbar';
+  String get sandboxLimitPasswordVault => 'Доступно после привязки родителя';
 
   @override
-  String get sandboxDailyLimitReached => 'Tageslimit erreicht. Bis morgen!';
+  String get sandboxDailyLimitReached => 'Дневной лимит. До завтра!';
 
   @override
-  String get curfewTitle => 'Gute Nacht!';
+  String get curfewTitle => 'Спокойной ночи!';
 
   @override
-  String get curfewMessage => 'Die App ist bis morgen früh gesperrt.';
+  String get curfewMessage => 'Приложение заблокировано до утра.';
 
   @override
-  String get loginPrimaryButton => 'Anmelden';
+  String get loginPrimaryButton => 'Войти';
 
   @override
-  String get chatUnknown => 'Unbekannt';
+  String get chatUnknown => 'Неизвестно';
 
   @override
-  String get chatTypeClass => 'Klassengruppe';
+  String get chatTypeClass => 'Классовый чат';
 
   @override
-  String get chatTypeSchool => 'Schulgruppe';
+  String get chatTypeSchool => 'Школьный чат';
 
   @override
-  String get chatOnline => 'Online';
+  String get chatOnline => 'Онлайн';
 
   @override
-  String get chatLastSeen => 'Zuletzt gesehen';
+  String get chatLastSeen => 'Был(а) онлайн';
 
   @override
-  String get chatNoMessages => 'Noch keine Nachrichten';
+  String get chatNoMessages => 'Нет сообщений';
 
   @override
-  String get chatFirstMessage => 'Schreib als Erster!';
+  String get chatFirstMessage => 'Напиши первым!';
 
   @override
-  String get chatNewMessages => 'Neue Nachrichten';
+  String get chatNewMessages => 'Новые сообщения';
 
   @override
-  String get chatDateToday => 'Heute';
+  String get chatDateToday => 'Сегодня';
 
   @override
-  String get chatDateYesterday => 'Gestern';
+  String get chatDateYesterday => 'Вчера';
 
   @override
-  String get settingsTabsTitle => 'Tabs';
+  String get settingsTabsTitle => 'Вкладки';
 
   @override
-  String get settingsTabChats => 'Chats';
+  String get settingsTabChats => 'Чаты';
 
   @override
-  String get settingsTabAi => 'KI-Assistent';
+  String get settingsTabAi => 'ИИ-помощник';
 
   @override
-  String get settingsTabSchool => 'Schule';
+  String get settingsTabSchool => 'Школа';
 
   @override
-  String get settingsTabKind => 'Kind';
+  String get settingsTabKind => 'Ребёнок';
 
   @override
-  String get settingsTabClasses => 'Klassen';
+  String get settingsTabClasses => 'Классы';
 
   @override
-  String get settingsTabVerwaltung => 'Verwaltung';
+  String get settingsTabVerwaltung => 'Управление';
 
   @override
   String get splashHai3Label => 'HAI3 Design';
 
   @override
   String get dashboardDonationsText =>
-      'Hilf uns, Knoty kostenlos und unabhängig zu halten.';
+      'Помоги нам сделать Knoty бесплатным и независимым.';
 
   @override
-  String get dashboardDonations => 'Knoty unterstützen';
+  String get dashboardDonations => 'Поддержать Knoty';
 
   @override
-  String get dashboardElementsStore => 'Store';
+  String get dashboardElementsStore => 'Магазин';
 
   @override
-  String get dashboardReportPlaceholder => 'Problem beschreiben...';
+  String get dashboardReportPlaceholder => 'Описать проблему...';
 
   @override
-  String get dashboardReportSend => 'Senden';
+  String get dashboardReportSend => 'Отправить';
 
   @override
-  String get dashboardReportSent => 'Meldung gesendet. Danke!';
+  String get dashboardReportSent => 'Отчёт отправлен. Спасибо!';
 
   @override
-  String get dashboardTabAi => 'KI-Assistent';
+  String get dashboardTabAi => 'ИИ-помощник';
 
   @override
-  String get dashboardTabChats => 'Chats';
+  String get dashboardTabChats => 'Чаты';
 
   @override
   String get dashboardTabVpn => 'VPN';
 
   @override
-  String get schoolTitle => 'Schule';
+  String get schoolTitle => 'Школа';
 
   @override
-  String get schoolCodeEmpty => 'Bitte Schulcode eingeben';
+  String get schoolCodeEmpty => 'Введи код школы';
 
   @override
-  String get schoolCodeInvalid => 'Ungültiger Schulcode';
+  String get schoolCodeInvalid => 'Неверный код школы';
 
   @override
-  String get schoolNotVerifiedTitle => 'Noch nicht verifiziert';
+  String get schoolNotVerifiedTitle => 'Ещё не верифицирован';
 
   @override
   String get schoolNotVerifiedSubtitle =>
-      'Dein Konto wartet auf Bestätigung durch den Schuladministrator.';
+      'Твой аккаунт ждёт подтверждения администратора школы.';
 
   @override
   String get schoolCodeHint => 'SCH-XXXX';
 
   @override
-  String get schoolCodeRedeem => 'Code einlösen';
+  String get schoolCodeRedeem => 'Активировать код';
 
   @override
   String schoolWaitingFrom(Object school) {
-    return 'Warte auf Bestätigung von $school';
+    return 'Ожидание подтверждения от $school';
   }
 
   @override
-  String get schoolWaitingConfirmation => 'Warte auf Bestätigung';
+  String get schoolWaitingConfirmation => 'Ожидание подтверждения';
 
   @override
-  String get schoolStatClass => 'Klasse';
+  String get schoolStatClass => 'Класс';
 
   @override
-  String get schoolStatStatus => 'Status';
+  String get schoolStatStatus => 'Статус';
 
   @override
-  String get schoolStatActive => 'Aktiv';
+  String get schoolStatActive => 'Активен';
 
   @override
-  String get schoolStatNew => 'Neu';
+  String get schoolStatNew => 'Новый';
 
   @override
-  String get schoolServicesTitle => 'Schuldienste';
+  String get schoolServicesTitle => 'Школьные сервисы';
 
   @override
-  String get schoolTimetable => 'Stundenplan';
+  String get schoolTimetable => 'Расписание';
 
   @override
-  String get schoolAnnouncements => 'Ankündigungen';
+  String get schoolAnnouncements => 'Объявления';
 
   @override
-  String get schoolDocuments => 'Dokumente';
+  String get schoolDocuments => 'Документы';
 
   @override
-  String get schoolHomework => 'Hausaufgaben';
+  String get schoolHomework => 'Домашние задания';
 
   @override
-  String get schoolGrades => 'Noten';
+  String get schoolGrades => 'Оценки';
 
   @override
-  String get schoolEvents => 'Veranstaltungen';
+  String get schoolEvents => 'Мероприятия';
 
   @override
-  String get schoolUpcomingTitle => 'Demnächst';
+  String get schoolUpcomingTitle => 'Скоро';
 
   @override
   String schoolComingSoon(Object name) {
-    return '$name demnächst verfügbar';
+    return '$name скоро появится';
   }
 
   @override
-  String get schoolVerifiedBadge => 'Verifiziert';
+  String get schoolVerifiedBadge => 'Верифицирован';
 
   @override
-  String get parentTitle => 'Kind';
+  String get parentTitle => 'Ребёнок';
 
   @override
-  String get lockedNoChildTitle => 'Kein Kind verknüpft';
+  String get lockedNoChildTitle => 'Ребёнок не привязан';
 
   @override
   String get lockedNoChildSubtitle =>
-      'Gib die KN-Nummer deines Kindes ein, um Konten zu verknüpfen.';
+      'Введи KN-номер ребёнка, чтобы связать аккаунты.';
 
   @override
-  String get teacherClassesTitle => 'Meine Klassen';
+  String get teacherClassesTitle => 'Мои классы';
 
   @override
-  String get lockedTeacherTitle => 'Noch nicht verfügbar';
+  String get lockedTeacherTitle => 'Пока недоступно';
 
   @override
   String get lockedTeacherSubtitle =>
-      'Klassenverwaltung wird nach der Schulverifizierung verfügbar.';
+      'Управление классами появится после верификации школы.';
 
   @override
-  String get teacherClassesComingSoon => 'Klassen demnächst verfügbar';
+  String get teacherClassesComingSoon => 'Классы скоро появятся';
 
   @override
-  String get verwaltungTitle => 'Verwaltung';
+  String get verwaltungTitle => 'Управление';
 
   @override
-  String get verwaltungActivateUsers => 'Benutzer aktivieren';
+  String get verwaltungActivateUsers => 'Активировать пользователей';
 
   @override
   String get verwaltungActivateUsersSubtitle =>
-      'Ausstehende Registrierungen prüfen und aktivieren';
+      'Проверить и активировать ожидающие регистрации';
 
   @override
-  String get verwaltungGenerateCodes => 'Codes generieren';
+  String get verwaltungGenerateCodes => 'Генерировать коды';
 
   @override
   String get verwaltungGenerateCodesSubtitle =>
-      'Schulzugangscodes für Lehrer und Schüler erstellen';
+      'Создать коды доступа для учителей и учеников';
 
   @override
-  String get verwaltungUserList => 'Benutzerliste';
+  String get verwaltungUserList => 'Список пользователей';
 
   @override
   String get verwaltungUserListSubtitle =>
-      'Alle Schulbenutzer anzeigen und verwalten';
+      'Просматривать и управлять пользователями школы';
 
   @override
   String get verwaltungSuperAdminHint =>
-      'Du hast Superadmin-Zugriff auf alle Schulen.';
+      'У тебя есть суперадмин-доступ ко всем школам.';
 
   @override
-  String get lockedDefaultTitle => 'Funktion gesperrt';
+  String get lockedDefaultTitle => 'Функция заблокирована';
 
   @override
   String get lockedDefaultSubtitle =>
-      'Diese Funktion ist für dein Konto nicht verfügbar.';
+      'Эта функция недоступна для твоего аккаунта.';
 
   @override
-  String get msgCopied => 'Nachricht kopiert';
+  String get msgCopied => 'Сообщение скопировано';
 
   @override
-  String get msgReportTitle => 'Melden';
+  String get msgReportTitle => 'Пожаловаться';
 
   @override
-  String get msgReportConfirm => 'Möchtest du diese Nachricht melden?';
+  String get msgReportConfirm => 'Пожаловаться на это сообщение?';
 
   @override
-  String get msgReportCancel => 'Abbrechen';
+  String get msgReportCancel => 'Отмена';
 
   @override
-  String get msgReportSend => 'Melden';
+  String get msgReportSend => 'Пожаловаться';
 
   @override
-  String get msgReported => 'Nachricht gemeldet';
+  String get msgReported => 'Сообщение отправлено';
 
   @override
-  String get msgReactionPicker => 'Reaktion wählen';
+  String get msgReactionPicker => 'Выбрать реакцию';
 
   @override
-  String get msgActionReply => 'Antworten';
+  String get msgActionReply => 'Ответить';
 
   @override
-  String get msgActionCopy => 'Kopieren';
+  String get msgActionCopy => 'Копировать';
 
   @override
-  String get msgActionForward => 'Weiterleiten';
+  String get msgActionForward => 'Переслать';
 
   @override
-  String get msgActionPin => 'Anpinnen';
+  String get msgActionPin => 'Закрепить';
 
   @override
-  String get msgActionEdit => 'Bearbeiten';
+  String get msgActionEdit => 'Редактировать';
 
   @override
-  String get msgActionDelete => 'Löschen';
+  String get msgActionDelete => 'Удалить';
 
   @override
-  String get msgActionRemove => 'Entfernen';
+  String get msgActionRemove => 'Убрать';
 
   @override
-  String get msgActionReport => 'Melden';
+  String get msgActionReport => 'Пожаловаться';
+
+  @override
+  String get registerWhoAreYou => 'Кто ты?';
+
+  @override
+  String get registerChooseRole => 'Выбери роль, чтобы продолжить';
+
+  @override
+  String get registerContinue => 'Продолжить';
+
+  @override
+  String get registerFirstName => 'Имя';
+
+  @override
+  String get registerFirstNameHint => 'Иван';
+
+  @override
+  String get registerLastName => 'Фамилия';
+
+  @override
+  String get registerLastNameHint => 'Иванов';
+
+  @override
+  String get registerRoleStudent => 'Ученик';
+
+  @override
+  String get registerRoleStudentSubtitle => 'Я ученик или ученица';
+
+  @override
+  String get registerRoleParent => 'Родитель';
+
+  @override
+  String get registerRoleParentSubtitle => 'Я мама или папа';
+
+  @override
+  String get registerRoleTeacher => 'Учитель';
+
+  @override
+  String get registerRoleTeacherSubtitle => 'Я учитель или учительница';
+
+  @override
+  String get registerSubtitleStudent => 'Создать аккаунт ученика';
+
+  @override
+  String get registerSubtitleParent => 'Создать аккаунт родителя';
+
+  @override
+  String get registerSubtitleTeacher => 'Создать аккаунт учителя';
+
+  @override
+  String get registerSchool => 'Школа';
+
+  @override
+  String get registerSchoolLoading => 'Загрузка школ...';
+
+  @override
+  String get registerSchoolHint => 'Введи название школы...';
+
+  @override
+  String get registerSchoolCodeUsed => 'Используется код активации';
+
+  @override
+  String get registerClass => 'Класс';
+
+  @override
+  String get registerClassHint => 'напр. 5а';
+
+  @override
+  String get registerHasActivationCode =>
+      'У меня есть код активации (KNOTY-XXXX-XXXX)';
+
+  @override
+  String get registerActivationCodeLabel => 'Код активации';
+
+  @override
+  String get registerActivationCodeHint => 'KNOTY-XXXX-XXXX';
+
+  @override
+  String get registerKnChildLabel => 'KN-номер ребёнка';
+
+  @override
+  String get registerKnChildHint => 'KN-123456';
+
+  @override
+  String get registerInfoStudent =>
+      'Твой аккаунт будет проверен администратором школы.';
+
+  @override
+  String get registerInfoTeacher =>
+      'Твой аккаунт будет верифицирован администратором школы.';
+
+  @override
+  String get registerInfoParent =>
+      'Введи KN-номер ребёнка. Его можно найти в приложении Knoty ребёнка.';
+
+  @override
+  String get registerErrorFirstName => 'Введи имя';
+
+  @override
+  String get registerErrorLastName => 'Введи фамилию';
+
+  @override
+  String get registerErrorSchool => 'Выбери школу';
+
+  @override
+  String get registerErrorActivationCode => 'Введи код активации';
+
+  @override
+  String get registerErrorKnChild => 'Введи KN-номер ребёнка';
+
+  @override
+  String get registerErrorNoInternet => 'Нет подключения к интернету';
 }

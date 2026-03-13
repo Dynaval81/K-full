@@ -50,8 +50,7 @@ class ChatController extends ChangeNotifier {
       ChatRoom(
         id: 'group_10b',
         name: 'Klasse 10B',
-        isGroup: true,
-        isClassGroup: true,
+        type: ChatType.classGroup,
         isOnline: true,
         unread: 5,
         lastMessage: 'Hausaufgabe für alle!',
@@ -60,7 +59,7 @@ class ChatController extends ChangeNotifier {
       ChatRoom(
         id: 'personal_anna',
         name: 'Anna Müller',
-        isGroup: false,
+        type: ChatType.personal,
         isOnline: true,
         unread: 2,
         lastMessage: 'Kannst du mir helfen?',
@@ -69,7 +68,7 @@ class ChatController extends ChangeNotifier {
       ChatRoom(
         id: 'personal_max',
         name: 'Max Schmidt',
-        isGroup: false,
+        type: ChatType.personal,
         isOnline: false,
         unread: 0,
         lastMessage: 'Bis morgen!',
@@ -78,7 +77,7 @@ class ChatController extends ChangeNotifier {
       ChatRoom(
         id: 'personal_lehrer',
         name: 'Hr. Weber',
-        isGroup: false,
+        type: ChatType.personal,
         isOnline: true,
         unread: 1,
         lastMessage: 'Bitte pünktlich sein.',

@@ -1035,6 +1035,222 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Melden'**
   String get msgActionReport;
+
+  /// No description provided for @registerWhoAreYou.
+  ///
+  /// In de, this message translates to:
+  /// **'Wer bist du?'**
+  String get registerWhoAreYou;
+
+  /// No description provided for @registerChooseRole.
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle deine Rolle, um fortzufahren'**
+  String get registerChooseRole;
+
+  /// No description provided for @registerContinue.
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter'**
+  String get registerContinue;
+
+  /// No description provided for @registerFirstName.
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get registerFirstName;
+
+  /// No description provided for @registerFirstNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Max'**
+  String get registerFirstNameHint;
+
+  /// No description provided for @registerLastName.
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get registerLastName;
+
+  /// No description provided for @registerLastNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Mustermann'**
+  String get registerLastNameHint;
+
+  /// No description provided for @registerRoleStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Schüler'**
+  String get registerRoleStudent;
+
+  /// No description provided for @registerRoleStudentSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Schüler oder Schülerin'**
+  String get registerRoleStudentSubtitle;
+
+  /// No description provided for @registerRoleParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil'**
+  String get registerRoleParent;
+
+  /// No description provided for @registerRoleParentSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Mutter oder Vater'**
+  String get registerRoleParentSubtitle;
+
+  /// No description provided for @registerRoleTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer'**
+  String get registerRoleTeacher;
+
+  /// No description provided for @registerRoleTeacherSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Lehrer oder Lehrerin'**
+  String get registerRoleTeacherSubtitle;
+
+  /// No description provided for @registerSubtitleStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Schüler-Konto erstellen'**
+  String get registerSubtitleStudent;
+
+  /// No description provided for @registerSubtitleParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil-Konto erstellen'**
+  String get registerSubtitleParent;
+
+  /// No description provided for @registerSubtitleTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer-Konto erstellen'**
+  String get registerSubtitleTeacher;
+
+  /// No description provided for @registerSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule'**
+  String get registerSchool;
+
+  /// No description provided for @registerSchoolLoading.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulen werden geladen...'**
+  String get registerSchoolLoading;
+
+  /// No description provided for @registerSchoolHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulname eingeben...'**
+  String get registerSchoolHint;
+
+  /// No description provided for @registerSchoolCodeUsed.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivierungscode wird verwendet'**
+  String get registerSchoolCodeUsed;
+
+  /// No description provided for @registerClass.
+  ///
+  /// In de, this message translates to:
+  /// **'Klasse'**
+  String get registerClass;
+
+  /// No description provided for @registerClassHint.
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 5a'**
+  String get registerClassHint;
+
+  /// No description provided for @registerHasActivationCode.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich habe einen Aktivierungscode (KNOTY-XXXX-XXXX)'**
+  String get registerHasActivationCode;
+
+  /// No description provided for @registerActivationCodeLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivierungscode'**
+  String get registerActivationCodeLabel;
+
+  /// No description provided for @registerActivationCodeHint.
+  ///
+  /// In de, this message translates to:
+  /// **'KNOTY-XXXX-XXXX'**
+  String get registerActivationCodeHint;
+
+  /// No description provided for @registerKnChildLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'KN-Nummer des Kindes'**
+  String get registerKnChildLabel;
+
+  /// No description provided for @registerKnChildHint.
+  ///
+  /// In de, this message translates to:
+  /// **'KN-123456'**
+  String get registerKnChildHint;
+
+  /// No description provided for @registerInfoStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wird vom Schuladministrator geprüft.'**
+  String get registerInfoStudent;
+
+  /// No description provided for @registerInfoTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wird vom Schuladministrator verifiziert.'**
+  String get registerInfoTeacher;
+
+  /// No description provided for @registerInfoParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Gib die KN-Nummer deines Kindes ein. Du findest sie in der Knoty-App deines Kindes.'**
+  String get registerInfoParent;
+
+  /// No description provided for @registerErrorFirstName.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Vornamen eingeben'**
+  String get registerErrorFirstName;
+
+  /// No description provided for @registerErrorLastName.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Nachnamen eingeben'**
+  String get registerErrorLastName;
+
+  /// No description provided for @registerErrorSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Schule auswählen'**
+  String get registerErrorSchool;
+
+  /// No description provided for @registerErrorActivationCode.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Aktivierungscode eingeben'**
+  String get registerErrorActivationCode;
+
+  /// No description provided for @registerErrorKnChild.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte KN-Nummer des Kindes eingeben'**
+  String get registerErrorKnChild;
+
+  /// No description provided for @registerErrorNoInternet.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Internetverbindung'**
+  String get registerErrorNoInternet;
 }
 
 class _AppLocalizationsDelegate

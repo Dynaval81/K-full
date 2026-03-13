@@ -12,6 +12,7 @@ import 'package:knoty/core/utils/app_logger.dart';
 import 'package:knoty/data/models/user_model.dart';
 import 'package:knoty/providers/user_provider.dart';
 import 'package:knoty/l10n/app_localizations.dart';
+import 'package:knoty/locale_provider.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -93,6 +94,10 @@ class DashboardScreen extends StatelessWidget {
                   ),
               ],
             ),
+            const SizedBox(height: 4),
+
+            // ── Language ──────────────────────────────────────────
+            _LanguageCard(),
             const SizedBox(height: 4),
 
             // ── App info ─────────────────────────────────────────
@@ -384,6 +389,75 @@ class _ReportButton extends StatelessWidget {
     } catch (e) {
       debugPrint('[REPORT] $e');
     }
+  }
+}
+
+// ── Language card ─────────────────────────────────────────────────────────────
+
+class _LanguageCard extends StatelessWidget {
+  const _LanguageCard();
+
+  static const _langs = [
+    ('de', 'Deutsch', '🇩🇪'),
+    ('en', 'English', '🇬🇧'),
+    ('ru', 'Русский', '🇷🇺'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localeProvider = context.watch<LocaleProvider>();
+    final current = localeProvider.locale.languageCode;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 2))],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(children: [
+          Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6B800).withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.language_rounded, color: Color(0xFFE6B800), size: 17),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(l10n.settingsLanguage,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87))),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: _langs.map((entry) {
+              final (code, label, flag) = entry;
+              final active = current == code;
+              return GestureDetector(
+                onTap: () => context.read<LocaleProvider>().setLocale(Locale(code)),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  margin: const EdgeInsets.only(left: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: active ? const Color(0xFFE6B800) : const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text('$flag $label',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: active ? Colors.white : const Color(0xFF757575),
+                    )),
+                ),
+              );
+            }).toList(),
+          ),
+        ]),
+      ),
+    );
   }
 }
 

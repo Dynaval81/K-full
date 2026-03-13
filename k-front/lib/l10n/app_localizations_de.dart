@@ -491,4 +491,116 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msgActionReport => 'Melden';
+
+  @override
+  String get registerWhoAreYou => 'Wer bist du?';
+
+  @override
+  String get registerChooseRole => 'Wähle deine Rolle, um fortzufahren';
+
+  @override
+  String get registerContinue => 'Weiter';
+
+  @override
+  String get registerFirstName => 'Vorname';
+
+  @override
+  String get registerFirstNameHint => 'Max';
+
+  @override
+  String get registerLastName => 'Nachname';
+
+  @override
+  String get registerLastNameHint => 'Mustermann';
+
+  @override
+  String get registerRoleStudent => 'Schüler';
+
+  @override
+  String get registerRoleStudentSubtitle => 'Ich bin Schüler oder Schülerin';
+
+  @override
+  String get registerRoleParent => 'Elternteil';
+
+  @override
+  String get registerRoleParentSubtitle => 'Ich bin Mutter oder Vater';
+
+  @override
+  String get registerRoleTeacher => 'Lehrer';
+
+  @override
+  String get registerRoleTeacherSubtitle => 'Ich bin Lehrer oder Lehrerin';
+
+  @override
+  String get registerSubtitleStudent => 'Schüler-Konto erstellen';
+
+  @override
+  String get registerSubtitleParent => 'Elternteil-Konto erstellen';
+
+  @override
+  String get registerSubtitleTeacher => 'Lehrer-Konto erstellen';
+
+  @override
+  String get registerSchool => 'Schule';
+
+  @override
+  String get registerSchoolLoading => 'Schulen werden geladen...';
+
+  @override
+  String get registerSchoolHint => 'Schulname eingeben...';
+
+  @override
+  String get registerSchoolCodeUsed => 'Aktivierungscode wird verwendet';
+
+  @override
+  String get registerClass => 'Klasse';
+
+  @override
+  String get registerClassHint => 'z.B. 5a';
+
+  @override
+  String get registerHasActivationCode =>
+      'Ich habe einen Aktivierungscode (KNOTY-XXXX-XXXX)';
+
+  @override
+  String get registerActivationCodeLabel => 'Aktivierungscode';
+
+  @override
+  String get registerActivationCodeHint => 'KNOTY-XXXX-XXXX';
+
+  @override
+  String get registerKnChildLabel => 'KN-Nummer des Kindes';
+
+  @override
+  String get registerKnChildHint => 'KN-123456';
+
+  @override
+  String get registerInfoStudent =>
+      'Dein Konto wird vom Schuladministrator geprüft.';
+
+  @override
+  String get registerInfoTeacher =>
+      'Dein Konto wird vom Schuladministrator verifiziert.';
+
+  @override
+  String get registerInfoParent =>
+      'Gib die KN-Nummer deines Kindes ein. Du findest sie in der Knoty-App deines Kindes.';
+
+  @override
+  String get registerErrorFirstName => 'Bitte Vornamen eingeben';
+
+  @override
+  String get registerErrorLastName => 'Bitte Nachnamen eingeben';
+
+  @override
+  String get registerErrorSchool => 'Bitte Schule auswählen';
+
+  @override
+  String get registerErrorActivationCode => 'Bitte Aktivierungscode eingeben';
+
+  @override
+  String get registerErrorKnChild => 'Bitte KN-Nummer des Kindes eingeben';
+
+  @override
+  String get registerErrorNoInternet => 'Keine Internetverbindung';
 }

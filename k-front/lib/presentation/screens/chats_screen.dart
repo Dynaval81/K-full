@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/controllers/chat_controller.dart';
+import 'package:knoty/core/enums/verification_level.dart';
 import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/presentation/screens/chat/chat_room_screen.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
+import 'package:knoty/l10n/app_localizations.dart';
 
 enum _ChatFilter { all, personal, groups, school }
 
@@ -36,12 +39,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
     );
   }
 
-  List<ChatRoom> _filtered(List<ChatRoom> all) {
+  List<ChatRoom> _filtered(List<ChatRoom> all, bool isSchoolVerified) {
+    // Школьные чаты скрыты для неверифицированных
+    final visible = isSchoolVerified
+        ? all
+        : all.where((c) => !c.type.requiresVerification).toList();
     switch (_activeFilter) {
-      case _ChatFilter.all:      return all;
-      case _ChatFilter.personal: return all.where((c) => c.isPersonal).toList();
-      case _ChatFilter.groups:   return all.where((c) => c.isGroup && !c.isClassGroup).toList();
-      case _ChatFilter.school:   return all.where((c) => c.isClassGroup).toList();
+      case _ChatFilter.all:      return visible;
+      case _ChatFilter.personal: return visible.where((c) => c.isPersonal).toList();
+      case _ChatFilter.groups:   return visible.where((c) => c.isGroup && !c.isClassGroup).toList();
+      case _ChatFilter.school:   return visible.where((c) => c.isClassGroup).toList();
     }
   }
 
@@ -57,7 +64,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ChatController>();
-    final rooms = _filtered(controller.chatRooms);
+    final user = context.watch<AuthController>().currentUser;
+    final isSchoolVerified = user?.verificationLevel == VerificationLevel.verified
+        && user?.schoolId != null;
+    final rooms = _filtered(controller.chatRooms, isSchoolVerified);
     final all = controller.chatRooms;
 
     return Scaffold(
@@ -102,7 +112,19 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   label: 'Schule',
                   count: all.where((c) => c.isClassGroup).length,
                   active: _activeFilter == _ChatFilter.school,
-                  onTap: () => setState(() => _activeFilter = _ChatFilter.school),
+                  isLocked: !isSchoolVerified,
+                  onTap: isSchoolVerified
+                      ? () => setState(() => _activeFilter = _ChatFilter.school)
+                      : () {
+                          final l10n = AppLocalizations.of(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n?.sandboxLimitChats ?? 'Nach Schulverifizierung verfügbar'),
+                              duration: const Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                 )),
               ],
             ),
@@ -139,6 +161,7 @@ class _Chip extends StatelessWidget {
   final String label;
   final int count;
   final bool active;
+  final bool isLocked;
   final VoidCallback onTap;
 
   const _Chip({
@@ -146,6 +169,7 @@ class _Chip extends StatelessWidget {
     required this.count,
     required this.active,
     required this.onTap,
+    this.isLocked = false,
   });
 
   @override
@@ -161,51 +185,49 @@ class _Chip extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
           ),
           child: Center(
-            child: count > 0
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: active ? Colors.white : const Color(0xFF757575),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+            child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isLocked) ...[
+                    Icon(Icons.lock_outline_rounded,
+                        size: 11,
+                        color: active ? Colors.white : const Color(0xFF9E9E9E)),
+                    const SizedBox(width: 3),
+                  ],
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: active ? Colors.white : const Color(0xFF757575),
                       ),
-                      const SizedBox(width: 3),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: active
-                              ? Colors.white.withOpacity(0.35)
-                              : const Color(0xFFE0E0E0),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '$count',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: active ? Colors.white : const Color(0xFF757575),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: active ? Colors.white : const Color(0xFF757575),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (!isLocked && count > 0) ...[
+                    const SizedBox(width: 3),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? Colors.white.withValues(alpha: 0.35)
+                            : const Color(0xFFE0E0E0),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$count',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: active ? Colors.white : const Color(0xFF757575),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
           ),
       ),
     );
@@ -251,14 +273,15 @@ class _ChatList extends StatelessWidget {
       );
     }
     return ListView.builder(
-      // ClampingScrollPhysics — не перехватывает горизонтальные жесты
-      // (BouncingScrollPhysics конкурировал со SwipeTabDetector)
       physics: const ClampingScrollPhysics(),
       itemCount: rooms.length,
-      itemBuilder: (context, index) => _ChatListItem(
-        chat: rooms[index],
-        onTap: () => onTap(rooms[index]),
-      ),
+      itemBuilder: (context, index) {
+        final chat = rooms[index];
+        return _ChatListItem(
+          chat: chat,
+          onTap: () => onTap(chat),
+        );
+      },
     );
   }
 }
@@ -269,7 +292,10 @@ class _ChatListItem extends StatelessWidget {
   final ChatRoom chat;
   final VoidCallback onTap;
 
-  const _ChatListItem({required this.chat, required this.onTap});
+  const _ChatListItem({
+    required this.chat,
+    required this.onTap,
+  });
 
   String _formatTime(DateTime? dt) {
     if (dt == null) return '';

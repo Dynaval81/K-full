@@ -21,6 +21,7 @@ import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/providers/user_provider.dart';
 import 'package:knoty/theme_provider.dart';
 import 'package:knoty/theme/app_theme.dart';
+import 'package:knoty/locale_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'package:knoty/core/utils/app_logger.dart';
 
@@ -47,6 +48,9 @@ void main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.initializeTheme();
 
+  final localeProvider = LocaleProvider();
+  await localeProvider.init();
+
   runApp(
     MultiProvider(
       providers: [
@@ -54,6 +58,7 @@ void main() async {
         ChangeNotifierProvider.value(value: userProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: chatController),
+        ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider(create: (_) => TabVisibilityController()..load()),
       ],
       child: KnotyApp(initialLocation: initialLocation),
@@ -135,6 +140,7 @@ class _KnotyAppState extends State<KnotyApp> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
 
     return MaterialApp.router(
       routerConfig: _router,
@@ -149,7 +155,7 @@ class _KnotyAppState extends State<KnotyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('de'),
+      locale: localeProvider.locale,
     );
   }
 }

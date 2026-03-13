@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze 2>&1)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter devices 2>&1)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter run -d RZ8MA30LX8D 2>&1)",
+      "Bash(flutter run:*)"
+    ]
+  }
+}

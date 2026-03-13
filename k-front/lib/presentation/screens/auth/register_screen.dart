@@ -120,10 +120,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // ── Register ──────────────────────────────────────────────────────────────
   Future<void> _register() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
-    if (_firstNameCtrl.text.trim().isEmpty) { _err('Bitte Vornamen eingeben'); return; }
-    if (_lastNameCtrl.text.trim().isEmpty)  { _err('Bitte Nachnamen eingeben'); return; }
+    if (_firstNameCtrl.text.trim().isEmpty) { _err(l10n.registerErrorFirstName); return; }
+    if (_lastNameCtrl.text.trim().isEmpty)  { _err(l10n.registerErrorLastName); return; }
     if (_emailCtrl.text.trim().isEmpty)     { _err(l10n.loginErrorEmpty); return; }
     if (_passwordCtrl.text.length < AppConstants.minPasswordLength) {
       _err(l10n.registerPasswordHint); return;
@@ -134,14 +134,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       case _RegRole.student:
       case _RegRole.teacher:
         if (!_hasActivationCode && _selectedSchool == null) {
-          _err('Bitte Schule auswählen'); return;
+          _err(l10n.registerErrorSchool); return;
         }
         if (_hasActivationCode && _activationCodeCtrl.text.trim().isEmpty) {
-          _err('Bitte Aktivierungscode eingeben'); return;
+          _err(l10n.registerErrorActivationCode); return;
         }
       case _RegRole.parent:
         if (_knChildCtrl.text.trim().isEmpty) {
-          _err('Bitte KN-Nummer des Kindes eingeben'); return;
+          _err(l10n.registerErrorKnChild); return;
         }
     }
 
@@ -175,9 +175,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _err(result['error']?.toString() ?? l10n.errorUnknown);
       }
     } on SocketException {
-      if (mounted) _err('Keine Internetverbindung');
+      if (mounted) _err(AppLocalizations.of(context).registerErrorNoInternet);
     } catch (e) {
-      if (mounted) _err(l10n.errorUnknown);
+      if (mounted) _err(AppLocalizations.of(context).errorUnknown);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -195,7 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Theme(
       data: ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.white),
       child: GestureDetector(
@@ -243,7 +243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: 36, height: 36, fit: BoxFit.contain),
                           const SizedBox(width: 12),
                           Text(
-                            _step == 0 ? 'Wer bist du?' : l10n.registerTitle,
+                            _step == 0 ? l10n.registerWhoAreYou : l10n.registerTitle,
                             style: const TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.w700,
                                 color: Color(0xFF1A1A1A)),
@@ -252,8 +252,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _step == 0
-                              ? 'Wähle deine Rolle, um fortzufahren'
-                              : _roleSubtitle(_selectedRole),
+                              ? l10n.registerChooseRole
+                              : _roleSubtitle(_selectedRole, l10n),
                           style: const TextStyle(
                               fontSize: 14, color: Color(0xFF9E9E9E)),
                         ),
@@ -287,8 +287,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20)),
                               ),
-                              child: const Text('Weiter',
-                                  style: TextStyle(
+                              child: Text(l10n.registerContinue,
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 16)),
                             ),
                           ),
@@ -301,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(28),
                               boxShadow: [BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 20, offset: const Offset(0, 4),
                               )],
                             ),
@@ -314,16 +314,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                 // Vorname + Nachname
                                 AiryInputField(controller: _firstNameCtrl,
-                                    label: 'Vorname', hint: 'Max',
+                                    label: l10n.registerFirstName,
+                                    hint: l10n.registerFirstNameHint,
                                     keyboardType: TextInputType.name),
                                 const SizedBox(height: 16),
                                 AiryInputField(controller: _lastNameCtrl,
-                                    label: 'Nachname', hint: 'Mustermann',
+                                    label: l10n.registerLastName,
+                                    hint: l10n.registerLastNameHint,
                                     keyboardType: TextInputType.name),
                                 const SizedBox(height: 16),
 
                                 // Role-specific fields
-                                ..._buildRoleFields(),
+                                ..._buildRoleFields(l10n),
 
                                 // Email + Password
                                 AiryInputField(controller: _emailCtrl,
@@ -388,7 +390,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F3F5),
                     border: Border(top: BorderSide(
-                        color: Colors.black.withOpacity(0.06))),
+                        color: Colors.black.withValues(alpha: 0.06))),
                   ),
                   child: SafeArea(
                     top: false,
@@ -426,15 +428,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // ── Role-specific form fields ─────────────────────────────────────────────
-  List<Widget> _buildRoleFields() {
+  List<Widget> _buildRoleFields(AppLocalizations l10n) {
     switch (_selectedRole) {
-      case _RegRole.student:  return _buildStudentFields();
-      case _RegRole.parent:   return _buildParentFields();
-      case _RegRole.teacher:  return _buildTeacherFields();
+      case _RegRole.student:  return _buildStudentFields(l10n);
+      case _RegRole.parent:   return _buildParentFields(l10n);
+      case _RegRole.teacher:  return _buildTeacherFields(l10n);
     }
   }
 
-  List<Widget> _buildStudentFields() => [
+  List<Widget> _buildStudentFields(AppLocalizations l10n) => [
     _SchoolSearchField(
       controller: _schoolSearchCtrl,
       filteredSchools: _showSchoolDropdown ? _filteredSchools : [],
@@ -447,13 +449,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       const SizedBox(height: 16),
       AiryInputField(
         controller: _classCtrl,
-        label: 'Klasse',
-        hint: 'z.B. 5a',
+        label: l10n.registerClass,
+        hint: l10n.registerClassHint,
         keyboardType: TextInputType.text,
       ),
     ],
     const SizedBox(height: 16),
-    _InfoBox(text: 'Dein Konto wird vom Schuladministrator geprüft.'),
+    _InfoBox(text: l10n.registerInfoStudent),
     const SizedBox(height: 16),
     _ActivationCodeToggle(
       hasCode: _hasActivationCode,
@@ -471,20 +473,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     const SizedBox(height: 16),
   ];
 
-  List<Widget> _buildParentFields() => [
+  List<Widget> _buildParentFields(AppLocalizations l10n) => [
     AiryInputField(
       controller: _knChildCtrl,
-      label: 'KN-Nummer des Kindes',
-      hint: 'KN-123456',
+      label: l10n.registerKnChildLabel,
+      hint: l10n.registerKnChildHint,
       keyboardType: TextInputType.number,
       inputFormatters: [_KnNumberFormatter()],
     ),
     const SizedBox(height: 16),
-    _InfoBox(text: 'Gib die KN-Nummer deines Kindes ein. Du findest sie in der Knoty-App deines Kindes.'),
+    _InfoBox(text: l10n.registerInfoParent),
     const SizedBox(height: 16),
   ];
 
-  List<Widget> _buildTeacherFields() => [
+  List<Widget> _buildTeacherFields(AppLocalizations l10n) => [
     _SchoolSearchField(
       controller: _schoolSearchCtrl,
       filteredSchools: _showSchoolDropdown ? _filteredSchools : [],
@@ -494,7 +496,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       isLoading: _isLoadingSchools,
     ),
     const SizedBox(height: 16),
-    _InfoBox(text: 'Dein Konto wird vom Schuladministrator verifiziert.'),
+    _InfoBox(text: l10n.registerInfoTeacher),
     const SizedBox(height: 16),
     _ActivationCodeToggle(
       hasCode: _hasActivationCode,
@@ -511,11 +513,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     const SizedBox(height: 16),
   ];
 
-  String _roleSubtitle(_RegRole r) {
+  String _roleSubtitle(_RegRole r, AppLocalizations l10n) {
     switch (r) {
-      case _RegRole.student:  return 'Schüler-Konto erstellen';
-      case _RegRole.parent:   return 'Elternteil-Konto erstellen';
-      case _RegRole.teacher:  return 'Lehrer-Konto erstellen';
+      case _RegRole.student:  return l10n.registerSubtitleStudent;
+      case _RegRole.parent:   return l10n.registerSubtitleParent;
+      case _RegRole.teacher:  return l10n.registerSubtitleTeacher;
     }
   }
 }
@@ -529,13 +531,14 @@ class _RoleSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         _RoleTile(
           role: _RegRole.student,
           icon: Icons.school_rounded,
-          title: 'Schüler',
-          subtitle: 'Ich bin Schüler oder Schülerin',
+          title: l10n.registerRoleStudent,
+          subtitle: l10n.registerRoleStudentSubtitle,
           selected: selected == _RegRole.student,
           onTap: () => onChanged(_RegRole.student),
         ),
@@ -543,8 +546,8 @@ class _RoleSelector extends StatelessWidget {
         _RoleTile(
           role: _RegRole.parent,
           icon: Icons.family_restroom_rounded,
-          title: 'Elternteil',
-          subtitle: 'Ich bin Mutter oder Vater',
+          title: l10n.registerRoleParent,
+          subtitle: l10n.registerRoleParentSubtitle,
           selected: selected == _RegRole.parent,
           onTap: () => onChanged(_RegRole.parent),
         ),
@@ -552,8 +555,8 @@ class _RoleSelector extends StatelessWidget {
         _RoleTile(
           role: _RegRole.teacher,
           icon: Icons.person_rounded,
-          title: 'Lehrer',
-          subtitle: 'Ich bin Lehrer oder Lehrerin',
+          title: l10n.registerRoleTeacher,
+          subtitle: l10n.registerRoleTeacherSubtitle,
           selected: selected == _RegRole.teacher,
           onTap: () => onChanged(_RegRole.teacher),
         ),
@@ -585,17 +588,17 @@ class _RoleTile extends StatelessWidget {
           color: selected ? const Color(0xFFFFF8E1) : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: selected ? const Color(0xFFE6B800) : Colors.black.withOpacity(0.08),
+            color: selected ? const Color(0xFFE6B800) : Colors.black.withValues(alpha: 0.08),
             width: selected ? 2 : 1,
           ),
           boxShadow: selected ? [
             BoxShadow(
-              color: const Color(0xFFE6B800).withOpacity(0.15),
+              color: const Color(0xFFE6B800).withValues(alpha: 0.15),
               blurRadius: 12, offset: const Offset(0, 4),
             )
           ] : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8, offset: const Offset(0, 2),
             )
           ],
@@ -605,7 +608,7 @@ class _RoleTile extends StatelessWidget {
             width: 48, height: 48,
             decoration: BoxDecoration(
               color: selected
-                  ? const Color(0xFFE6B800).withOpacity(0.15)
+                  ? const Color(0xFFE6B800).withValues(alpha: 0.15)
                   : const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(14),
             ),
@@ -639,7 +642,7 @@ class _RoleTile extends StatelessWidget {
               width: 22, height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.black.withOpacity(0.15), width: 2),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.15), width: 2),
               ),
             ),
         ]),
@@ -656,17 +659,18 @@ class _RoleBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (icon, label) = switch (role) {
-      _RegRole.student => (Icons.school_rounded, 'Schüler'),
-      _RegRole.parent  => (Icons.family_restroom_rounded, 'Elternteil'),
-      _RegRole.teacher => (Icons.person_rounded, 'Lehrer'),
+      _RegRole.student => (Icons.school_rounded, l10n.registerRoleStudent),
+      _RegRole.parent  => (Icons.family_restroom_rounded, l10n.registerRoleParent),
+      _RegRole.teacher => (Icons.person_rounded, l10n.registerRoleTeacher),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8E1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE6B800).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFE6B800).withValues(alpha: 0.3)),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(icon, size: 14, color: const Color(0xFFE6B800)),
@@ -690,7 +694,7 @@ class _InfoBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE6B800).withOpacity(0.08),
+        color: const Color(0xFFE6B800).withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(children: [
@@ -720,15 +724,16 @@ class _SchoolSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Opacity(
         opacity: enabled ? 1.0 : 0.45,
         child: AiryInputField(
           controller: controller,
-          label: 'Schule',
+          label: l10n.registerSchool,
           hint: enabled
-              ? (isLoading ? 'Schulen werden geladen...' : 'Schulname eingeben...')
-              : 'Aktivierungscode wird verwendet',
+              ? (isLoading ? l10n.registerSchoolLoading : l10n.registerSchoolHint)
+              : l10n.registerSchoolCodeUsed,
           keyboardType: TextInputType.text,
           onChanged: enabled ? onSearch : null,
         ),
@@ -740,7 +745,7 @@ class _SchoolSearchField extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 12, offset: const Offset(0, 4),
             )],
           ),
@@ -774,6 +779,7 @@ class _ActivationCodeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       GestureDetector(
         onTap: () => onToggle(!hasCode),
@@ -794,9 +800,9 @@ class _ActivationCodeToggle extends StatelessWidget {
                 : null,
           ),
           const SizedBox(width: 10),
-          const Flexible(child: Text(
-            'Ich habe einen Aktivierungscode (KNOTY-XXXX-XXXX)',
-            style: TextStyle(fontSize: 14, color: Color(0xFF1A1A1A)),
+          Flexible(child: Text(
+            l10n.registerHasActivationCode,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A1A)),
           )),
         ]),
       ),
@@ -804,8 +810,8 @@ class _ActivationCodeToggle extends StatelessWidget {
         const SizedBox(height: 12),
         AiryInputField(
           controller: controller,
-          label: 'Aktivierungscode',
-          hint: 'KNOTY-XXXX-XXXX',
+          label: l10n.registerActivationCodeLabel,
+          hint: l10n.registerActivationCodeHint,
           keyboardType: TextInputType.text,
           inputFormatters: [_ActivationCodeFormatter()],
         ),
