@@ -1,5 +1,6 @@
 // v1.1.3
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/core/constants.dart';
 import 'package:knoty/core/controllers/chat_controller.dart';
@@ -22,12 +23,14 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   late bool _hadUnread;
+  late int _unreadCount;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _hadUnread = widget.chat.unread > 0;
+    _unreadCount = widget.chat.unread;
+    _hadUnread = _unreadCount > 0;
     if (_hadUnread) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.read<ChatController>().markAsRead(widget.chat.id);
@@ -43,6 +46,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   bool _isSameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
+
+  void _showActionSnack(BuildContext context, String label) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(
+        content: Text(label),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +78,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         horizontal: 16, vertical: 12),
                     itemCount: messages.length + (_hadUnread ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (_hadUnread && index == 0) {
+                      if (_hadUnread && index == _unreadCount) {
                         return _NewMessagesDivider();
                       }
-                      final msgIndex = _hadUnread ? index - 1 : index;
+                      final msgIndex = (_hadUnread && index > _unreadCount) ? index - 1 : index;
                       final message = messages[msgIndex];
                       final isPrevSame = msgIndex < messages.length - 1 &&
                           (messages[msgIndex + 1].senderId ?? '') == (message.senderId ?? '');
@@ -80,10 +94,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         child: Column(
                           children: [
                             if (showDate) _DateDivider(date: message.timestamp),
-                            MessageBubble(
-                              message: message,
-                              isMe: message.isMe,
-                              isPreviousFromSameSender: isPrevSame,
+                            _SwipeableBubble(
+                              onReply: () => _showActionSnack(context, AppLocalizations.of(context)!.msgActionReply),
+                              onForward: () => _showActionSnack(context, AppLocalizations.of(context)!.msgActionForward),
+                              child: MessageBubble(
+                                message: message,
+                                isMe: message.isMe,
+                                isPreviousFromSameSender: isPrevSame,
+                              ),
                             ),
                           ],
                         ),
@@ -100,6 +118,132 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     );
   }
 }
+
+// ── Swipeable bubble (WhatsApp-style reply / forward) ─────────────────────────
+
+class _SwipeableBubble extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onReply;
+  final VoidCallback onForward;
+
+  const _SwipeableBubble({
+    required this.child,
+    required this.onReply,
+    required this.onForward,
+  });
+
+  @override
+  State<_SwipeableBubble> createState() => _SwipeableBubbleState();
+}
+
+class _SwipeableBubbleState extends State<_SwipeableBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _snapCtrl;
+  late Animation<double> _snapAnim;
+  double _dx = 0;
+  bool _triggered = false;
+
+  static const _kThreshold = 72.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _snapCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
+  @override
+  void dispose() {
+    _snapCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onUpdate(DragUpdateDetails d) {
+    final clamped = (_dx + d.delta.dx).clamp(-_kThreshold * 1.3, _kThreshold * 1.3);
+    setState(() => _dx = clamped);
+    if (!_triggered && _dx.abs() >= _kThreshold) {
+      _triggered = true;
+      HapticFeedback.mediumImpact();
+    } else if (_triggered && _dx.abs() < _kThreshold * 0.5) {
+      _triggered = false;
+    }
+  }
+
+  void _onEnd(DragEndDetails _) {
+    if (_dx >= _kThreshold) widget.onForward();
+    else if (_dx <= -_kThreshold) widget.onReply();
+    _snapBack();
+  }
+
+  void _snapBack() {
+    final start = _dx;
+    _snapCtrl.stop();
+    _snapAnim = Tween<double>(begin: start, end: 0.0).animate(
+      CurvedAnimation(parent: _snapCtrl, curve: Curves.elasticOut),
+    )..addListener(() => setState(() => _dx = _snapAnim.value));
+    _snapCtrl.forward(from: 0);
+    _triggered = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final abs = (_dx / _kThreshold).abs().clamp(0.0, 1.0);
+    final goRight = _dx > 8;
+    final goLeft  = _dx < -8;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Icon hint (behind bubble)
+        if (goRight || goLeft)
+          Positioned.fill(
+            child: Align(
+              alignment: goRight ? Alignment.centerLeft : Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Opacity(
+                  opacity: abs,
+                  child: Transform.scale(
+                    scale: 0.5 + 0.5 * abs,
+                    child: Container(
+                      width: 36, height: 36,
+                      decoration: BoxDecoration(
+                        color: (goRight
+                            ? const Color(0xFFAB47BC)
+                            : const Color(0xFF5B8DEF)).withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        goRight ? Icons.forward_rounded : Icons.reply_rounded,
+                        size: 18,
+                        color: goRight
+                            ? const Color(0xFFAB47BC)
+                            : const Color(0xFF5B8DEF),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        // Bubble
+        GestureDetector(
+          onHorizontalDragUpdate: _onUpdate,
+          onHorizontalDragEnd: _onEnd,
+          onHorizontalDragCancel: () => _snapBack(),
+          child: Transform.translate(
+            offset: Offset(_dx, 0),
+            child: widget.child,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ChatRoom chat;

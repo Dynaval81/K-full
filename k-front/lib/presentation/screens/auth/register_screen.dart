@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/l10n/app_localizations.dart';
+import 'package:knoty/locale_provider.dart';
 import 'package:knoty/services/api_service.dart';
 import 'package:knoty/presentation/atoms/airy_input_field.dart';
 import 'package:knoty/constants/app_colors.dart';
@@ -124,6 +126,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_firstNameCtrl.text.trim().isEmpty) { _err(l10n.registerErrorFirstName); return; }
     if (_lastNameCtrl.text.trim().isEmpty)  { _err(l10n.registerErrorLastName); return; }
+    if (RegExp(r'^\d+$').hasMatch(_firstNameCtrl.text.trim()) ||
+        RegExp(r'^\d+$').hasMatch(_lastNameCtrl.text.trim())) {
+      _err(l10n.registerErrorNameDigitsOnly); return;
+    }
     if (_emailCtrl.text.trim().isEmpty)     { _err(l10n.loginErrorEmpty); return; }
     if (_passwordCtrl.text.length < AppConstants.minPasswordLength) {
       _err(l10n.registerPasswordHint); return;
@@ -195,13 +201,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<LocaleProvider>(); // rebuild on locale change
     final l10n = AppLocalizations.of(context);
     return Theme(
       data: ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.white),
       child: GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity == null) return;
-          if (details.primaryVelocity! > 300) {
+          if (details.primaryVelocity! > 80) {
             if (_step == 1) {
               setState(() => _step = 0);
             } else {
@@ -242,12 +249,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Image.asset('assets/images/knoty_logo_nt.png',
                               width: 36, height: 36, fit: BoxFit.contain),
                           const SizedBox(width: 12),
-                          Text(
+                          Expanded(child: Text(
                             _step == 0 ? l10n.registerWhoAreYou : l10n.registerTitle,
                             style: const TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.w700,
                                 color: Color(0xFF1A1A1A)),
-                          ),
+                          )),
+                          _LangPickerRow(),
                         ]),
                         const SizedBox(height: 8),
                         Text(
@@ -820,9 +828,73 @@ class _ActivationCodeToggle extends StatelessWidget {
   }
 }
 
+// ── Language picker ───────────────────────────────────────────────────────────
+
+class _LangPickerRow extends StatelessWidget {
+  static const _langs = [
+    ('de', '🇩🇪', 'Deutsch'),
+    ('en', '🇬🇧', 'English'),
+    ('ru', '🇷🇺', 'Русский'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final localeProvider = context.watch<LocaleProvider>();
+    final current = localeProvider.locale.languageCode;
+    final currentFlag = _langs.firstWhere((e) => e.$1 == current,
+        orElse: () => _langs.first).$2;
+
+    return PopupMenuButton<String>(
+      onSelected: (code) =>
+          context.read<LocaleProvider>().setLocale(Locale(code)),
+      offset: const Offset(0, 40),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: Colors.white,
+      elevation: 8,
+      itemBuilder: (_) => _langs
+          .map((e) => PopupMenuItem<String>(
+                value: e.$1,
+                child: Row(children: [
+                  Text(e.$2, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: 10),
+                  Text(e.$3,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: e.$1 == current
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: e.$1 == current
+                            ? const Color(0xFFE6B800)
+                            : const Color(0xFF1A1A1A),
+                      )),
+                  if (e.$1 == current) ...[
+                    const Spacer(),
+                    const Icon(Icons.check_rounded,
+                        size: 16, color: Color(0xFFE6B800)),
+                  ],
+                ]),
+              ))
+          .toList(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(currentFlag, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 4),
+          const Icon(Icons.keyboard_arrow_down_rounded,
+              size: 16, color: Color(0xFF9E9E9E)),
+        ]),
+      ),
+    );
+  }
+}
+
 // ── Input Formatters ──────────────────────────────────────────────────────────
 
-/// Форматирует ввод как KN-XXXXXX (6 цифр)
+/// Formats input as KN-XXXXX (5 digits)
 class _KnNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -830,7 +902,7 @@ class _KnNumberFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-    final limited = digits.length > 6 ? digits.substring(0, 6) : digits;
+    final limited = digits.length > 5 ? digits.substring(0, 5) : digits;
     final formatted = limited.isEmpty ? '' : 'KN-$limited';
     return TextEditingValue(
       text: formatted,

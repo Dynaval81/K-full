@@ -184,17 +184,25 @@ class ChatController extends ChangeNotifier {
   }
 
   Future<void> sendMessage(String chatId, String text) async {
+    final now = DateTime.now();
     final msg = MessageModel(
-      // Уникальный ID: timestamp + hashCode текста (без dart:math)
-      id: '${DateTime.now().millisecondsSinceEpoch}_${text.hashCode.abs()}',
+      id: '${now.millisecondsSinceEpoch}_${text.hashCode.abs()}',
       chatId: chatId,
       text: text,
       isMe: true,
       senderId: 'me',
-      timestamp: DateTime.now(),
+      timestamp: now,
       status: MessageStatus.sending,
     );
     _messages.add(msg);
+    // Обновляем lastMessage и lastActivity в списке чатов
+    final roomIdx = _chatRooms.indexWhere((r) => r.id == chatId);
+    if (roomIdx != -1) {
+      _chatRooms[roomIdx] = _chatRooms[roomIdx].copyWith(
+        lastMessage: text,
+        lastActivity: now,
+      );
+    }
     notifyListeners();
 
     await Future.delayed(const Duration(milliseconds: 400));

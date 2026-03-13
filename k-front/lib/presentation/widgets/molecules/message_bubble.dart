@@ -585,11 +585,11 @@ class _ActionsMenu extends StatelessWidget {
                     child: Icon(item.icon, color: item.color, size: 18),
                   ),
                   const SizedBox(width: 14),
-                  Text(item.label,
+                  Flexible(child: Text(item.label,
                       style: TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w500,
                         color: isDanger ? item.color : Colors.black87,
-                      )),
+                      ))),
                 ]),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/core/controllers/ai_controller.dart';
+import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/presentation/widgets/molecules/chat_input_field.dart';
 import 'package:knoty/presentation/widgets/molecules/message_bubble.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
@@ -21,7 +22,7 @@ class AiAssistantScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => AIController(),
       child: Scaffold(
-        appBar: const KnotyAppBar(title: 'KI-Assistent'),
+        appBar: KnotyAppBar(title: AppLocalizations.of(context)!.tabAi),
         body: Container(
           decoration: const BoxDecoration(gradient: kAiBackgroundGradient),
           child: Consumer<AIController>(
@@ -47,7 +48,7 @@ class AiAssistantScreen extends StatelessWidget {
       itemCount: ai.messages.length + (ai.isThinking ? 1 : 0),
       itemBuilder: (context, index) {
         if (ai.isThinking && index == 0) {
-          return _buildThinkingBubble();
+          return _buildThinkingBubble(context);
         }
         final msgIndex = ai.isThinking ? index - 1 : index;
         final message = ai.messages[ai.messages.length - 1 - msgIndex];
@@ -64,6 +65,7 @@ class AiAssistantScreen extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -79,18 +81,18 @@ class AiAssistantScreen extends StatelessWidget {
                 size: 40, color: Color(0xFFE6B800)),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Knoty KI-Assistent',
-            style: TextStyle(
+          Text(
+            l10n.aiEmptyTitle,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
               color: Color(0xFF1A1A1A),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Stell mir eine Frage — ich helfe dir gerne.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF6B6B6B)),
+          Text(
+            l10n.aiEmptySubtitle,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF6B6B6B)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -98,7 +100,7 @@ class AiAssistantScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildThinkingBubble() {
+  Widget _buildThinkingBubble(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
       child: Align(
@@ -121,9 +123,9 @@ class AiAssistantScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Denkt nach...',
-                style: TextStyle(color: Color(0xFF6B6B6B), fontSize: 14),
+              Text(
+                AppLocalizations.of(context)!.aiThinking,
+                style: const TextStyle(color: Color(0xFF6B6B6B), fontSize: 14),
               ),
             ],
           ),

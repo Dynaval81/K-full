@@ -572,7 +572,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerKnChildLabel => 'KN-Nummer des Kindes';
 
   @override
-  String get registerKnChildHint => 'KN-123456';
+  String get registerKnChildHint => 'KN-12345';
 
   @override
   String get registerInfoStudent =>
@@ -603,4 +603,88 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get registerErrorNoInternet => 'Keine Internetverbindung';
+
+  @override
+  String get registerErrorNameDigitsOnly =>
+      'Vor- und Nachname dürfen nicht nur aus Ziffern bestehen';
+
+  @override
+  String get registerSuccessWelcome => 'Willkommen!';
+
+  @override
+  String get registerSuccessKnotyIdLabel => 'Deine Knoty-ID';
+
+  @override
+  String get registerSuccessRememberHint =>
+      'Merke dir diese Nummer — du brauchst sie zum Anmelden';
+
+  @override
+  String get registerSuccessButton => 'Los geht\'s';
+
+  @override
+  String get chatsFilterAll => 'Alle';
+
+  @override
+  String get chatsFilterPrivate => 'Privat';
+
+  @override
+  String get chatsFilterGroups => 'Gruppen';
+
+  @override
+  String get chatsFilterSchool => 'Schule';
+
+  @override
+  String get chatsEmptyAll => 'Noch keine Chats';
+
+  @override
+  String get chatsEmptyPrivate => 'Keine persönlichen Chats';
+
+  @override
+  String get chatsEmptyGroups => 'Keine Gruppen';
+
+  @override
+  String get chatsEmptySchool => 'Keine Schulchats';
+
+  @override
+  String get aiEmptyTitle => 'Knoty KI-Assistent';
+
+  @override
+  String get aiEmptySubtitle => 'Stell mir eine Frage — ich helfe dir gerne.';
+
+  @override
+  String get aiThinking => 'Denkt nach...';
+
+  @override
+  String get profileChangePhoto => 'Profilbild ändern';
+
+  @override
+  String get profileMySchool => 'Meine Schule';
+
+  @override
+  String get profileQrCode => 'QR-Code';
+
+  @override
+  String get profileNotifications => 'Benachrichtigungen';
+
+  @override
+  String get profileSupport => 'Support';
+
+  @override
+  String get chatTimeNow => 'Gerade eben';
+
+  @override
+  String get chatTimeMin => 'Min.';
+
+  @override
+  String get loginIdentifierHint =>
+      '@Benutzername, Knoty-ID oder E-Mail eingeben';
+
+  @override
+  String get profileRequestChange => 'Änderung anfragen';
+
+  @override
+  String get profileEdit => 'Profil bearbeiten';
+
+  @override
+  String get profileSchoolChange => 'Schulwechsel anfragen';
 }

@@ -283,6 +283,148 @@ class ApiService {
     }
   }
 
+  // ─── Admin API ────────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> _adminGet(String path, {Map<String, String>? query}) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final uri = Uri.parse('$_baseUrl/admin/$path').replace(queryParameters: query);
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> _adminPost(String path, Map<String, dynamic> body) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.post(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> _adminPut(String path, Map<String, dynamic> body) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.put(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> _adminDelete(String path) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  // Статистика
+  Future<Map<String, dynamic>> adminGetStats() => _adminGet('stats');
+
+  // Школы
+  Future<Map<String, dynamic>> adminListSchools() => _adminGet('schools');
+
+  Future<Map<String, dynamic>> adminCreateSchool({
+    required String name,
+    required String city,
+    String? address,
+  }) => _adminPost('schools', {'name': name, 'city': city, if (address != null) 'address': address});
+
+  Future<Map<String, dynamic>> adminUpdateSchool(
+    String id, {
+    String? name,
+    String? city,
+    String? address,
+  }) => _adminPut('schools/$id', {
+        if (name != null) 'name': name,
+        if (city != null) 'city': city,
+        if (address != null) 'address': address,
+      });
+
+  // Коды активации
+  Future<Map<String, dynamic>> adminListCodes({String? schoolId, String? status, String? classId}) =>
+      _adminGet('codes', query: {
+        if (schoolId != null) 'schoolId': schoolId,
+        if (status != null) 'status': status,
+        if (classId != null) 'classId': classId,
+      });
+
+  Future<Map<String, dynamic>> adminGenerateCodes({
+    required String schoolId,
+    required String classId,
+    required List<Map<String, String>> entries, // [{firstName, lastName}]
+    String role = 'student',
+    int expiresInDays = 30,
+  }) => _adminPost('codes/generate', {
+        'schoolId': schoolId,
+        'classId': classId,
+        'role': role,
+        'entries': entries,
+        'expiresInDays': expiresInDays,
+      });
+
+  Future<Map<String, dynamic>> adminDeleteCode(String code) => _adminDelete('codes/$code');
+
+  // Пользователи
+  Future<Map<String, dynamic>> adminListUsers({
+    String? schoolId,
+    String? status,
+    String? role,
+    bool? pending,
+    String? search,
+    int page = 1,
+    int limit = 50,
+  }) => _adminGet('users', query: {
+        if (schoolId != null) 'schoolId': schoolId,
+        if (status != null) 'status': status,
+        if (role != null) 'role': role,
+        if (pending != null) 'pending': pending.toString(),
+        if (search != null) 'search': search,
+        'page': page.toString(),
+        'limit': limit.toString(),
+      });
+
+  Future<Map<String, dynamic>> adminApproveUser(String id) => _adminPost('users/$id/approve', {});
+
+  Future<Map<String, dynamic>> adminBanUser(String id, {String? reason}) =>
+      _adminPost('users/$id/ban', {if (reason != null) 'reason': reason});
+
+  Future<Map<String, dynamic>> adminUnbanUser(String id) => _adminPost('users/$id/unban', {});
+
   // Выход
   Future<void> logout() async {
     await _secureStorage.delete(key: _tokenKey);

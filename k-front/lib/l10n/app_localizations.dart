@@ -1195,7 +1195,7 @@ abstract class AppLocalizations {
   /// No description provided for @registerKnChildHint.
   ///
   /// In de, this message translates to:
-  /// **'KN-123456'**
+  /// **'KN-12345'**
   String get registerKnChildHint;
 
   /// No description provided for @registerInfoStudent.
@@ -1251,6 +1251,168 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine Internetverbindung'**
   String get registerErrorNoInternet;
+
+  /// No description provided for @registerErrorNameDigitsOnly.
+  ///
+  /// In de, this message translates to:
+  /// **'Vor- und Nachname dürfen nicht nur aus Ziffern bestehen'**
+  String get registerErrorNameDigitsOnly;
+
+  /// No description provided for @registerSuccessWelcome.
+  ///
+  /// In de, this message translates to:
+  /// **'Willkommen!'**
+  String get registerSuccessWelcome;
+
+  /// No description provided for @registerSuccessKnotyIdLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Knoty-ID'**
+  String get registerSuccessKnotyIdLabel;
+
+  /// No description provided for @registerSuccessRememberHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Merke dir diese Nummer — du brauchst sie zum Anmelden'**
+  String get registerSuccessRememberHint;
+
+  /// No description provided for @registerSuccessButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Los geht\'s'**
+  String get registerSuccessButton;
+
+  /// No description provided for @chatsFilterAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get chatsFilterAll;
+
+  /// No description provided for @chatsFilterPrivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Privat'**
+  String get chatsFilterPrivate;
+
+  /// No description provided for @chatsFilterGroups.
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get chatsFilterGroups;
+
+  /// No description provided for @chatsFilterSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule'**
+  String get chatsFilterSchool;
+
+  /// No description provided for @chatsEmptyAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Chats'**
+  String get chatsEmptyAll;
+
+  /// No description provided for @chatsEmptyPrivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine persönlichen Chats'**
+  String get chatsEmptyPrivate;
+
+  /// No description provided for @chatsEmptyGroups.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Gruppen'**
+  String get chatsEmptyGroups;
+
+  /// No description provided for @chatsEmptySchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Schulchats'**
+  String get chatsEmptySchool;
+
+  /// No description provided for @aiEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Knoty KI-Assistent'**
+  String get aiEmptyTitle;
+
+  /// No description provided for @aiEmptySubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Stell mir eine Frage — ich helfe dir gerne.'**
+  String get aiEmptySubtitle;
+
+  /// No description provided for @aiThinking.
+  ///
+  /// In de, this message translates to:
+  /// **'Denkt nach...'**
+  String get aiThinking;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In de, this message translates to:
+  /// **'Profilbild ändern'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profileMySchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Schule'**
+  String get profileMySchool;
+
+  /// No description provided for @profileQrCode.
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code'**
+  String get profileQrCode;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen'**
+  String get profileNotifications;
+
+  /// No description provided for @profileSupport.
+  ///
+  /// In de, this message translates to:
+  /// **'Support'**
+  String get profileSupport;
+
+  /// No description provided for @chatTimeNow.
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade eben'**
+  String get chatTimeNow;
+
+  /// No description provided for @chatTimeMin.
+  ///
+  /// In de, this message translates to:
+  /// **'Min.'**
+  String get chatTimeMin;
+
+  /// No description provided for @loginIdentifierHint.
+  ///
+  /// In de, this message translates to:
+  /// **'@Benutzername, Knoty-ID oder E-Mail eingeben'**
+  String get loginIdentifierHint;
+
+  /// No description provided for @profileRequestChange.
+  ///
+  /// In de, this message translates to:
+  /// **'Änderung anfragen'**
+  String get profileRequestChange;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In de, this message translates to:
+  /// **'Profil bearbeiten'**
+  String get profileEdit;
+
+  /// No description provided for @profileSchoolChange.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulwechsel anfragen'**
+  String get profileSchoolChange;
 }
 
 class _AppLocalizationsDelegate

@@ -119,8 +119,8 @@ class _MainNavShellState extends State<MainNavShell> {
     setState(() => _activeIndex = index);
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
     );
   }
 
@@ -170,17 +170,11 @@ class _MainNavShellState extends State<MainNavShell> {
     final safeIndex = _activeIndex.clamp(0, _tabs.length - 1);
 
     return Scaffold(
-      body: _SwipeTabDetector(
-        tabCount: _tabs.length,
-        activeIndex: safeIndex,
-        onSwipe: _onTabTapped,
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: _onPageChanged,
-          // Только активные вкладки — скрытых нет в дереве
-          children: _tabs.map((t) => t.screen).toList(),
-        ),
+      body: PageView(
+        controller: _pageController,
+        physics: const _SpringPagePhysics(),
+        onPageChanged: _onPageChanged,
+        children: _tabs.map((t) => t.screen).toList(),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -217,52 +211,23 @@ Iterable<(A, B)> _zip<A, B>(List<A> a, List<B> b) sync* {
   for (var i = 0; i < len; i++) yield (a[i], b[i]);
 }
 
-// ── Swipe detector ────────────────────────────────────────────────────────────
-
-class _SwipeTabDetector extends StatefulWidget {
-  final int tabCount;
-  final int activeIndex;
-  final ValueChanged<int> onSwipe;
-  final Widget child;
-
-  const _SwipeTabDetector({
-    required this.tabCount,
-    required this.activeIndex,
-    required this.onSwipe,
-    required this.child,
-  });
+// ── Telegram-style page physics: low friction, snappy, spring feel ─────────────
+class _SpringPagePhysics extends PageScrollPhysics {
+  const _SpringPagePhysics() : super(parent: const BouncingScrollPhysics());
 
   @override
-  State<_SwipeTabDetector> createState() => _SwipeTabDetectorState();
-}
+  _SpringPagePhysics applyTo(ScrollPhysics? ancestor) =>
+      const _SpringPagePhysics();
 
-class _SwipeTabDetectorState extends State<_SwipeTabDetector> {
-  double _dragStart = 0;
-  // Используем velocity а не только distance — точнее распознаёт намерение
-  static const double _threshold    = 50.0;  // px
-  static const double _velocityMin  = 200.0; // px/s
-
+  /// Lower the minimum fling velocity so even a gentle flick switches pages.
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // translucent — детектор видит жесты поверх дочерних скроллов,
-      // не перехватывает их (GestureArena решает победителя по velocity)
-      behavior: HitTestBehavior.translucent,
-      onHorizontalDragStart: (d) => _dragStart = d.globalPosition.dx,
-      onHorizontalDragEnd: (d) {
-        final dx       = d.globalPosition.dx - _dragStart;
-        final velocity = d.primaryVelocity ?? 0;
-        // Засчитываем свайп если достаточно дистанции ИЛИ достаточно скорости
-        final isSwipe  = dx.abs() > _threshold || velocity.abs() > _velocityMin;
-        if (!isSwipe) return;
-        final idx = widget.activeIndex;
-        if ((dx < 0 || velocity < -_velocityMin) && idx < widget.tabCount - 1) {
-          widget.onSwipe(idx + 1);
-        } else if ((dx > 0 || velocity > _velocityMin) && idx > 0) {
-          widget.onSwipe(idx - 1);
-        }
-      },
-      child: widget.child,
-    );
-  }
+  double get minFlingVelocity => 100.0; // default is 365 — much lower = snappier
+
+  /// Tighter spring so the page follows the finger closely, snaps fast.
+  @override
+  SpringDescription get spring => const SpringDescription(
+    mass: 0.5,
+    stiffness: 150.0,
+    damping: 20.0,
+  );
 }

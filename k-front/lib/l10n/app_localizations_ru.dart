@@ -569,7 +569,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get registerKnChildLabel => 'KN-номер ребёнка';
 
   @override
-  String get registerKnChildHint => 'KN-123456';
+  String get registerKnChildHint => 'KN-12345';
 
   @override
   String get registerInfoStudent =>
@@ -600,4 +600,87 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get registerErrorNoInternet => 'Нет подключения к интернету';
+
+  @override
+  String get registerErrorNameDigitsOnly =>
+      'Имя и фамилия не могут состоять только из цифр';
+
+  @override
+  String get registerSuccessWelcome => 'Добро пожаловать!';
+
+  @override
+  String get registerSuccessKnotyIdLabel => 'Твой Knoty-ID';
+
+  @override
+  String get registerSuccessRememberHint =>
+      'Запомни этот номер — он нужен для входа';
+
+  @override
+  String get registerSuccessButton => 'Начать';
+
+  @override
+  String get chatsFilterAll => 'Все';
+
+  @override
+  String get chatsFilterPrivate => 'Личные';
+
+  @override
+  String get chatsFilterGroups => 'Группы';
+
+  @override
+  String get chatsFilterSchool => 'Школа';
+
+  @override
+  String get chatsEmptyAll => 'Нет чатов';
+
+  @override
+  String get chatsEmptyPrivate => 'Нет личных чатов';
+
+  @override
+  String get chatsEmptyGroups => 'Нет групп';
+
+  @override
+  String get chatsEmptySchool => 'Нет школьных чатов';
+
+  @override
+  String get aiEmptyTitle => 'Knoty ИИ-ассистент';
+
+  @override
+  String get aiEmptySubtitle => 'Задай мне вопрос — я с удовольствием помогу.';
+
+  @override
+  String get aiThinking => 'Думаю...';
+
+  @override
+  String get profileChangePhoto => 'Изменить фото профиля';
+
+  @override
+  String get profileMySchool => 'Моя школа';
+
+  @override
+  String get profileQrCode => 'QR-код';
+
+  @override
+  String get profileNotifications => 'Уведомления';
+
+  @override
+  String get profileSupport => 'Поддержка';
+
+  @override
+  String get chatTimeNow => 'Только что';
+
+  @override
+  String get chatTimeMin => 'мин.';
+
+  @override
+  String get loginIdentifierHint => '@Никнейм, Knoty-ID или email';
+
+  @override
+  String get profileRequestChange => 'Запросить изменение';
+
+  @override
+  String get profileEdit => 'Редактировать профиль';
+
+  @override
+  String get profileSchoolChange => 'Запросить смену школы';
 }

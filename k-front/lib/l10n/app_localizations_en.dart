@@ -571,7 +571,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerKnChildLabel => 'Child\'s KN number';
 
   @override
-  String get registerKnChildHint => 'KN-123456';
+  String get registerKnChildHint => 'KN-12345';
 
   @override
   String get registerInfoStudent =>
@@ -602,4 +602,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerErrorNoInternet => 'No internet connection';
+
+  @override
+  String get registerErrorNameDigitsOnly =>
+      'Name cannot consist of digits only';
+
+  @override
+  String get registerSuccessWelcome => 'Welcome!';
+
+  @override
+  String get registerSuccessKnotyIdLabel => 'Your Knoty-ID';
+
+  @override
+  String get registerSuccessRememberHint =>
+      'Remember this number — you need it to log in';
+
+  @override
+  String get registerSuccessButton => 'Get started';
+
+  @override
+  String get chatsFilterAll => 'All';
+
+  @override
+  String get chatsFilterPrivate => 'Private';
+
+  @override
+  String get chatsFilterGroups => 'Groups';
+
+  @override
+  String get chatsFilterSchool => 'School';
+
+  @override
+  String get chatsEmptyAll => 'No chats yet';
+
+  @override
+  String get chatsEmptyPrivate => 'No private chats';
+
+  @override
+  String get chatsEmptyGroups => 'No groups';
+
+  @override
+  String get chatsEmptySchool => 'No school chats';
+
+  @override
+  String get aiEmptyTitle => 'Knoty AI Assistant';
+
+  @override
+  String get aiEmptySubtitle => 'Ask me a question — I\'m happy to help.';
+
+  @override
+  String get aiThinking => 'Thinking...';
+
+  @override
+  String get profileChangePhoto => 'Change profile picture';
+
+  @override
+  String get profileMySchool => 'My School';
+
+  @override
+  String get profileQrCode => 'QR Code';
+
+  @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileSupport => 'Support';
+
+  @override
+  String get chatTimeNow => 'Just now';
+
+  @override
+  String get chatTimeMin => 'min';
+
+  @override
+  String get loginIdentifierHint => '@Username, Knoty-ID or email';
+
+  @override
+  String get profileRequestChange => 'Request change';
+
+  @override
+  String get profileEdit => 'Edit profile';
+
+  @override
+  String get profileSchoolChange => 'Request school change';
 }

@@ -1,12 +1,11 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/constants/app_constants.dart';
+import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/providers/user_provider.dart';
-import 'package:knoty/theme_provider.dart';
 import 'package:knoty/data/models/user_model.dart';
 
 /// Единая шапка для всех экранов Knoty.
@@ -33,25 +32,16 @@ class KnotyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(60 + (bottom?.preferredSize.height ?? 0));
 
   void _showProfileOverlay(BuildContext context) {
-    final user = context.read<AuthController>().currentUser ??
-        context.read<UserProvider>().user;
-    final themeProvider = context.read<ThemeProvider>();
-
-    showGeneralDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: true,
-      barrierLabel: 'profile',
-      barrierColor: Colors.transparent,
-      transitionDuration: const Duration(milliseconds: 280),
-      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
-      transitionBuilder: (ctx, anim, _, __) {
-        final curved =
-            CurvedAnimation(parent: anim, curve: Curves.easeOutCubic);
-        return FadeTransition(
-          opacity: curved,
-          child: _ProfileOverlay(user: user, themeProvider: themeProvider),
-        );
-      },
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _ProfileSheet(
+        user: context.read<AuthController>().currentUser ??
+            context.read<UserProvider>().user,
+        authController: context.read<AuthController>(),
+        l10n: AppLocalizations.of(context)!,
+      ),
     );
   }
 
@@ -92,153 +82,321 @@ class KnotyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-// ── Profile Overlay ───────────────────────────────────────────────────────────
-class _ProfileOverlay extends StatelessWidget {
+// ── Profile Bottom Sheet (HAI3 "Knoty Airy Profile") ─────────────────────────
+class _ProfileSheet extends StatelessWidget {
   final User? user;
-  final ThemeProvider themeProvider;
+  final AuthController authController;
+  final AppLocalizations l10n;
 
-  const _ProfileOverlay({this.user, required this.themeProvider});
+  const _ProfileSheet({
+    this.user,
+    required this.authController,
+    required this.l10n,
+  });
+
+  String _displayName() {
+    final first = user?.firstName?.trim() ?? '';
+    final last = user?.lastName?.trim() ?? '';
+    if (first.isNotEmpty || last.isNotEmpty) return '$first $last'.trim();
+    return user?.username.isNotEmpty == true ? user!.username : '—';
+  }
+
+  String _knDigits() {
+    final kn = user?.knotyNumber ?? '';
+    if (kn.isEmpty) return '';
+    return kn.startsWith('KN-') ? kn.substring(3) : kn;
+  }
+
+  void _comingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(l10n.comingSoon),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      duration: const Duration(seconds: 2),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(color: Colors.black.withOpacity(0.25)),
+    final bottomPad = MediaQuery.of(context).padding.bottom;
+    final nickname = user?.username ?? '';
+    final email = user?.email ?? '';
+    final schoolName = '—'; // TODO: resolve school name from user.schoolId
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ── Drag handle ───────────────────────────────────────
+          Container(
+            margin: const EdgeInsets.only(top: 12, bottom: 4),
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).padding.top + 60,
-          right: 16,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              width: 300,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 30,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Avatar + info
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                    child: Row(
-                      children: [
-                        _UserAvatarWidget(
-                          user: user,
-                          size: 56,
+
+          // ── Header card ───────────────────────────────────────
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12, offset: const Offset(0, 4))],
+            ),
+            child: Row(
+              children: [
+                // Avatar with gradient ring
+                Stack(
+                  children: [
+                    Container(
+                      width: 72, height: 72,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFE6B800), Color(0xFF1A1A1A)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '@${user?.username ?? '—'}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              if (user?.email.isNotEmpty == true) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  user!.email,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade500),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                              if (user?.knotyNumber.isNotEmpty == true) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  user!.knotyNumber.startsWith('KN-')
-                                      ? user!.knotyNumber
-                                      : 'KN-${user!.knotyNumber}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFFE6B800),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ],
+                      ),
+                      padding: const EdgeInsets.all(2.5),
+                      child: ClipOval(
+                        child: user?.avatar != null && user!.avatar!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: user!.avatar!,
+                                fit: BoxFit.cover,
+                                placeholder: (_, __) =>
+                                    _GradientAvatar(_displayName()),
+                                errorWidget: (_, __, ___) =>
+                                    _GradientAvatar(_displayName()),
+                              )
+                            : _GradientAvatar(_displayName()),
+                      ),
+                    ),
+                    // Camera badge
+                    Positioned(
+                      right: 0, bottom: 0,
+                      child: GestureDetector(
+                        onTap: () => _comingSoon(context),
+                        child: Container(
+                          width: 26, height: 26,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE6B800),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
                           ),
+                          child: const Icon(Icons.camera_alt_rounded,
+                              size: 13, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _displayName(),
+                        style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w700,
+                          color: Color(0xFF1A1A1A)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (_knDigits().isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: TextSpan(children: [
+                            const TextSpan(
+                              text: 'KN-',
+                              style: TextStyle(
+                                fontSize: 13, color: Color(0xFFBDBDBD),
+                                fontWeight: FontWeight.w500),
+                            ),
+                            TextSpan(
+                              text: _knDigits(),
+                              style: const TextStyle(
+                                fontSize: 13, color: Color(0xFFE6B800),
+                                fontWeight: FontWeight.w700),
+                            ),
+                          ]),
                         ),
                       ],
-                    ),
+                    ],
                   ),
+                ),
+              ],
+            ),
+          ),
 
-                  const Divider(height: 1),
+          // ── Profile info tiles ────────────────────────────────
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12, offset: const Offset(0, 4))],
+            ),
+            child: Column(
+              children: [
+                _ProfileTile(
+                  icon: Icons.alternate_email_rounded,
+                  label: l10n.registerNicknameLabel,
+                  value: nickname.isNotEmpty ? '@$nickname' : '—',
+                  onTap: () => _comingSoon(context),
+                ),
+                _Divider(),
+                _ProfileTile(
+                  icon: Icons.mail_outline_rounded,
+                  label: l10n.registerEmailLabel,
+                  value: email.isNotEmpty ? email : '—',
+                  onTap: () => _comingSoon(context),
+                ),
+                _Divider(),
+                _ProfileTile(
+                  icon: Icons.school_rounded,
+                  label: l10n.schoolTitle,
+                  value: schoolName,
+                  actionIcon: Icons.swap_horiz_rounded,
+                  onTap: () => _comingSoon(context),
+                ),
+              ],
+            ),
+          ),
 
-                  // Change photo
-                  ListTile(
-                    dense: true,
-                    leading: Icon(Icons.camera_alt_outlined,
-                        size: 18, color: Colors.grey.shade600),
-                    title: const Text('Profilbild ändern',
-                        style: TextStyle(fontSize: 14)),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // TODO: image picker
-                    },
-                  ),
-
-                  const Divider(height: 1),
-
-                  // Settings
-                  ListTile(
-                    dense: true,
-                    leading: Icon(Icons.settings_outlined,
-                        size: 18, color: Colors.grey.shade600),
-                    title: const Text('Einstellungen',
-                        style: TextStyle(fontSize: 14)),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      context.push(AppRoutes.settings);
-                    },
-                  ),
-
-                  // Logout
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.logout_rounded,
-                        size: 18, color: Colors.redAccent),
-                    title: const Text('Abmelden',
-                        style: TextStyle(
-                            fontSize: 14, color: Colors.redAccent)),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await context.read<AuthController>().logout();
-                      if (context.mounted) context.go(AppRoutes.auth);
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                ],
+          // ── Logout ────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: SizedBox(
+              width: double.infinity, height: 52,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await authController.logout();
+                  if (context.mounted) context.go(AppRoutes.auth);
+                },
+                icon: const Icon(Icons.logout_rounded, size: 18),
+                label: Text(l10n.dashboardLogout),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
               ),
             ),
           ),
+
+          SizedBox(height: 16 + bottomPad),
+        ],
         ),
-      ],
+      ),
     );
   }
+}
+
+// ── Profile tile ──────────────────────────────────────────────────────────────
+class _ProfileTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final String? actionLabel;
+  final IconData? actionIcon;
+  final VoidCallback onTap;
+
+  const _ProfileTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.actionLabel,
+    this.actionIcon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 36, height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE6B800).withOpacity(0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 18, color: const Color(0xFFE6B800)),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label,
+                    style: const TextStyle(
+                      fontSize: 11, color: Color(0xFF9E9E9E),
+                      fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 2),
+                  Text(value,
+                    style: const TextStyle(
+                      fontSize: 14, color: Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.w500),
+                    overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            if (actionIcon != null)
+              Container(
+                width: 32, height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(actionIcon!, size: 16, color: const Color(0xFF757575)),
+              )
+            else if (actionLabel != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(actionLabel!,
+                  style: const TextStyle(
+                    fontSize: 11, fontWeight: FontWeight.w600,
+                    color: Color(0xFF757575))),
+              )
+            else
+              Icon(Icons.edit_outlined,
+                  size: 16, color: Colors.grey.shade400),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Divider(
+    height: 1, indent: 70,
+    color: Colors.black.withOpacity(0.06));
 }
 
 
@@ -279,33 +437,7 @@ class _AppBarAvatar extends StatelessWidget {
   }
 }
 
-// ── User Avatar Widget ────────────────────────────────────────────────────────
-class _UserAvatarWidget extends StatelessWidget {
-  final User? user;
-  final double size;
 
-  const _UserAvatarWidget({this.user, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    final avatarUrl = user?.avatar;
-    return Container(
-      width: size,
-      height: size,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
-      child: ClipOval(
-        child: avatarUrl != null && avatarUrl.isNotEmpty
-            ? CachedNetworkImage(
-                imageUrl: avatarUrl,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => _GradientAvatar(_fullName(user)),
-                errorWidget: (_, __, ___) => _GradientAvatar(_fullName(user)),
-              )
-            : _GradientAvatar(_fullName(user)),
-      ),
-    );
-  }
-}
 
 // ── German Flag Avatar ───────────────────────────────────────────────────────
 class _GradientAvatar extends StatelessWidget {
