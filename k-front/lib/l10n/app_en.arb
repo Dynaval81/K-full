@@ -1,0 +1,218 @@
+{
+  "@@locale": "en",
+  "splashTagline": "Connect your school world",
+  "loginTitle": "Sign In",
+  "loginSubtitle": "Sign in to your account",
+  "loginMethodEmail": "Email",
+  "loginHintEmail": "Enter email",
+  "loginPasswordLabel": "Password",
+  "loginPasswordHint": "Enter password",
+  "loginEnterPassword": "Enter password",
+  "loginButtonLogin": "Sign In",
+  "loginForgotPassword": "Forgot password?",
+  "loginDividerOr": "or",
+  "loginGoogle": "Sign in with Google",
+  "loginApple": "Sign in with Apple",
+  "loginGoogleSoon": "Google Sign-In — coming soon",
+  "loginAppleSoon": "Apple Sign-In — coming soon",
+  "loginNoAccount": "No account? ",
+  "loginRegister": "Register",
+  "loginErrorEmpty": "Enter email or username",
+  "loginErrorEmptyPassword": "Please enter password",
+  "loginErrorNetwork": "Network error. Please try again.",
+  "loginErrorEmailVerification": "Please verify your email before signing in",
+  "loginErrorGeneric": "Sign in error. Please try again.",
+  "registerTitle": "Register",
+  "registerSubtitle": "Create account",
+  "registerEmailLabel": "Email",
+  "registerEmailHint": "Enter email",
+  "registerPasswordLabel": "Password",
+  "registerPasswordHint": "At least 6 characters",
+  "registerNicknameLabel": "Nickname (optional)",
+  "registerNicknameHint": "Enter nickname",
+  "registerButton": "Create account",
+  "registerHaveAccount": "Already have an account? ",
+  "registerLogin": "Sign In",
+  "dashboardTitle": "Dashboard",
+  "dashboardSettings": "Settings",
+  "dashboardLogout": "Sign Out",
+  "dashboardReport": "Report a bug",
+  "dashboardReportHint": "Describe what's not working — we'll take care of it.",
+  "dashboardAppInfo": "App Info",
+  "dashboardVersionDetails": "Version details",
+  "tabChats": "Chats",
+  "tabAi": "AI Assistant",
+  "tabSchedule": "Schedule",
+  "tabDashboard": "Dashboard",
+  "settingsTitle": "Settings",
+  "settingsTheme": "Theme",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsLanguage": "Language",
+  "settingsAccount": "Account",
+  "settingsNotifications": "Notifications",
+  "settingsLogout": "Sign Out",
+  "settingsVersion": "Version",
+  "scheduleTitle": "Schedule",
+  "scheduleComingSoon": "Your schedule will be available soon.",
+  "pendingTitle": "Account under review",
+  "pendingMessage": "Your request is being reviewed by the school administrator.",
+  "pendingAvailable": "You can already chat with friends!",
+  "comingSoon": "Coming soon",
+  "comingSoonAi": "AI Assistant is in development",
+  "comingSoonChats": "Chats coming soon",
+  "errorNetwork": "Network error",
+  "errorUnknown": "Unknown error",
+  "buttonOk": "OK",
+  "buttonCancel": "Cancel",
+  "buttonSave": "Save",
+  "buttonClose": "Close",
+  "sandboxLimitChats": "Available after school verification",
+  "sandboxLimitSchedule": "Available after school verification",
+  "sandboxLimitPasswordVault": "Available after parent linking",
+  "sandboxDailyLimitReached": "Daily limit reached. See you tomorrow!",
+  "curfewTitle": "Good night!",
+  "curfewMessage": "The app is locked until tomorrow morning.",
+  "loginPrimaryButton": "Log in",
+  "chatUnknown": "Unknown",
+  "chatTypeClass": "Class group",
+  "chatTypeSchool": "School group",
+  "chatOnline": "Online",
+  "chatLastSeen": "Last seen recently",
+  "chatNoMessages": "No messages yet",
+  "chatFirstMessage": "Be the first to write!",
+  "chatNewMessages": "New messages",
+  "chatDateToday": "Today",
+  "chatDateYesterday": "Yesterday",
+  "settingsTabsTitle": "Tabs",
+  "settingsTabChats": "Chats",
+  "settingsTabAi": "AI Assistant",
+  "settingsTabSchool": "School",
+  "settingsTabKind": "Child",
+  "settingsTabClasses": "Classes",
+  "settingsTabVerwaltung": "Administration",
+  "splashHai3Label": "HAI3 Design",
+  "dashboardDonationsText": "Help us keep Knoty free and independent.",
+  "dashboardDonations": "Support Knoty",
+  "dashboardElementsStore": "Store",
+  "dashboardReportPlaceholder": "Describe the issue...",
+  "dashboardReportSend": "Send",
+  "dashboardReportSent": "Report sent. Thank you!",
+  "dashboardTabAi": "AI Assistant",
+  "dashboardTabChats": "Chats",
+  "dashboardTabVpn": "VPN",
+  "schoolTitle": "School",
+  "schoolCodeEmpty": "Please enter a school code",
+  "schoolCodeInvalid": "Invalid school code",
+  "schoolNotVerifiedTitle": "Not yet verified",
+  "schoolNotVerifiedSubtitle": "Your account is waiting for school admin confirmation.",
+  "schoolCodeHint": "SCH-XXXX",
+  "schoolCodeRedeem": "Redeem code",
+  "schoolWaitingFrom": "Waiting for confirmation from {school}",
+  "schoolWaitingConfirmation": "Waiting for confirmation",
+  "schoolStatClass": "Class",
+  "schoolStatStatus": "Status",
+  "schoolStatActive": "Active",
+  "schoolStatNew": "New",
+  "schoolServicesTitle": "School services",
+  "schoolTimetable": "Timetable",
+  "schoolAnnouncements": "Announcements",
+  "schoolDocuments": "Documents",
+  "schoolHomework": "Homework",
+  "schoolGrades": "Grades",
+  "schoolEvents": "Events",
+  "schoolUpcomingTitle": "Upcoming",
+  "schoolComingSoon": "{name} coming soon",
+  "schoolVerifiedBadge": "Verified",
+  "parentTitle": "Child",
+  "lockedNoChildTitle": "No child linked",
+  "lockedNoChildSubtitle": "Enter your child's KN number to link accounts.",
+  "teacherClassesTitle": "My Classes",
+  "lockedTeacherTitle": "Not yet available",
+  "lockedTeacherSubtitle": "Classes management available after school verification.",
+  "teacherClassesComingSoon": "Classes coming soon",
+  "verwaltungTitle": "Administration",
+  "verwaltungActivateUsers": "Activate users",
+  "verwaltungActivateUsersSubtitle": "Review and activate pending registrations",
+  "verwaltungGenerateCodes": "Generate codes",
+  "verwaltungGenerateCodesSubtitle": "Create school access codes",
+  "verwaltungUserList": "User list",
+  "verwaltungUserListSubtitle": "View and manage all school users",
+  "verwaltungSuperAdminHint": "You have superadmin access to all schools.",
+  "lockedDefaultTitle": "Feature locked",
+  "lockedDefaultSubtitle": "This feature is not available for your account.",
+  "@schoolWaitingFrom": {
+    "placeholders": {
+      "school": {
+        "type": "Object"
+      }
+    }
+  },
+  "@schoolComingSoon": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "msgCopied": "Message copied",
+  "@msgCopied": {
+    "description": "Message bubble: msgCopied"
+  },
+  "msgReportTitle": "Report",
+  "@msgReportTitle": {
+    "description": "Message bubble: msgReportTitle"
+  },
+  "msgReportConfirm": "Do you want to report this message?",
+  "@msgReportConfirm": {
+    "description": "Message bubble: msgReportConfirm"
+  },
+  "msgReportCancel": "Cancel",
+  "@msgReportCancel": {
+    "description": "Message bubble: msgReportCancel"
+  },
+  "msgReportSend": "Report",
+  "@msgReportSend": {
+    "description": "Message bubble: msgReportSend"
+  },
+  "msgReported": "Message reported",
+  "@msgReported": {
+    "description": "Message bubble: msgReported"
+  },
+  "msgReactionPicker": "Choose reaction",
+  "@msgReactionPicker": {
+    "description": "Message bubble: msgReactionPicker"
+  },
+  "msgActionReply": "Reply",
+  "@msgActionReply": {
+    "description": "Message bubble: msgActionReply"
+  },
+  "msgActionCopy": "Copy",
+  "@msgActionCopy": {
+    "description": "Message bubble: msgActionCopy"
+  },
+  "msgActionForward": "Forward",
+  "@msgActionForward": {
+    "description": "Message bubble: msgActionForward"
+  },
+  "msgActionPin": "Pin",
+  "@msgActionPin": {
+    "description": "Message bubble: msgActionPin"
+  },
+  "msgActionEdit": "Edit",
+  "@msgActionEdit": {
+    "description": "Message bubble: msgActionEdit"
+  },
+  "msgActionDelete": "Delete",
+  "@msgActionDelete": {
+    "description": "Message bubble: msgActionDelete"
+  },
+  "msgActionRemove": "Remove",
+  "@msgActionRemove": {
+    "description": "Message bubble: msgActionRemove"
+  },
+  "msgActionReport": "Report",
+  "@msgActionReport": {
+    "description": "Message bubble: msgActionReport"
+  }
+}

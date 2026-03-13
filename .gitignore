@@ -1,0 +1,30 @@
+# --- GLOBAL / IDE ---
+.DS_Store
+.vscode/
+.idea/
+*.iml
+*.log
+
+# --- FRONTEND (k-front) ---
+k-front/.dart_tool/
+k-front/.flutter-plugins
+k-front/.flutter-plugins-dependencies
+k-front/.packages
+k-front/.pub-cache/
+k-front/.pub/
+k-front/build/
+k-front/android/local.properties
+k-front/ios/Flutter/Generated.xcconfig
+k-front/ios/Flutter/ephemeral
+k-front/ios/Pods/
+
+# --- BACKEND (k-back) ---
+k-back/__pycache__/
+k-back/venv/
+k-back/.env
+k-back/*.pyc
+
+# --- SECRETS ---
+*.env
+*.jks
+google-services.json

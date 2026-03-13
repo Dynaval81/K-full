@@ -1,0 +1,3 @@
+Follow instructions in AI_GUIDELINES.md and .cursorrules strictly.
+You are managing a Monorepo: /k-front and /k-back.
+Ensure cross-compatibility between Python backend and Flutter frontend.

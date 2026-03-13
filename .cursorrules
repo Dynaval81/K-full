@@ -1,0 +1,47 @@
+# KNOTY FULLSTACK COMMAND CENTER (v2026)
+
+## 1. Context & Roles
+- [cite_start]Project: Knoty — educational messenger for German schoolchildren.
+- Structure: Frontend in `/k-front`, Backend in `/k-back`.
+- Role: Senior Fullstack Developer (Expert in Flutter & Matrix).
+
+## 2. Tech Stack & Architecture
+- [cite_start]Framework: Flutter Stable[cite: 31, 65].
+- State Management: ONLY `provider`. (Riverpod/Bloc/Get_it — FORBIDDEN) [cite_start][cite: 2, 66].
+- [cite_start]Navigation: PageView + BottomNavigationBar + horizontal swipes[cite: 3, 67].
+- Roles Logic: Use Enums ONLY (`UserRole`, `VerificationLevel`). [cite_start]No booleans[cite: 33].
+- [cite_start]Imports: Absolute only (`package:knoty/...`)[cite: 5, 69].
+
+## 3. Design System (HAI3 Airy Gold)
+- [cite_start]Background: Pure White (#FFFFFF).
+- [cite_start]Primary Accent: Muted Gold (#E6B800)[cite: 59].
+- [cite_start]Border Radius: 24dp minimum[cite: 9, 73].
+- [cite_start]Padding: 20dp minimum[cite: 8, 72].
+- Icons: SVG only (flutter_svg). [cite_start]No PNG/JPG[cite: 11, 75].
+- [cite_start]Fonts: Headings 22px+, Body 16px+[cite: 10, 74].
+
+## 4. Localization (German-First)
+- [cite_start]Format: Date DD.MM.YYYY, Time 24h, Decimal comma (1,5)[cite: 62].
+- Rules: All strings via `AppLocalizations`. [cite_start]No hardcoded text[cite: 19, 91].
+- [cite_start]UI Layout: German words are long — use `Flexible`/`Expanded` in Rows[cite: 21, 85].
+- [cite_start]Language: Code/Comments in English, UI in German, AI-comm in Russian[cite: 25, 26, 89, 90].
+
+## 5. Security & Cleanup
+- GDPR: No PII in logs. [cite_start]No data outside Germany[cite: 62].
+- [cite_start]Dead Code: Delete any unused imports or Riverpod/VPN remnants immediately[cite: 16, 63, 80].
+
+## 6. HAI3 Advanced Design System (Full Specs)
+
+### A. Layered Architecture (The HAI3 Trinity)
+- **Presentation Layer:** Reusable atomic widgets only (Atoms, Molecules). Use `Tailwind-style` naming for constants.
+- **Layout Layer:** Defines the "Skeleton" (Sidebar, Header, Content Area). No business logic here.
+- **Service Layer:** API calls and Matrix SDK integration. Strictly separated from UI.
+
+### B. UI-Core Values (from HAI3 Manifest)
+- **Airiness (Value #1):** Use "Negative Space" to separate content. Avoid borders where padding can do the job.
+- **Consistency (Value #3):** Use a `ThemeRegistry`. No "magic numbers" for colors or sizes. All spacings must be multiples of 4 (4, 8, 12, 16, 24).
+- **Global Readiness (Value #9):** German localization is primary. Layout must be "elastic" to accommodate long German words (e.g., 'Benachrichtigungseinstellungen').
+
+### C. Component Logic
+- **State Separation:** Logic stays in `Provider`. UI stays "dumb".
+- **Interaction:** Every action must follow the HAI3 "Feedback Loop" (Action -> Visual Change -> Data Update).
