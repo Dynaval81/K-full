@@ -37,10 +37,10 @@ app.use('/admin', require('./routes/admin.routes'));
 
 // API Routes (добавим позже)
 app.use('/api/v1/auth', require('./routes/auth.routes'));
+app.use('/api/v1/schools', require('./routes/schools.routes'));
 app.use('/api/v1/premium', require('./routes/premium.routes'));
 app.use('/api/v1/users', require('./routes/users.routes'));
 app.use('/api/v1/chats', require('./routes/chat.routes'));
-app.use('/api/v1/vpn', require('./routes/vpn.routes'));
 
 // 404 handler
 app.use((req, res) => {
