@@ -687,4 +687,516 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get profileSchoolChange => 'Schulwechsel anfragen';
+
+  @override
+  String get schoolNow => 'Jetzt';
+
+  @override
+  String get schoolNextLesson => 'Nächste Stunde';
+
+  @override
+  String get schoolBreak => 'Pause';
+
+  @override
+  String get schoolRoom => 'Raum';
+
+  @override
+  String get schoolMinLeft => 'Min verbleibend';
+
+  @override
+  String get schoolClubs => 'AGs';
+
+  @override
+  String get schoolCafeteria => 'Mensa';
+
+  @override
+  String get schoolScheduleToday => 'Heute';
+
+  @override
+  String get schoolAfterHours => 'Schule beendet';
+
+  @override
+  String get schoolNoSchedule => 'Kein Unterricht';
+
+  @override
+  String get schoolTeacherLabel => 'Lehrer';
+
+  @override
+  String get schoolWeekView => 'Woche';
+
+  @override
+  String get schoolTeachersTitle => 'Lehrer';
+
+  @override
+  String get schoolQrTitle => 'Mein QR-Code';
+
+  @override
+  String get schoolQrHint => 'Zeige diesen Code dem Schuladmin';
+
+  @override
+  String get schoolNotesTitle => 'Unterrichtsnotizen';
+
+  @override
+  String get schoolNotesAdd => 'Notiz hinzufügen';
+
+  @override
+  String get schoolNotesHint => 'Notiz schreiben...';
+
+  @override
+  String get schoolNotesSave => 'Speichern';
+
+  @override
+  String get schoolAvgLabel => 'Durchschnitt';
+
+  @override
+  String get schoolOpenHoursLabel => 'Geöffnet 11:30–14:00';
+
+  @override
+  String get schoolCafeteriaMenuToday => 'Menü heute';
+
+  @override
+  String get schoolGradeTopic => 'Thema';
+
+  @override
+  String get schoolGradeDate => 'Datum';
+
+  @override
+  String get schoolTeacherContact => 'Kontakt';
+
+  @override
+  String schoolHomeworkOpen(int count) {
+    return '$count offen';
+  }
+
+  @override
+  String schoolAnnouncementsNew(int count) {
+    return '$count neu';
+  }
+
+  @override
+  String schoolDocumentsCount(int count) {
+    return '$count Dateien';
+  }
+
+  @override
+  String schoolClubsActive(int count) {
+    return '$count aktiv';
+  }
+
+  @override
+  String aiGreeting(String name) {
+    return 'Bereit für die Schule, $name?';
+  }
+
+  @override
+  String aiGreetingMorning(String name) {
+    return 'Guten Morgen, $name!';
+  }
+
+  @override
+  String aiGreetingEvening(String name) {
+    return 'Hausaufgaben fertig, $name?';
+  }
+
+  @override
+  String get aiSurpriseMe => 'Überrasch mich mit einer Schulfrage!';
+
+  @override
+  String get aiHubSubtitle => 'Dein KI-Studio';
+
+  @override
+  String get aiChatTitle => 'Assistent fragen';
+
+  @override
+  String get aiChatSubtitle => 'Lernpartner';
+
+  @override
+  String get aiStickerTitle => 'Aufkleber-Labor';
+
+  @override
+  String get aiStickerSubtitle => 'Text zu Bild';
+
+  @override
+  String get aiPhotoTitle => 'Foto-Magie';
+
+  @override
+  String get aiPhotoSubtitle => 'Bearbeiten & Verbessern';
+
+  @override
+  String get aiChipExplain => 'Thema erklären';
+
+  @override
+  String get aiChipGrammar => 'Grammatik prüfen';
+
+  @override
+  String get aiChipSummarize => 'Zusammenfassen';
+
+  @override
+  String get aiChipMath => 'Mathe-Hilfe';
+
+  @override
+  String get aiInputHint => 'Frag etwas...';
+
+  @override
+  String get aiStyleAnime => 'Anime';
+
+  @override
+  String get aiStyle3d => '3D-Render';
+
+  @override
+  String get aiStyleComic => 'Comic';
+
+  @override
+  String get aiStylePixel => 'Pixel-Art';
+
+  @override
+  String get aiStyleRealist => 'Realistisch';
+
+  @override
+  String get aiImprovePrompt => 'Prompt verbessern';
+
+  @override
+  String get aiGenerate => 'Generieren';
+
+  @override
+  String get aiPaintingLabel => 'Male deine Fantasie...';
+
+  @override
+  String get aiRemoveBg => 'Hintergrund entfernen';
+
+  @override
+  String get aiEnhance => 'Verbessern';
+
+  @override
+  String get aiStylize => 'KI-Stilisierung';
+
+  @override
+  String get aiSendAsSticker => 'Als Aufkleber senden';
+
+  @override
+  String get aiUploadPhoto => 'Foto hochladen';
+
+  @override
+  String get aiStickerInputHint => 'Beschreibe deinen Aufkleber...';
+
+  @override
+  String get aiProcessing => 'Verarbeitung...';
+
+  @override
+  String get aiNewChat => 'Neuer Chat';
+
+  @override
+  String get aiAiLabel => 'KI';
+
+  @override
+  String get aiAuraActive => 'KI aktiv';
+
+  @override
+  String get navTabAi => 'KI';
+
+  @override
+  String get navTabSchool => 'Schule';
+
+  @override
+  String get aiStop => 'Stopp';
+
+  @override
+  String get aiParentGreetingMorning => 'Guten Morgen! Wie läuft\'s bei euch?';
+
+  @override
+  String get aiParentGreetingEvening =>
+      'Schönen Abend! Alles gut mit der Familie?';
+
+  @override
+  String get aiParentGreetingDay => 'Hallo! Wie kann ich helfen?';
+
+  @override
+  String get aiParentTile1Title => 'Elternberater';
+
+  @override
+  String get aiParentTile1Subtitle => 'Tipps & Ratschläge';
+
+  @override
+  String get aiParentTile2Title => 'Ausflug-Ideen';
+
+  @override
+  String get aiParentTile2Subtitle => 'Mit der Familie';
+
+  @override
+  String get aiParentTile3Title => 'Brief schreiben';
+
+  @override
+  String get aiParentTile3Subtitle => 'An Schule & Lehrer';
+
+  @override
+  String get aiParentChipTip => 'Erziehungstipp';
+
+  @override
+  String get aiParentChipOuting => 'Ausflug-Ideen';
+
+  @override
+  String get aiParentChipLetter => 'Brief schreiben';
+
+  @override
+  String get aiParentChipStress => 'Schulstress';
+
+  @override
+  String get aiParentEmptyTitle => 'Eltern-Assistent';
+
+  @override
+  String get aiParentEmptySubtitle =>
+      'Ich helfe dir bei Erziehung, Ausflügen\nund Schulkommunikation.';
+
+  @override
+  String get parentAddChild => 'Kind hinzufügen';
+
+  @override
+  String get parentEmergencyActivateTitle => 'Notfallsperre aktivieren?';
+
+  @override
+  String get parentEmergencyDeactivateTitle => 'Sperre aufheben?';
+
+  @override
+  String get parentEmergencyActivateMsg =>
+      'Die App wird für das Kind sofort gesperrt.';
+
+  @override
+  String get parentEmergencyDeactivateMsg =>
+      'Das Kind kann die App wieder nutzen.';
+
+  @override
+  String get parentEmergencyActivateBtn => 'Sperren';
+
+  @override
+  String get parentEmergencyDeactivateBtn => 'Aufheben';
+
+  @override
+  String get parentStatusPending => 'Ausstehend';
+
+  @override
+  String get parentStatusLinked => 'Verknüpft';
+
+  @override
+  String get parentAttendanceAtSchool => 'In der Schule';
+
+  @override
+  String get parentAttendanceAbsent => 'Nicht anwesend';
+
+  @override
+  String get parentAttendanceUnknown => 'Unbekannt';
+
+  @override
+  String get parentSectionAttendance => 'Anwesenheit';
+
+  @override
+  String get parentSectionScreenTime => 'Bildschirmzeit heute';
+
+  @override
+  String get parentSectionGrades => 'Letzte Noten';
+
+  @override
+  String get parentSectionControls => 'Elternsteuerung';
+
+  @override
+  String get parentDailyLimitLabel => 'Tageslimit';
+
+  @override
+  String get parentEveningBlockLabel => 'Abendsperre';
+
+  @override
+  String get parentEveningBlockDesc => 'Ab 21:00 Uhr gesperrt';
+
+  @override
+  String get parentEmergencyLockActivate => 'Notfallsperre aktivieren';
+
+  @override
+  String get parentEmergencyLockDeactivate => 'Notfallsperre aufheben';
+
+  @override
+  String get parentPendingTitle => 'Warte auf Bestätigung';
+
+  @override
+  String get parentPendingSubtitle =>
+      'Die Verknüpfung wird vom Kind bestätigt.';
+
+  @override
+  String get parentWithdrawRequest => 'Anfrage zurückziehen';
+
+  @override
+  String get parentLinkChildTitle => 'Kind verknüpfen';
+
+  @override
+  String get parentLinkButton => 'Verknüpfen';
+
+  @override
+  String get parentKnFormat => 'Format: KN-12345';
+
+  @override
+  String get parentSchoolEventsTitle => 'Nächste Termine';
+
+  @override
+  String get parentSchoolContactsTitle => 'Kontakte';
+
+  @override
+  String get parentSchoolLettersTitle => 'Elternbriefe';
+
+  @override
+  String get parentSchoolCommitteeTitle => 'Elternbeirat';
+
+  @override
+  String get parentSchoolCommitteeChat => 'Elternbeirat-Chat';
+
+  @override
+  String get parentSchoolCommitteeVotes => 'Abstimmungen & Beschlüsse';
+
+  @override
+  String get parentRoleBadge => 'Elternteil';
+
+  @override
+  String get parentSchoolMySchool => 'Meine Schule';
+
+  @override
+  String aiTeacherGreetingMorning(String name) {
+    return 'Guten Morgen, $name!';
+  }
+
+  @override
+  String aiTeacherGreetingDay(String name) {
+    return 'Hallo, $name! Was darf ich vorbereiten?';
+  }
+
+  @override
+  String aiTeacherGreetingEvening(String name) {
+    return 'Schönen Abend, $name! Noch etwas zu planen?';
+  }
+
+  @override
+  String get aiTeacherTile1Title => 'Test erstellen';
+
+  @override
+  String get aiTeacherTile1Subtitle => 'KI generiert Fragen & Antworten';
+
+  @override
+  String get aiTeacherTile2Title => 'Stundenplan';
+
+  @override
+  String get aiTeacherTile2Subtitle => 'Methodisch & strukturiert';
+
+  @override
+  String get aiTeacherTile3Title => 'Arbeiten prüfen';
+
+  @override
+  String get aiTeacherTile3Subtitle => 'Fehler per Beschreibung erkennen';
+
+  @override
+  String get aiTeacherChipTest => 'Test zu einem Thema erstellen';
+
+  @override
+  String get aiTeacherChipPlan => 'Stundenplan entwerfen';
+
+  @override
+  String get aiTeacherChipCheck => 'Schülerarbeit bewerten';
+
+  @override
+  String get aiTeacherChipIdea => 'Unterrichtsidee vorschlagen';
+
+  @override
+  String get teacherJournalSubjectMath => 'Mathe';
+
+  @override
+  String get teacherJournalSubjectGerman => 'Deutsch';
+
+  @override
+  String get teacherJournalSubjectEnglish => 'Englisch';
+
+  @override
+  String get teacherGrade1Label => 'Sehr gut';
+
+  @override
+  String get teacherGrade2Label => 'Gut';
+
+  @override
+  String get teacherGrade3Label => 'Befriedigend';
+
+  @override
+  String get teacherGrade4Label => 'Ausreichend';
+
+  @override
+  String get teacherGrade5Label => 'Mangelhaft';
+
+  @override
+  String get teacherGrade6Label => 'Ungenügend';
+
+  @override
+  String get teacherMarkAbsent => 'Abwesend';
+
+  @override
+  String get teacherGradeDialogTitle => 'Note eintragen';
+
+  @override
+  String get teacherGradeAdded => 'Note gespeichert';
+
+  @override
+  String get teacherNoStudents => 'Keine Schüler in dieser Klasse';
+
+  @override
+  String get teacherSelectClass => 'Klasse auswählen';
+
+  @override
+  String get teacherGradeTypeOral => 'Mündlich';
+
+  @override
+  String get teacherGradeTypeWritten => 'Schriftlich';
+
+  @override
+  String get teacherGradeTypeTest => 'Klassenarbeit';
+
+  @override
+  String get teacherGradeTypeHomework => 'Hausaufgabe';
+
+  @override
+  String get teacherGradeDate => 'Datum';
+
+  @override
+  String get teacherGradeTypeLabel => 'Art';
+
+  @override
+  String get teacherGradeSubjectLabel => 'Fach';
+
+  @override
+  String get teacherGradeToday => 'Heute';
+
+  @override
+  String get teacherGradeYesterday => 'Gestern';
+
+  @override
+  String teacherGradeFor(String name) {
+    return 'Note für $name';
+  }
+
+  @override
+  String get teacherSchoolMySchedule => 'Mein Stundenplan';
+
+  @override
+  String get teacherSchoolMyClasses => 'Meine Klassen';
+
+  @override
+  String get teacherSchoolColleagues => 'Kollegium';
+
+  @override
+  String get teacherSchoolNextClass => 'Nächste Stunde';
+
+  @override
+  String get teacherSchoolNowTeaching => 'Jetzt';
+
+  @override
+  String get teacherSchoolFreeNow => 'Freistunde';
+
+  @override
+  String get teacherSchoolRoleBadge => 'Lehrkraft';
+
+  @override
+  String teacherSchoolStudents(int count) {
+    return '$count Schüler';
+  }
 }

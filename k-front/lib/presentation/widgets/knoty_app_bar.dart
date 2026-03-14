@@ -284,8 +284,8 @@ class _ProfileSheet extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  await authController.logout();
                   if (context.mounted) context.go(AppRoutes.auth);
+                  await authController.logout();
                 },
                 icon: const Icon(Icons.logout_rounded, size: 18),
                 label: Text(l10n.dashboardLogout),

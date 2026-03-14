@@ -4,10 +4,26 @@ const cors = require('cors');
 
 const app = express();
 
-// Middleware
+// CORS — configurable via ALLOWED_ORIGINS env var (comma-separated).
+// In production NODE_ENV the variable must be set explicitly; '*' is never used.
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : null;
+
+if (!allowedOrigins && process.env.NODE_ENV === 'production') {
+  console.error('[FATAL] ALLOWED_ORIGINS must be set in production');
+  process.exit(1);
+}
+
 app.use(cors({
-  origin: '*',  // Для разработки разрешаем все источники
-  credentials: true
+  origin: allowedOrigins
+    ? (origin, cb) => {
+        // Allow requests with no origin (mobile apps, curl)
+        if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+        cb(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    : '*', // development only — production blocked above
+  credentials: true,
 }));
 
 app.use(express.json());
@@ -35,8 +51,9 @@ app.get('/health', (req, res) => {
 app.use('/admin', require('./routes/admin.routes'));
 
 
-// API Routes (добавим позже)
+// API Routes
 app.use('/api/v1/auth', require('./routes/auth.routes'));
+app.use('/api/v1/admin', require('./routes/admin.api.routes'));
 app.use('/api/v1/schools', require('./routes/schools.routes'));
 app.use('/api/v1/premium', require('./routes/premium.routes'));
 app.use('/api/v1/users', require('./routes/users.routes'));

@@ -1,7 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../lib/prisma');
 const axios = require('axios');
-
-const prisma = new PrismaClient();
 
 const MATRIX_HOMESERVER_URL = 'http://localhost:8008';
 

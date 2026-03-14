@@ -683,4 +683,515 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileSchoolChange => 'Запросить смену школы';
+
+  @override
+  String get schoolNow => 'Сейчас';
+
+  @override
+  String get schoolNextLesson => 'Следующий урок';
+
+  @override
+  String get schoolBreak => 'Перемена';
+
+  @override
+  String get schoolRoom => 'Кабинет';
+
+  @override
+  String get schoolMinLeft => 'мин осталось';
+
+  @override
+  String get schoolClubs => 'Кружки';
+
+  @override
+  String get schoolCafeteria => 'Столовая';
+
+  @override
+  String get schoolScheduleToday => 'Сегодня';
+
+  @override
+  String get schoolAfterHours => 'Уроки закончились';
+
+  @override
+  String get schoolNoSchedule => 'Нет занятий';
+
+  @override
+  String get schoolTeacherLabel => 'Учитель';
+
+  @override
+  String get schoolWeekView => 'Неделя';
+
+  @override
+  String get schoolTeachersTitle => 'Учителя';
+
+  @override
+  String get schoolQrTitle => 'Мой QR-код';
+
+  @override
+  String get schoolQrHint => 'Покажи этот код администратору школы';
+
+  @override
+  String get schoolNotesTitle => 'Заметки к уроку';
+
+  @override
+  String get schoolNotesAdd => 'Добавить заметку';
+
+  @override
+  String get schoolNotesHint => 'Напиши заметку...';
+
+  @override
+  String get schoolNotesSave => 'Сохранить';
+
+  @override
+  String get schoolAvgLabel => 'Среднее';
+
+  @override
+  String get schoolOpenHoursLabel => 'Открыто 11:30–14:00';
+
+  @override
+  String get schoolCafeteriaMenuToday => 'Меню сегодня';
+
+  @override
+  String get schoolGradeTopic => 'Тема';
+
+  @override
+  String get schoolGradeDate => 'Дата';
+
+  @override
+  String get schoolTeacherContact => 'Контакт';
+
+  @override
+  String schoolHomeworkOpen(int count) {
+    return '$count заданий';
+  }
+
+  @override
+  String schoolAnnouncementsNew(int count) {
+    return '$count новых';
+  }
+
+  @override
+  String schoolDocumentsCount(int count) {
+    return '$count файлов';
+  }
+
+  @override
+  String schoolClubsActive(int count) {
+    return '$count активных';
+  }
+
+  @override
+  String aiGreeting(String name) {
+    return 'Готов к школе, $name?';
+  }
+
+  @override
+  String aiGreetingMorning(String name) {
+    return 'Доброе утро, $name!';
+  }
+
+  @override
+  String aiGreetingEvening(String name) {
+    return 'Домашка готова, $name?';
+  }
+
+  @override
+  String get aiSurpriseMe => 'Удиви меня школьным вопросом!';
+
+  @override
+  String get aiHubSubtitle => 'Твоя ИИ-студия';
+
+  @override
+  String get aiChatTitle => 'Спросить ассистента';
+
+  @override
+  String get aiChatSubtitle => 'Учебный партнёр';
+
+  @override
+  String get aiStickerTitle => 'Лаборатория стикеров';
+
+  @override
+  String get aiStickerSubtitle => 'Текст в картинку';
+
+  @override
+  String get aiPhotoTitle => 'Магия фото';
+
+  @override
+  String get aiPhotoSubtitle => 'Редактировать и улучшить';
+
+  @override
+  String get aiChipExplain => 'Объяснить тему';
+
+  @override
+  String get aiChipGrammar => 'Проверить грамматику';
+
+  @override
+  String get aiChipSummarize => 'Резюме';
+
+  @override
+  String get aiChipMath => 'Помощь по математике';
+
+  @override
+  String get aiInputHint => 'Спроси что-нибудь...';
+
+  @override
+  String get aiStyleAnime => 'Аниме';
+
+  @override
+  String get aiStyle3d => '3D-рендер';
+
+  @override
+  String get aiStyleComic => 'Комикс';
+
+  @override
+  String get aiStylePixel => 'Пиксель-арт';
+
+  @override
+  String get aiStyleRealist => 'Реализм';
+
+  @override
+  String get aiImprovePrompt => 'Улучшить промпт';
+
+  @override
+  String get aiGenerate => 'Сгенерировать';
+
+  @override
+  String get aiPaintingLabel => 'Рисую твою фантазию...';
+
+  @override
+  String get aiRemoveBg => 'Удалить фон';
+
+  @override
+  String get aiEnhance => 'Улучшить';
+
+  @override
+  String get aiStylize => 'ИИ-стилизация';
+
+  @override
+  String get aiSendAsSticker => 'Отправить как стикер';
+
+  @override
+  String get aiUploadPhoto => 'Загрузить фото';
+
+  @override
+  String get aiStickerInputHint => 'Опиши свой стикер...';
+
+  @override
+  String get aiProcessing => 'Обработка...';
+
+  @override
+  String get aiNewChat => 'Новый чат';
+
+  @override
+  String get aiAiLabel => 'ИИ';
+
+  @override
+  String get aiAuraActive => 'ИИ активен';
+
+  @override
+  String get navTabAi => 'ИИ';
+
+  @override
+  String get navTabSchool => 'Школа';
+
+  @override
+  String get aiStop => 'Стоп';
+
+  @override
+  String get aiParentGreetingMorning => 'Доброе утро! Как дела у вас?';
+
+  @override
+  String get aiParentGreetingEvening => 'Добрый вечер! Всё хорошо в семье?';
+
+  @override
+  String get aiParentGreetingDay => 'Привет! Чем могу помочь?';
+
+  @override
+  String get aiParentTile1Title => 'Советник';
+
+  @override
+  String get aiParentTile1Subtitle => 'Советы и рекомендации';
+
+  @override
+  String get aiParentTile2Title => 'Идеи прогулок';
+
+  @override
+  String get aiParentTile2Subtitle => 'С семьёй';
+
+  @override
+  String get aiParentTile3Title => 'Написать письмо';
+
+  @override
+  String get aiParentTile3Subtitle => 'В школу и учителям';
+
+  @override
+  String get aiParentChipTip => 'Совет по воспитанию';
+
+  @override
+  String get aiParentChipOuting => 'Идеи прогулок';
+
+  @override
+  String get aiParentChipLetter => 'Написать письмо';
+
+  @override
+  String get aiParentChipStress => 'Стресс в школе';
+
+  @override
+  String get aiParentEmptyTitle => 'Ассистент для родителей';
+
+  @override
+  String get aiParentEmptySubtitle =>
+      'Помогу с воспитанием, прогулками\nи общением со школой.';
+
+  @override
+  String get parentAddChild => 'Добавить ребёнка';
+
+  @override
+  String get parentEmergencyActivateTitle => 'Активировать блокировку?';
+
+  @override
+  String get parentEmergencyDeactivateTitle => 'Снять блокировку?';
+
+  @override
+  String get parentEmergencyActivateMsg =>
+      'Приложение будет заблокировано немедленно.';
+
+  @override
+  String get parentEmergencyDeactivateMsg =>
+      'Ребёнок снова сможет использовать приложение.';
+
+  @override
+  String get parentEmergencyActivateBtn => 'Заблокировать';
+
+  @override
+  String get parentEmergencyDeactivateBtn => 'Снять';
+
+  @override
+  String get parentStatusPending => 'Ожидает';
+
+  @override
+  String get parentStatusLinked => 'Привязан';
+
+  @override
+  String get parentAttendanceAtSchool => 'В школе';
+
+  @override
+  String get parentAttendanceAbsent => 'Отсутствует';
+
+  @override
+  String get parentAttendanceUnknown => 'Неизвестно';
+
+  @override
+  String get parentSectionAttendance => 'Посещаемость';
+
+  @override
+  String get parentSectionScreenTime => 'Экранное время сегодня';
+
+  @override
+  String get parentSectionGrades => 'Последние оценки';
+
+  @override
+  String get parentSectionControls => 'Родительский контроль';
+
+  @override
+  String get parentDailyLimitLabel => 'Дневной лимит';
+
+  @override
+  String get parentEveningBlockLabel => 'Вечерняя блокировка';
+
+  @override
+  String get parentEveningBlockDesc => 'Блокировка с 21:00';
+
+  @override
+  String get parentEmergencyLockActivate =>
+      'Активировать экстренную блокировку';
+
+  @override
+  String get parentEmergencyLockDeactivate => 'Снять экстренную блокировку';
+
+  @override
+  String get parentPendingTitle => 'Ожидает подтверждения';
+
+  @override
+  String get parentPendingSubtitle => 'Подтверждение от ребёнка ожидается.';
+
+  @override
+  String get parentWithdrawRequest => 'Отозвать запрос';
+
+  @override
+  String get parentLinkChildTitle => 'Привязать ребёнка';
+
+  @override
+  String get parentLinkButton => 'Привязать';
+
+  @override
+  String get parentKnFormat => 'Формат: KN-12345';
+
+  @override
+  String get parentSchoolEventsTitle => 'Предстоящие события';
+
+  @override
+  String get parentSchoolContactsTitle => 'Контакты';
+
+  @override
+  String get parentSchoolLettersTitle => 'Письма для родителей';
+
+  @override
+  String get parentSchoolCommitteeTitle => 'Родительский комитет';
+
+  @override
+  String get parentSchoolCommitteeChat => 'Чат комитета';
+
+  @override
+  String get parentSchoolCommitteeVotes => 'Голосования и решения';
+
+  @override
+  String get parentRoleBadge => 'Родитель';
+
+  @override
+  String get parentSchoolMySchool => 'Моя школа';
+
+  @override
+  String aiTeacherGreetingMorning(String name) {
+    return 'Доброе утро, $name!';
+  }
+
+  @override
+  String aiTeacherGreetingDay(String name) {
+    return 'Привет, $name! Что подготовить?';
+  }
+
+  @override
+  String aiTeacherGreetingEvening(String name) {
+    return 'Добрый вечер, $name! Ещё что-то планируем?';
+  }
+
+  @override
+  String get aiTeacherTile1Title => 'Создать тест';
+
+  @override
+  String get aiTeacherTile1Subtitle => 'ИИ генерирует вопросы и ответы';
+
+  @override
+  String get aiTeacherTile2Title => 'План урока';
+
+  @override
+  String get aiTeacherTile2Subtitle => 'Методично и структурированно';
+
+  @override
+  String get aiTeacherTile3Title => 'Проверить работы';
+
+  @override
+  String get aiTeacherTile3Subtitle => 'Найти ошибки по описанию';
+
+  @override
+  String get aiTeacherChipTest => 'Создать тест по теме';
+
+  @override
+  String get aiTeacherChipPlan => 'Составить план урока';
+
+  @override
+  String get aiTeacherChipCheck => 'Оценить работу ученика';
+
+  @override
+  String get aiTeacherChipIdea => 'Предложить идею урока';
+
+  @override
+  String get teacherJournalSubjectMath => 'Математика';
+
+  @override
+  String get teacherJournalSubjectGerman => 'Немецкий';
+
+  @override
+  String get teacherJournalSubjectEnglish => 'Английский';
+
+  @override
+  String get teacherGrade1Label => 'Отлично';
+
+  @override
+  String get teacherGrade2Label => 'Хорошо';
+
+  @override
+  String get teacherGrade3Label => 'Удовлетворительно';
+
+  @override
+  String get teacherGrade4Label => 'Достаточно';
+
+  @override
+  String get teacherGrade5Label => 'Плохо';
+
+  @override
+  String get teacherGrade6Label => 'Неудовл.';
+
+  @override
+  String get teacherMarkAbsent => 'Отсутствует';
+
+  @override
+  String get teacherGradeDialogTitle => 'Выставить оценку';
+
+  @override
+  String get teacherGradeAdded => 'Оценка сохранена';
+
+  @override
+  String get teacherNoStudents => 'Нет учеников в этом классе';
+
+  @override
+  String get teacherSelectClass => 'Выбрать класс';
+
+  @override
+  String get teacherGradeTypeOral => 'Устно';
+
+  @override
+  String get teacherGradeTypeWritten => 'Письменно';
+
+  @override
+  String get teacherGradeTypeTest => 'Контрольная';
+
+  @override
+  String get teacherGradeTypeHomework => 'Домашнее задание';
+
+  @override
+  String get teacherGradeDate => 'Дата';
+
+  @override
+  String get teacherGradeTypeLabel => 'Тип';
+
+  @override
+  String get teacherGradeSubjectLabel => 'Предмет';
+
+  @override
+  String get teacherGradeToday => 'Сегодня';
+
+  @override
+  String get teacherGradeYesterday => 'Вчера';
+
+  @override
+  String teacherGradeFor(String name) {
+    return 'Оценка для $name';
+  }
+
+  @override
+  String get teacherSchoolMySchedule => 'Моё расписание';
+
+  @override
+  String get teacherSchoolMyClasses => 'Мои классы';
+
+  @override
+  String get teacherSchoolColleagues => 'Коллеги';
+
+  @override
+  String get teacherSchoolNextClass => 'Следующий урок';
+
+  @override
+  String get teacherSchoolNowTeaching => 'Сейчас';
+
+  @override
+  String get teacherSchoolFreeNow => 'Окно';
+
+  @override
+  String get teacherSchoolRoleBadge => 'Учитель';
+
+  @override
+  String teacherSchoolStudents(int count) {
+    return '$count учеников';
+  }
 }

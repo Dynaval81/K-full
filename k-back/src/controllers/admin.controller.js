@@ -1,9 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
 const ejs = require('ejs');
 const path = require('path');
-
-const prisma = new PrismaClient();
 
 // Helper для рендера с layout
 async function render(view, data) {

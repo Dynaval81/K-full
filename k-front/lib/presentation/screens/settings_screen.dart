@@ -87,8 +87,8 @@ class SettingsScreen extends StatelessWidget {
             height: 52,
             child: ElevatedButton.icon(
               onPressed: () async {
-                await context.read<AuthController>().logout();
                 if (context.mounted) context.go(AppRoutes.auth);
+                await context.read<AuthController>().logout();
               },
               icon: const Icon(Icons.logout_rounded, size: 18),
               label: Text(l10n.dashboardLogout),

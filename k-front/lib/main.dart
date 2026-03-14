@@ -8,6 +8,7 @@ import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/controllers/chat_controller.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
+import 'package:knoty/core/controllers/swipe_lock_controller.dart';
 import 'package:knoty/presentation/screens/auth/login_screen.dart';
 import 'package:knoty/presentation/screens/auth/register_screen.dart' as reg_screen;
 import 'package:knoty/presentation/screens/auth/registration_success_screen.dart';
@@ -60,16 +61,18 @@ void main() async {
         ChangeNotifierProvider.value(value: chatController),
         ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider(create: (_) => TabVisibilityController()..load()),
+        ChangeNotifierProvider(create: (_) => SwipeLockController()),
       ],
-      child: KnotyApp(initialLocation: initialLocation),
+      child: KnotyApp(initialLocation: initialLocation, authController: authController),
     ),
   );
 }
 
 class KnotyApp extends StatefulWidget {
   final String initialLocation;
+  final AuthController authController;
 
-  const KnotyApp({super.key, required this.initialLocation});
+  const KnotyApp({super.key, required this.initialLocation, required this.authController});
 
   @override
   State<KnotyApp> createState() => _KnotyAppState();
@@ -83,6 +86,16 @@ class _KnotyAppState extends State<KnotyApp> {
     super.initState();
     _router = GoRouter(
       initialLocation: widget.initialLocation,
+      refreshListenable: widget.authController,
+      redirect: (context, state) {
+        final auth = widget.authController;
+        if (auth.isRestoringSession) return null;
+        final isAuth = auth.isAuthenticated;
+        const publicPaths = {'/splash', '/auth', '/register', '/verify-email', '/register-success'};
+        final isPublic = publicPaths.contains(state.matchedLocation);
+        if (!isAuth && !isPublic) return AppRoutes.auth;
+        return null;
+      },
       routes: [
         GoRoute(
           path: AppRoutes.splash,

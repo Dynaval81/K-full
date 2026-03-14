@@ -1,24 +1,20 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../lib/prisma');
 const emailService = require('../services/email.service');
-
-const prisma = new PrismaClient();
 
 function generateToken(userId) {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
 }
 
 async function generateKnNumber() {
-  let knNumber;
-  let isUnique = false;
-  while (!isUnique) {
-    const num = String(Math.floor(100000 + Math.random() * 900000));
-    knNumber = `KN-${num}`;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const num = String(Math.floor(10000 + Math.random() * 90000));
+    const knNumber = `KN-${num}`;
     const existing = await prisma.user.findUnique({ where: { knNumber } });
-    if (!existing) isUnique = true;
+    if (!existing) return knNumber;
   }
-  return knNumber;
+  throw new Error('Failed to generate unique KN number after 10 attempts');
 }
 
 // Проверка активационного кода (до регистрации)
