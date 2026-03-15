@@ -1570,6 +1570,54 @@ abstract class AppLocalizations {
   /// **'Denkt nach...'**
   String get aiThinking;
 
+  /// No description provided for @profileTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Mein Profil'**
+  String get profileTitle;
+
+  /// No description provided for @profileName.
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get profileName;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get profileEmail;
+
+  /// No description provided for @profileRole.
+  ///
+  /// In de, this message translates to:
+  /// **'Rolle'**
+  String get profileRole;
+
+  /// No description provided for @profileKnNumber.
+  ///
+  /// In de, this message translates to:
+  /// **'Knoty-ID'**
+  String get profileKnNumber;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen speichern'**
+  String get profileSave;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'Profil aktualisiert'**
+  String get profileSaved;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort ändern'**
+  String get profileChangePassword;
+
   /// No description provided for @profileChangePhoto.
   ///
   /// In de, this message translates to:

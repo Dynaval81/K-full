@@ -765,6 +765,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiThinking => 'Думаю...';
 
   @override
+  String get profileTitle => 'Мой профиль';
+
+  @override
+  String get profileName => 'Имя';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileRole => 'Роль';
+
+  @override
+  String get profileKnNumber => 'Knoty-ID';
+
+  @override
+  String get profileSave => 'Сохранить изменения';
+
+  @override
+  String get profileSaved => 'Профиль обновлён';
+
+  @override
+  String get profileChangePassword => 'Изменить пароль';
+
+  @override
   String get profileChangePhoto => 'Изменить фото профиля';
 
   @override

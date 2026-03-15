@@ -768,6 +768,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aiThinking => 'Denkt nach...';
 
   @override
+  String get profileTitle => 'Mein Profil';
+
+  @override
+  String get profileName => 'Name';
+
+  @override
+  String get profileEmail => 'E-Mail';
+
+  @override
+  String get profileRole => 'Rolle';
+
+  @override
+  String get profileKnNumber => 'Knoty-ID';
+
+  @override
+  String get profileSave => 'Änderungen speichern';
+
+  @override
+  String get profileSaved => 'Profil aktualisiert';
+
+  @override
+  String get profileChangePassword => 'Passwort ändern';
+
+  @override
   String get profileChangePhoto => 'Profilbild ändern';
 
   @override

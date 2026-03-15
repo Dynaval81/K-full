@@ -61,7 +61,7 @@ class SettingsScreen extends StatelessWidget {
                 title: l10n.settingsAccount,
                 trailing: Icon(Icons.arrow_forward_ios_rounded,
                     size: 14, color: cs.onSurfaceVariant),
-                onTap: () {},
+                onTap: () => context.push('/profile'),
               ),
               _Divider(),
               _SettingsRow(
