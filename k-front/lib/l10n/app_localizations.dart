@@ -952,6 +952,210 @@ abstract class AppLocalizations {
   /// **'Du hast Superadmin-Zugriff auf alle Schulen.'**
   String get verwaltungSuperAdminHint;
 
+  /// No description provided for @adminTabStats.
+  ///
+  /// In de, this message translates to:
+  /// **'Übersicht'**
+  String get adminTabStats;
+
+  /// No description provided for @adminTabUsers.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzer'**
+  String get adminTabUsers;
+
+  /// No description provided for @adminTabCodes.
+  ///
+  /// In de, this message translates to:
+  /// **'Codes'**
+  String get adminTabCodes;
+
+  /// No description provided for @adminTabSchools.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulen'**
+  String get adminTabSchools;
+
+  /// No description provided for @adminTabSettings.
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen'**
+  String get adminTabSettings;
+
+  /// No description provided for @adminStatUsers.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzer'**
+  String get adminStatUsers;
+
+  /// No description provided for @adminStatSchools.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulen'**
+  String get adminStatSchools;
+
+  /// No description provided for @adminStatPending.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausstehend'**
+  String get adminStatPending;
+
+  /// No description provided for @adminStatCodes.
+  ///
+  /// In de, this message translates to:
+  /// **'Codes'**
+  String get adminStatCodes;
+
+  /// No description provided for @adminUsersTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzerverwaltung'**
+  String get adminUsersTitle;
+
+  /// No description provided for @adminUsersPending.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausstehend'**
+  String get adminUsersPending;
+
+  /// No description provided for @adminUsersAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get adminUsersAll;
+
+  /// No description provided for @adminApprove.
+  ///
+  /// In de, this message translates to:
+  /// **'Freigeben'**
+  String get adminApprove;
+
+  /// No description provided for @adminBan.
+  ///
+  /// In de, this message translates to:
+  /// **'Sperren'**
+  String get adminBan;
+
+  /// No description provided for @adminUnban.
+  ///
+  /// In de, this message translates to:
+  /// **'Entsperren'**
+  String get adminUnban;
+
+  /// No description provided for @adminCodesTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivierungscodes'**
+  String get adminCodesTitle;
+
+  /// No description provided for @adminCodesGenerate.
+  ///
+  /// In de, this message translates to:
+  /// **'Generieren'**
+  String get adminCodesGenerate;
+
+  /// No description provided for @adminCodesGenerateHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie viele Codes?'**
+  String get adminCodesGenerateHint;
+
+  /// No description provided for @adminCodesEmpty.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Aktivierungscodes'**
+  String get adminCodesEmpty;
+
+  /// No description provided for @adminSchoolsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulen'**
+  String get adminSchoolsTitle;
+
+  /// No description provided for @adminSchoolsAdd.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule hinzufügen'**
+  String get adminSchoolsAdd;
+
+  /// No description provided for @adminSchoolsEmpty.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Schulen'**
+  String get adminSchoolsEmpty;
+
+  /// No description provided for @adminSettingsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Globale Einstellungen'**
+  String get adminSettingsTitle;
+
+  /// No description provided for @adminSettingsMaintenance.
+  ///
+  /// In de, this message translates to:
+  /// **'Wartungsmodus'**
+  String get adminSettingsMaintenance;
+
+  /// No description provided for @adminSettingsMaintenanceHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Blockiert den Nutzerzugang wenn aktiv'**
+  String get adminSettingsMaintenanceHint;
+
+  /// No description provided for @adminSettingsRegistration.
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung offen'**
+  String get adminSettingsRegistration;
+
+  /// No description provided for @adminSettingsRegistrationHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Nutzer können sich registrieren'**
+  String get adminSettingsRegistrationHint;
+
+  /// No description provided for @adminSettingsSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen gespeichert'**
+  String get adminSettingsSaved;
+
+  /// No description provided for @adminConfirmBan.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzer sperren?'**
+  String get adminConfirmBan;
+
+  /// No description provided for @adminConfirmBanMessage.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Nutzer wird vom Zugang gesperrt.'**
+  String get adminConfirmBanMessage;
+
+  /// No description provided for @adminSchoolNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulname'**
+  String get adminSchoolNameHint;
+
+  /// No description provided for @adminSchoolCityHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Stadt'**
+  String get adminSchoolCityHint;
+
+  /// No description provided for @adminCancel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get adminCancel;
+
+  /// No description provided for @adminConfirm.
+  ///
+  /// In de, this message translates to:
+  /// **'Bestätigen'**
+  String get adminConfirm;
+
   /// No description provided for @lockedDefaultTitle.
   ///
   /// In de, this message translates to:
@@ -1365,6 +1569,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Denkt nach...'**
   String get aiThinking;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Mein Profil'**
+  String get profileTitle;
+
+  /// No description provided for @profileName.
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get profileName;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get profileEmail;
+
+  /// No description provided for @profileRole.
+  ///
+  /// In de, this message translates to:
+  /// **'Rolle'**
+  String get profileRole;
+
+  /// No description provided for @profileKnNumber.
+  ///
+  /// In de, this message translates to:
+  /// **'Knoty-ID'**
+  String get profileKnNumber;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen speichern'**
+  String get profileSave;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'Profil aktualisiert'**
+  String get profileSaved;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort ändern'**
+  String get profileChangePassword;
 
   /// No description provided for @profileChangePhoto.
   ///

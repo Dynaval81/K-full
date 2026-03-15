@@ -449,6 +449,109 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have superadmin access to all schools.';
 
   @override
+  String get adminTabStats => 'Stats';
+
+  @override
+  String get adminTabUsers => 'Users';
+
+  @override
+  String get adminTabCodes => 'Codes';
+
+  @override
+  String get adminTabSchools => 'Schools';
+
+  @override
+  String get adminTabSettings => 'Settings';
+
+  @override
+  String get adminStatUsers => 'Users';
+
+  @override
+  String get adminStatSchools => 'Schools';
+
+  @override
+  String get adminStatPending => 'Pending';
+
+  @override
+  String get adminStatCodes => 'Codes';
+
+  @override
+  String get adminUsersTitle => 'User Management';
+
+  @override
+  String get adminUsersPending => 'Pending';
+
+  @override
+  String get adminUsersAll => 'All';
+
+  @override
+  String get adminApprove => 'Approve';
+
+  @override
+  String get adminBan => 'Ban';
+
+  @override
+  String get adminUnban => 'Unban';
+
+  @override
+  String get adminCodesTitle => 'Activation Codes';
+
+  @override
+  String get adminCodesGenerate => 'Generate';
+
+  @override
+  String get adminCodesGenerateHint => 'How many codes?';
+
+  @override
+  String get adminCodesEmpty => 'No activation codes yet';
+
+  @override
+  String get adminSchoolsTitle => 'Schools';
+
+  @override
+  String get adminSchoolsAdd => 'Add School';
+
+  @override
+  String get adminSchoolsEmpty => 'No schools yet';
+
+  @override
+  String get adminSettingsTitle => 'Global Settings';
+
+  @override
+  String get adminSettingsMaintenance => 'Maintenance Mode';
+
+  @override
+  String get adminSettingsMaintenanceHint =>
+      'Blocks all user access when active';
+
+  @override
+  String get adminSettingsRegistration => 'Open Registration';
+
+  @override
+  String get adminSettingsRegistrationHint => 'Allow new users to register';
+
+  @override
+  String get adminSettingsSaved => 'Settings saved';
+
+  @override
+  String get adminConfirmBan => 'Ban this user?';
+
+  @override
+  String get adminConfirmBanMessage => 'The user will be blocked from the app.';
+
+  @override
+  String get adminSchoolNameHint => 'School name';
+
+  @override
+  String get adminSchoolCityHint => 'City';
+
+  @override
+  String get adminCancel => 'Cancel';
+
+  @override
+  String get adminConfirm => 'Confirm';
+
+  @override
   String get lockedDefaultTitle => 'Feature locked';
 
   @override
@@ -661,6 +764,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiThinking => 'Thinking...';
+
+  @override
+  String get profileTitle => 'My Profile';
+
+  @override
+  String get profileName => 'Name';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileRole => 'Role';
+
+  @override
+  String get profileKnNumber => 'Knoty ID';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileSaved => 'Profile updated';
+
+  @override
+  String get profileChangePassword => 'Change password';
 
   @override
   String get profileChangePhoto => 'Change profile picture';

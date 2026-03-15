@@ -7,6 +7,7 @@ import 'package:knoty/core/constants.dart';
 import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/presentation/atoms/airy_input_field.dart';
+import 'package:knoty/core/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen>
   int _loginMethodIndex = 0;
   bool _isLoading = false;
   bool _obscurePassword = true;
+  String? _loginError;
+  String? _passwordError;
 
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
@@ -72,10 +75,18 @@ class _LoginScreenState extends State<LoginScreen>
   void _goToPassword() {
     final identifier = _loginController.text.trim();
     if (identifier.isEmpty) {
-      _showError(AppLocalizations.of(context)!.loginErrorEmpty);
+      setState(() => _loginError = AppLocalizations.of(context)!.loginErrorEmpty);
       return;
     }
-    setState(() => _step = 1);
+    // Email method: validate format inline
+    if (_loginMethodIndex == 2) {
+      final err = Validators.email(identifier);
+      if (err != null) {
+        setState(() => _loginError = err);
+        return;
+      }
+    }
+    setState(() { _loginError = null; _step = 1; });
     _stepController.forward(from: 0);
     Future.delayed(const Duration(milliseconds: 200), () {
       _passwordFocus.requestFocus();
@@ -95,9 +106,10 @@ class _LoginScreenState extends State<LoginScreen>
     final password = _passwordController.text;
 
     if (password.isEmpty) {
-      _showError(AppLocalizations.of(context)!.loginEnterPassword);
+      setState(() => _passwordError = AppLocalizations.of(context)!.loginEnterPassword);
       return;
     }
+    setState(() => _passwordError = null);
 
     setState(() => _isLoading = true);
     try {
@@ -333,7 +345,9 @@ class _LoginScreenState extends State<LoginScreen>
           label: l10n.loginTitle,
           hint: '',
           keyboardType: TextInputType.emailAddress,
+          onChanged: (_) { if (_loginError != null) setState(() => _loginError = null); },
           onSubmitted: (_) => _goToPassword(),
+          errorText: _loginError,
         ),
         const SizedBox(height: 8),
         Text(
@@ -390,7 +404,9 @@ class _LoginScreenState extends State<LoginScreen>
           hint: AppLocalizations.of(context)!.loginPasswordHint,
           obscureText: _obscurePassword,
           keyboardType: TextInputType.visiblePassword,
+          onChanged: (_) { if (_passwordError != null) setState(() => _passwordError = null); },
           onSubmitted: (_) => _onLogin(),
+          errorText: _passwordError,
           suffixIcon: IconButton(
             icon: Icon(
               _obscurePassword

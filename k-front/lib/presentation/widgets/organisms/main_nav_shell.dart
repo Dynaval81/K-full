@@ -13,6 +13,7 @@ import 'package:knoty/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:knoty/presentation/screens/parent/parent_control_screen.dart';
 import 'package:knoty/presentation/screens/teacher/my_classes_screen.dart';
 import 'package:knoty/presentation/screens/admin/verwaltung_screen.dart';
+import 'package:knoty/presentation/widgets/offline_banner.dart';
 
 class _TabDef {
   final String id;
@@ -192,36 +193,45 @@ class _MainNavShellState extends State<MainNavShell> {
     // а не переносит старые пиксели из предыдущего состояния.
     final pageViewKey = ValueKey('pv_${_tabs.map((t) => t.id).join('_')}');
 
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
-      body: _SwipeTabDetector(
-        tabCount: _tabs.length,
-        activeIndex: safeIndex,
-        onSwipe: _onTabTapped,
-        locked: swipeLocked,
-        child: PageView(
-          key: pageViewKey,
-          controller: _pageController,
-          // NeverScrollableScrollPhysics обязателен: с live-физикой (SpringPhysics)
-          // при смене числа дочерних виджетов позиция сбивается, вызывая мигание.
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: _onPageChanged,
-          children: _tabs.map((t) => t.screen).toList(),
-        ),
+      body: Column(
+        children: [
+          const OfflineBanner(),
+          Expanded(
+            child: _SwipeTabDetector(
+              tabCount: _tabs.length,
+              activeIndex: safeIndex,
+              onSwipe: _onTabTapped,
+              locked: swipeLocked,
+              child: PageView(
+                key: pageViewKey,
+                controller: _pageController,
+                // NeverScrollableScrollPhysics обязателен: с live-физикой (SpringPhysics)
+                // при смене числа дочерних виджетов позиция сбивается, вызывая мигание.
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: _onPageChanged,
+                children: _tabs.map((t) => t.screen).toList(),
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           border: Border(
-            top: BorderSide(color: Colors.grey.withOpacity(0.12)),
+            top: BorderSide(color: cs.outline.withValues(alpha: 0.12)),
           ),
         ),
         child: BottomNavigationBar(
           currentIndex: safeIndex,
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: cs.surface,
           selectedItemColor: const Color(0xFFE6B800),
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: cs.onSurfaceVariant,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           items: _tabs

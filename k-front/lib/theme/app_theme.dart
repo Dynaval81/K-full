@@ -1,86 +1,134 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+import '../constants/palette.dart';
 
+/// Knoty branded themes — light and dark.
+/// Both use KPalette.gold as the primary accent.
 class AppTheme {
-  static ThemeData get darkTheme {
+  // ── Dark surface tokens ───────────────────────────────────────────────────
+  static const Color _darkBg          = Color(0xFF0F0F0F);
+  static const Color _darkSurface     = Color(0xFF1C1C1C);
+  static const Color _darkSurfaceHigh = Color(0xFF282828);
+  static const Color _darkOnSurface   = Color(0xFFF2F2F2);
+  static const Color _darkSubtext     = Color(0xFF9E9E9E);
+  static const Color _darkDivider     = Color(0xFF2E2E2E);
+
+  static ThemeData get lightTheme {
+    const cs = ColorScheme.light(
+      primary:              KPalette.gold,
+      onPrimary:            KPalette.ink,
+      secondary:            KPalette.goldMid,
+      onSecondary:          KPalette.ink,
+      error:                KPalette.error,
+      onError:              Colors.white,
+      surface:              KPalette.white,
+      onSurface:            KPalette.ink,
+      onSurfaceVariant:     KPalette.subtext,
+      outline:              KPalette.border,
+      surfaceContainerLow:  KPalette.surface,
+      surfaceContainer:     Color(0xFFEDEDED),
+    );
+
     return ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: Colors.blue,
-      scaffoldBackgroundColor: AppColors.primaryBackground,
-      cardColor: AppColors.cardBackground,
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.cardBackground,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.primaryText),
-        titleTextStyle: TextStyle(
-          color: AppColors.primaryText,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+      colorScheme:            cs,
+      brightness:             Brightness.light,
+      scaffoldBackgroundColor: KPalette.surface,
+      cardColor:              KPalette.white,
+      dividerColor:           KPalette.border,
+      appBarTheme: const AppBarTheme(
+        backgroundColor:  KPalette.white,
+        elevation:        0,
+        scrolledUnderElevation: 0,
+        iconTheme:        IconThemeData(color: KPalette.ink),
+        titleTextStyle:   TextStyle(
+          color: KPalette.ink, fontSize: 18, fontWeight: FontWeight.w700,
         ),
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.cardBackground,
-        selectedItemColor: AppColors.primaryBlue,
-        unselectedItemColor: AppColors.secondaryText,
-        type: BottomNavigationBarType.fixed,
+      textTheme: const TextTheme(
+        titleLarge:  TextStyle(color: KPalette.ink,     fontWeight: FontWeight.w700),
+        titleMedium: TextStyle(color: KPalette.ink,     fontWeight: FontWeight.w600),
+        bodyLarge:   TextStyle(color: KPalette.ink),
+        bodyMedium:  TextStyle(color: KPalette.subtext),
+        labelMedium: TextStyle(color: KPalette.subtext),
+        labelSmall:  TextStyle(color: KPalette.hint),
       ),
-      textTheme: TextTheme(
-        bodyLarge: TextStyle(color: AppColors.primaryText),
-        bodyMedium: TextStyle(color: AppColors.primaryText),
-        displayLarge: TextStyle(color: AppColors.primaryText),
-        displayMedium: TextStyle(color: AppColors.primaryText),
-        headlineLarge: TextStyle(color: AppColors.primaryText),
-        headlineMedium: TextStyle(color: AppColors.primaryText),
-        titleLarge: TextStyle(color: AppColors.primaryText),
-        titleMedium: TextStyle(color: AppColors.primaryText),
-      ),
-      iconTheme: IconThemeData(color: AppColors.primaryText),
+      iconTheme: const IconThemeData(color: KPalette.ink),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: Colors.white,
+          backgroundColor: KPalette.gold,
+          foregroundColor: KPalette.ink,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? KPalette.gold : KPalette.disabled,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? KPalette.gold.withOpacity(0.4)
+              : KPalette.border,
         ),
       ),
     );
   }
 
-  static ThemeData get lightTheme {
+  static ThemeData get darkTheme {
+    const cs = ColorScheme.dark(
+      primary:              KPalette.gold,
+      onPrimary:            KPalette.ink,
+      secondary:            KPalette.goldMid,
+      onSecondary:          KPalette.ink,
+      error:                Color(0xFFFF6B6B),
+      onError:              Colors.black,
+      surface:              _darkSurface,
+      onSurface:            _darkOnSurface,
+      onSurfaceVariant:     _darkSubtext,
+      outline:              _darkDivider,
+      surfaceContainerLow:  _darkBg,
+      surfaceContainer:     _darkSurfaceHigh,
+    );
+
     return ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.blue,
-      scaffoldBackgroundColor: AppColors.lightPrimaryBackground,
-      cardColor: AppColors.lightCardBackground,
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.lightCardBackground,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.lightPrimaryText),
-        titleTextStyle: TextStyle(
-          color: AppColors.lightPrimaryText,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+      colorScheme:             cs,
+      brightness:              Brightness.dark,
+      scaffoldBackgroundColor: _darkBg,
+      cardColor:               _darkSurface,
+      dividerColor:            _darkDivider,
+      appBarTheme: const AppBarTheme(
+        backgroundColor:  _darkSurface,
+        elevation:        0,
+        scrolledUnderElevation: 0,
+        iconTheme:        IconThemeData(color: _darkOnSurface),
+        titleTextStyle:   TextStyle(
+          color: _darkOnSurface, fontSize: 18, fontWeight: FontWeight.w700,
         ),
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.lightCardBackground,
-        selectedItemColor: AppColors.primaryBlue,
-        unselectedItemColor: AppColors.lightSecondaryText,
-        type: BottomNavigationBarType.fixed,
+      textTheme: const TextTheme(
+        titleLarge:  TextStyle(color: _darkOnSurface, fontWeight: FontWeight.w700),
+        titleMedium: TextStyle(color: _darkOnSurface, fontWeight: FontWeight.w600),
+        bodyLarge:   TextStyle(color: _darkOnSurface),
+        bodyMedium:  TextStyle(color: _darkSubtext),
+        labelMedium: TextStyle(color: _darkSubtext),
+        labelSmall:  TextStyle(color: _darkSubtext),
       ),
-      textTheme: TextTheme(
-        bodyLarge: TextStyle(color: AppColors.lightPrimaryText),
-        bodyMedium: TextStyle(color: AppColors.lightPrimaryText),
-        displayLarge: TextStyle(color: AppColors.lightPrimaryText),
-        displayMedium: TextStyle(color: AppColors.lightPrimaryText),
-        headlineLarge: TextStyle(color: AppColors.lightPrimaryText),
-        headlineMedium: TextStyle(color: AppColors.lightPrimaryText),
-        titleLarge: TextStyle(color: AppColors.lightPrimaryText),
-        titleMedium: TextStyle(color: AppColors.lightPrimaryText),
-      ),
-      iconTheme: IconThemeData(color: AppColors.lightPrimaryText),
+      iconTheme: const IconThemeData(color: _darkOnSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: Colors.white,
+          backgroundColor: KPalette.gold,
+          foregroundColor: KPalette.ink,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? KPalette.gold : _darkSubtext,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? KPalette.gold.withOpacity(0.35)
+              : _darkDivider,
         ),
       ),
     );

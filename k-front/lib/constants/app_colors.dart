@@ -25,4 +25,9 @@ class AppColors {
 
   // Borders
   static const Color lightPrimaryBorder = Color(0xFFE0E0E0);
+
+  // Aliases used in main.dart / shared widgets (point to light values; prefer Theme.of(context) in new code)
+  static const Color surface   = lightCardBackground;
+  static const Color onSurface = lightPrimaryText;
+  static const Color onSurfaceVariant = lightSecondaryText;
 }
