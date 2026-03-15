@@ -592,6 +592,24 @@ abstract class AppLocalizations {
   /// **'Neue Nachrichten'**
   String get chatNewMessages;
 
+  /// No description provided for @chatCallVoice.
+  ///
+  /// In de, this message translates to:
+  /// **'Anruf'**
+  String get chatCallVoice;
+
+  /// No description provided for @chatCallVideo.
+  ///
+  /// In de, this message translates to:
+  /// **'Videoanruf'**
+  String get chatCallVideo;
+
+  /// No description provided for @chatCallComingSoon.
+  ///
+  /// In de, this message translates to:
+  /// **'Anrufe kommen bald'**
+  String get chatCallComingSoon;
+
   /// No description provided for @chatDateToday.
   ///
   /// In de, this message translates to:
@@ -1035,6 +1053,1422 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Melden'**
   String get msgActionReport;
+
+  /// No description provided for @registerWhoAreYou.
+  ///
+  /// In de, this message translates to:
+  /// **'Wer bist du?'**
+  String get registerWhoAreYou;
+
+  /// No description provided for @registerChooseRole.
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle deine Rolle, um fortzufahren'**
+  String get registerChooseRole;
+
+  /// No description provided for @registerContinue.
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter'**
+  String get registerContinue;
+
+  /// No description provided for @registerFirstName.
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get registerFirstName;
+
+  /// No description provided for @registerFirstNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Max'**
+  String get registerFirstNameHint;
+
+  /// No description provided for @registerLastName.
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get registerLastName;
+
+  /// No description provided for @registerLastNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Mustermann'**
+  String get registerLastNameHint;
+
+  /// No description provided for @registerRoleStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Schüler'**
+  String get registerRoleStudent;
+
+  /// No description provided for @registerRoleStudentSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Schüler oder Schülerin'**
+  String get registerRoleStudentSubtitle;
+
+  /// No description provided for @registerRoleParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil'**
+  String get registerRoleParent;
+
+  /// No description provided for @registerRoleParentSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Mutter oder Vater'**
+  String get registerRoleParentSubtitle;
+
+  /// No description provided for @registerRoleTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer'**
+  String get registerRoleTeacher;
+
+  /// No description provided for @registerRoleTeacherSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Lehrer oder Lehrerin'**
+  String get registerRoleTeacherSubtitle;
+
+  /// No description provided for @registerSubtitleStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Schüler-Konto erstellen'**
+  String get registerSubtitleStudent;
+
+  /// No description provided for @registerSubtitleParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil-Konto erstellen'**
+  String get registerSubtitleParent;
+
+  /// No description provided for @registerSubtitleTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer-Konto erstellen'**
+  String get registerSubtitleTeacher;
+
+  /// No description provided for @registerSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule'**
+  String get registerSchool;
+
+  /// No description provided for @registerSchoolLoading.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulen werden geladen...'**
+  String get registerSchoolLoading;
+
+  /// No description provided for @registerSchoolHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulname eingeben...'**
+  String get registerSchoolHint;
+
+  /// No description provided for @registerSchoolCodeUsed.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivierungscode wird verwendet'**
+  String get registerSchoolCodeUsed;
+
+  /// No description provided for @registerClass.
+  ///
+  /// In de, this message translates to:
+  /// **'Klasse'**
+  String get registerClass;
+
+  /// No description provided for @registerClassHint.
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 5a'**
+  String get registerClassHint;
+
+  /// No description provided for @registerHasActivationCode.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich habe einen Aktivierungscode (KNOTY-XXXX-XXXX)'**
+  String get registerHasActivationCode;
+
+  /// No description provided for @registerActivationCodeLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivierungscode'**
+  String get registerActivationCodeLabel;
+
+  /// No description provided for @registerActivationCodeHint.
+  ///
+  /// In de, this message translates to:
+  /// **'KNOTY-XXXX-XXXX'**
+  String get registerActivationCodeHint;
+
+  /// No description provided for @registerKnChildLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'KN-Nummer des Kindes'**
+  String get registerKnChildLabel;
+
+  /// No description provided for @registerKnChildHint.
+  ///
+  /// In de, this message translates to:
+  /// **'KN-12345'**
+  String get registerKnChildHint;
+
+  /// No description provided for @registerInfoStudent.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wird vom Schuladministrator geprüft.'**
+  String get registerInfoStudent;
+
+  /// No description provided for @registerInfoTeacher.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wird vom Schuladministrator verifiziert.'**
+  String get registerInfoTeacher;
+
+  /// No description provided for @registerInfoParent.
+  ///
+  /// In de, this message translates to:
+  /// **'Gib die KN-Nummer deines Kindes ein. Du findest sie in der Knoty-App deines Kindes.'**
+  String get registerInfoParent;
+
+  /// No description provided for @registerErrorFirstName.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Vornamen eingeben'**
+  String get registerErrorFirstName;
+
+  /// No description provided for @registerErrorLastName.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Nachnamen eingeben'**
+  String get registerErrorLastName;
+
+  /// No description provided for @registerErrorSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Schule auswählen'**
+  String get registerErrorSchool;
+
+  /// No description provided for @registerErrorActivationCode.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Aktivierungscode eingeben'**
+  String get registerErrorActivationCode;
+
+  /// No description provided for @registerErrorKnChild.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte KN-Nummer des Kindes eingeben'**
+  String get registerErrorKnChild;
+
+  /// No description provided for @registerErrorNoInternet.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Internetverbindung'**
+  String get registerErrorNoInternet;
+
+  /// No description provided for @registerErrorNameDigitsOnly.
+  ///
+  /// In de, this message translates to:
+  /// **'Vor- und Nachname dürfen nicht nur aus Ziffern bestehen'**
+  String get registerErrorNameDigitsOnly;
+
+  /// No description provided for @registerSuccessWelcome.
+  ///
+  /// In de, this message translates to:
+  /// **'Willkommen!'**
+  String get registerSuccessWelcome;
+
+  /// No description provided for @registerSuccessKnotyIdLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Knoty-ID'**
+  String get registerSuccessKnotyIdLabel;
+
+  /// No description provided for @registerSuccessRememberHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Merke dir diese Nummer — du brauchst sie zum Anmelden'**
+  String get registerSuccessRememberHint;
+
+  /// No description provided for @registerSuccessButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Los geht\'s'**
+  String get registerSuccessButton;
+
+  /// No description provided for @chatsFilterAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get chatsFilterAll;
+
+  /// No description provided for @chatsFilterPrivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Privat'**
+  String get chatsFilterPrivate;
+
+  /// No description provided for @chatsFilterGroups.
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get chatsFilterGroups;
+
+  /// No description provided for @chatsFilterSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule'**
+  String get chatsFilterSchool;
+
+  /// No description provided for @chatsEmptyAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Chats'**
+  String get chatsEmptyAll;
+
+  /// No description provided for @chatsEmptyPrivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine persönlichen Chats'**
+  String get chatsEmptyPrivate;
+
+  /// No description provided for @chatsEmptyGroups.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Gruppen'**
+  String get chatsEmptyGroups;
+
+  /// No description provided for @chatsEmptySchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Schulchats'**
+  String get chatsEmptySchool;
+
+  /// No description provided for @aiEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Knoty KI-Assistent'**
+  String get aiEmptyTitle;
+
+  /// No description provided for @aiEmptySubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Stell mir eine Frage — ich helfe dir gerne.'**
+  String get aiEmptySubtitle;
+
+  /// No description provided for @aiThinking.
+  ///
+  /// In de, this message translates to:
+  /// **'Denkt nach...'**
+  String get aiThinking;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In de, this message translates to:
+  /// **'Profilbild ändern'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profileMySchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Schule'**
+  String get profileMySchool;
+
+  /// No description provided for @profileQrCode.
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code'**
+  String get profileQrCode;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen'**
+  String get profileNotifications;
+
+  /// No description provided for @profileSupport.
+  ///
+  /// In de, this message translates to:
+  /// **'Support'**
+  String get profileSupport;
+
+  /// No description provided for @chatTimeNow.
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade eben'**
+  String get chatTimeNow;
+
+  /// No description provided for @chatTimeMin.
+  ///
+  /// In de, this message translates to:
+  /// **'Min.'**
+  String get chatTimeMin;
+
+  /// No description provided for @loginIdentifierHint.
+  ///
+  /// In de, this message translates to:
+  /// **'@Benutzername, Knoty-ID oder E-Mail eingeben'**
+  String get loginIdentifierHint;
+
+  /// No description provided for @profileRequestChange.
+  ///
+  /// In de, this message translates to:
+  /// **'Änderung anfragen'**
+  String get profileRequestChange;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In de, this message translates to:
+  /// **'Profil bearbeiten'**
+  String get profileEdit;
+
+  /// No description provided for @profileSchoolChange.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulwechsel anfragen'**
+  String get profileSchoolChange;
+
+  /// No description provided for @schoolNow.
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get schoolNow;
+
+  /// No description provided for @schoolNextLesson.
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Stunde'**
+  String get schoolNextLesson;
+
+  /// No description provided for @schoolBreak.
+  ///
+  /// In de, this message translates to:
+  /// **'Pause'**
+  String get schoolBreak;
+
+  /// No description provided for @schoolRoom.
+  ///
+  /// In de, this message translates to:
+  /// **'Raum'**
+  String get schoolRoom;
+
+  /// No description provided for @schoolMinLeft.
+  ///
+  /// In de, this message translates to:
+  /// **'Min verbleibend'**
+  String get schoolMinLeft;
+
+  /// No description provided for @schoolClubs.
+  ///
+  /// In de, this message translates to:
+  /// **'AGs'**
+  String get schoolClubs;
+
+  /// No description provided for @schoolCafeteria.
+  ///
+  /// In de, this message translates to:
+  /// **'Mensa'**
+  String get schoolCafeteria;
+
+  /// No description provided for @schoolScheduleToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get schoolScheduleToday;
+
+  /// No description provided for @schoolAfterHours.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule beendet'**
+  String get schoolAfterHours;
+
+  /// No description provided for @schoolNoSchedule.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Unterricht'**
+  String get schoolNoSchedule;
+
+  /// No description provided for @schoolTeacherLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer'**
+  String get schoolTeacherLabel;
+
+  /// No description provided for @schoolWeekView.
+  ///
+  /// In de, this message translates to:
+  /// **'Woche'**
+  String get schoolWeekView;
+
+  /// No description provided for @schoolTeachersTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer'**
+  String get schoolTeachersTitle;
+
+  /// No description provided for @schoolQrTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Mein QR-Code'**
+  String get schoolQrTitle;
+
+  /// No description provided for @schoolQrHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Zeige diesen Code dem Schuladmin'**
+  String get schoolQrHint;
+
+  /// No description provided for @schoolNotesTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Unterrichtsnotizen'**
+  String get schoolNotesTitle;
+
+  /// No description provided for @schoolNotesAdd.
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz hinzufügen'**
+  String get schoolNotesAdd;
+
+  /// No description provided for @schoolNotesHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz schreiben...'**
+  String get schoolNotesHint;
+
+  /// No description provided for @schoolNotesSave.
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern'**
+  String get schoolNotesSave;
+
+  /// No description provided for @schoolAvgLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Durchschnitt'**
+  String get schoolAvgLabel;
+
+  /// No description provided for @schoolOpenHoursLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Geöffnet 11:30–14:00'**
+  String get schoolOpenHoursLabel;
+
+  /// No description provided for @schoolCafeteriaMenuToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Menü heute'**
+  String get schoolCafeteriaMenuToday;
+
+  /// No description provided for @schoolGradeTopic.
+  ///
+  /// In de, this message translates to:
+  /// **'Thema'**
+  String get schoolGradeTopic;
+
+  /// No description provided for @schoolGradeDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get schoolGradeDate;
+
+  /// No description provided for @schoolTeacherContact.
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt'**
+  String get schoolTeacherContact;
+
+  /// No description provided for @schoolHomeworkOpen.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String schoolHomeworkOpen(int count);
+
+  /// No description provided for @schoolAnnouncementsNew.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} neu'**
+  String schoolAnnouncementsNew(int count);
+
+  /// No description provided for @schoolDocumentsCount.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Dateien'**
+  String schoolDocumentsCount(int count);
+
+  /// No description provided for @schoolClubsActive.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} aktiv'**
+  String schoolClubsActive(int count);
+
+  /// No description provided for @aiGreeting.
+  ///
+  /// In de, this message translates to:
+  /// **'Bereit für die Schule, {name}?'**
+  String aiGreeting(String name);
+
+  /// No description provided for @aiGreetingMorning.
+  ///
+  /// In de, this message translates to:
+  /// **'Guten Morgen, {name}!'**
+  String aiGreetingMorning(String name);
+
+  /// No description provided for @aiGreetingEvening.
+  ///
+  /// In de, this message translates to:
+  /// **'Hausaufgaben fertig, {name}?'**
+  String aiGreetingEvening(String name);
+
+  /// No description provided for @aiSurpriseMe.
+  ///
+  /// In de, this message translates to:
+  /// **'Überrasch mich mit einer Schulfrage!'**
+  String get aiSurpriseMe;
+
+  /// No description provided for @aiHubSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein KI-Studio'**
+  String get aiHubSubtitle;
+
+  /// No description provided for @aiChatTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Assistent fragen'**
+  String get aiChatTitle;
+
+  /// No description provided for @aiChatSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Lernpartner'**
+  String get aiChatSubtitle;
+
+  /// No description provided for @aiStickerTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufkleber-Labor'**
+  String get aiStickerTitle;
+
+  /// No description provided for @aiStickerSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Text zu Bild'**
+  String get aiStickerSubtitle;
+
+  /// No description provided for @aiPhotoTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto-Magie'**
+  String get aiPhotoTitle;
+
+  /// No description provided for @aiPhotoSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten & Verbessern'**
+  String get aiPhotoSubtitle;
+
+  /// No description provided for @aiChipExplain.
+  ///
+  /// In de, this message translates to:
+  /// **'Thema erklären'**
+  String get aiChipExplain;
+
+  /// No description provided for @aiChipGrammar.
+  ///
+  /// In de, this message translates to:
+  /// **'Grammatik prüfen'**
+  String get aiChipGrammar;
+
+  /// No description provided for @aiChipSummarize.
+  ///
+  /// In de, this message translates to:
+  /// **'Zusammenfassen'**
+  String get aiChipSummarize;
+
+  /// No description provided for @aiChipMath.
+  ///
+  /// In de, this message translates to:
+  /// **'Mathe-Hilfe'**
+  String get aiChipMath;
+
+  /// No description provided for @aiInputHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Frag etwas...'**
+  String get aiInputHint;
+
+  /// No description provided for @aiStyleAnime.
+  ///
+  /// In de, this message translates to:
+  /// **'Anime'**
+  String get aiStyleAnime;
+
+  /// No description provided for @aiStyle3d.
+  ///
+  /// In de, this message translates to:
+  /// **'3D-Render'**
+  String get aiStyle3d;
+
+  /// No description provided for @aiStyleComic.
+  ///
+  /// In de, this message translates to:
+  /// **'Comic'**
+  String get aiStyleComic;
+
+  /// No description provided for @aiStylePixel.
+  ///
+  /// In de, this message translates to:
+  /// **'Pixel-Art'**
+  String get aiStylePixel;
+
+  /// No description provided for @aiStyleRealist.
+  ///
+  /// In de, this message translates to:
+  /// **'Realistisch'**
+  String get aiStyleRealist;
+
+  /// No description provided for @aiImprovePrompt.
+  ///
+  /// In de, this message translates to:
+  /// **'Prompt verbessern'**
+  String get aiImprovePrompt;
+
+  /// No description provided for @aiGenerate.
+  ///
+  /// In de, this message translates to:
+  /// **'Generieren'**
+  String get aiGenerate;
+
+  /// No description provided for @aiPaintingLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Male deine Fantasie...'**
+  String get aiPaintingLabel;
+
+  /// No description provided for @aiRemoveBg.
+  ///
+  /// In de, this message translates to:
+  /// **'Hintergrund entfernen'**
+  String get aiRemoveBg;
+
+  /// No description provided for @aiEnhance.
+  ///
+  /// In de, this message translates to:
+  /// **'Verbessern'**
+  String get aiEnhance;
+
+  /// No description provided for @aiStylize.
+  ///
+  /// In de, this message translates to:
+  /// **'KI-Stilisierung'**
+  String get aiStylize;
+
+  /// No description provided for @aiSendAsSticker.
+  ///
+  /// In de, this message translates to:
+  /// **'Als Aufkleber senden'**
+  String get aiSendAsSticker;
+
+  /// No description provided for @aiUploadPhoto.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto hochladen'**
+  String get aiUploadPhoto;
+
+  /// No description provided for @aiStickerInputHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Beschreibe deinen Aufkleber...'**
+  String get aiStickerInputHint;
+
+  /// No description provided for @aiProcessing.
+  ///
+  /// In de, this message translates to:
+  /// **'Verarbeitung...'**
+  String get aiProcessing;
+
+  /// No description provided for @aiNewChat.
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Chat'**
+  String get aiNewChat;
+
+  /// No description provided for @aiAiLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'KI'**
+  String get aiAiLabel;
+
+  /// No description provided for @aiAuraActive.
+  ///
+  /// In de, this message translates to:
+  /// **'KI aktiv'**
+  String get aiAuraActive;
+
+  /// No description provided for @navTabAi.
+  ///
+  /// In de, this message translates to:
+  /// **'KI'**
+  String get navTabAi;
+
+  /// No description provided for @navTabSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule'**
+  String get navTabSchool;
+
+  /// No description provided for @aiStop.
+  ///
+  /// In de, this message translates to:
+  /// **'Stopp'**
+  String get aiStop;
+
+  /// No description provided for @aiParentGreetingMorning.
+  ///
+  /// In de, this message translates to:
+  /// **'Guten Morgen! Wie läuft\'s bei euch?'**
+  String get aiParentGreetingMorning;
+
+  /// No description provided for @aiParentGreetingEvening.
+  ///
+  /// In de, this message translates to:
+  /// **'Schönen Abend! Alles gut mit der Familie?'**
+  String get aiParentGreetingEvening;
+
+  /// No description provided for @aiParentGreetingDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo! Wie kann ich helfen?'**
+  String get aiParentGreetingDay;
+
+  /// No description provided for @aiParentTile1Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternberater'**
+  String get aiParentTile1Title;
+
+  /// No description provided for @aiParentTile1Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Tipps & Ratschläge'**
+  String get aiParentTile1Subtitle;
+
+  /// No description provided for @aiParentTile2Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausflug-Ideen'**
+  String get aiParentTile2Title;
+
+  /// No description provided for @aiParentTile2Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Mit der Familie'**
+  String get aiParentTile2Subtitle;
+
+  /// No description provided for @aiParentTile3Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Brief schreiben'**
+  String get aiParentTile3Title;
+
+  /// No description provided for @aiParentTile3Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'An Schule & Lehrer'**
+  String get aiParentTile3Subtitle;
+
+  /// No description provided for @aiParentChipTip.
+  ///
+  /// In de, this message translates to:
+  /// **'Erziehungstipp'**
+  String get aiParentChipTip;
+
+  /// No description provided for @aiParentChipOuting.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausflug-Ideen'**
+  String get aiParentChipOuting;
+
+  /// No description provided for @aiParentChipLetter.
+  ///
+  /// In de, this message translates to:
+  /// **'Brief schreiben'**
+  String get aiParentChipLetter;
+
+  /// No description provided for @aiParentChipStress.
+  ///
+  /// In de, this message translates to:
+  /// **'Schulstress'**
+  String get aiParentChipStress;
+
+  /// No description provided for @aiParentEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern-Assistent'**
+  String get aiParentEmptyTitle;
+
+  /// No description provided for @aiParentEmptySubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ich helfe dir bei Erziehung, Ausflügen\nund Schulkommunikation.'**
+  String get aiParentEmptySubtitle;
+
+  /// No description provided for @parentAddChild.
+  ///
+  /// In de, this message translates to:
+  /// **'Kind hinzufügen'**
+  String get parentAddChild;
+
+  /// No description provided for @parentEmergencyActivateTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Notfallsperre aktivieren?'**
+  String get parentEmergencyActivateTitle;
+
+  /// No description provided for @parentEmergencyDeactivateTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Sperre aufheben?'**
+  String get parentEmergencyDeactivateTitle;
+
+  /// No description provided for @parentEmergencyActivateMsg.
+  ///
+  /// In de, this message translates to:
+  /// **'Die App wird für das Kind sofort gesperrt.'**
+  String get parentEmergencyActivateMsg;
+
+  /// No description provided for @parentEmergencyDeactivateMsg.
+  ///
+  /// In de, this message translates to:
+  /// **'Das Kind kann die App wieder nutzen.'**
+  String get parentEmergencyDeactivateMsg;
+
+  /// No description provided for @parentEmergencyActivateBtn.
+  ///
+  /// In de, this message translates to:
+  /// **'Sperren'**
+  String get parentEmergencyActivateBtn;
+
+  /// No description provided for @parentEmergencyDeactivateBtn.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufheben'**
+  String get parentEmergencyDeactivateBtn;
+
+  /// No description provided for @parentStatusPending.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausstehend'**
+  String get parentStatusPending;
+
+  /// No description provided for @parentStatusLinked.
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpft'**
+  String get parentStatusLinked;
+
+  /// No description provided for @parentAttendanceAtSchool.
+  ///
+  /// In de, this message translates to:
+  /// **'In der Schule'**
+  String get parentAttendanceAtSchool;
+
+  /// No description provided for @parentAttendanceAbsent.
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht anwesend'**
+  String get parentAttendanceAbsent;
+
+  /// No description provided for @parentAttendanceUnknown.
+  ///
+  /// In de, this message translates to:
+  /// **'Unbekannt'**
+  String get parentAttendanceUnknown;
+
+  /// No description provided for @parentSectionAttendance.
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get parentSectionAttendance;
+
+  /// No description provided for @parentSectionScreenTime.
+  ///
+  /// In de, this message translates to:
+  /// **'Bildschirmzeit heute'**
+  String get parentSectionScreenTime;
+
+  /// No description provided for @parentSectionGrades.
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte Noten'**
+  String get parentSectionGrades;
+
+  /// No description provided for @parentSectionControls.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternsteuerung'**
+  String get parentSectionControls;
+
+  /// No description provided for @parentDailyLimitLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Tageslimit'**
+  String get parentDailyLimitLabel;
+
+  /// No description provided for @parentEveningBlockLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abendsperre'**
+  String get parentEveningBlockLabel;
+
+  /// No description provided for @parentEveningBlockDesc.
+  ///
+  /// In de, this message translates to:
+  /// **'Ab 21:00 Uhr gesperrt'**
+  String get parentEveningBlockDesc;
+
+  /// No description provided for @parentEmergencyLockActivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Notfallsperre aktivieren'**
+  String get parentEmergencyLockActivate;
+
+  /// No description provided for @parentEmergencyLockDeactivate.
+  ///
+  /// In de, this message translates to:
+  /// **'Notfallsperre aufheben'**
+  String get parentEmergencyLockDeactivate;
+
+  /// No description provided for @parentPendingTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Warte auf Bestätigung'**
+  String get parentPendingTitle;
+
+  /// No description provided for @parentPendingSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Verknüpfung wird vom Kind bestätigt.'**
+  String get parentPendingSubtitle;
+
+  /// No description provided for @parentWithdrawRequest.
+  ///
+  /// In de, this message translates to:
+  /// **'Anfrage zurückziehen'**
+  String get parentWithdrawRequest;
+
+  /// No description provided for @parentLinkChildTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Kind verknüpfen'**
+  String get parentLinkChildTitle;
+
+  /// No description provided for @parentLinkButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfen'**
+  String get parentLinkButton;
+
+  /// No description provided for @parentKnFormat.
+  ///
+  /// In de, this message translates to:
+  /// **'Format: KN-12345'**
+  String get parentKnFormat;
+
+  /// No description provided for @parentSchoolEventsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Termine'**
+  String get parentSchoolEventsTitle;
+
+  /// No description provided for @parentSchoolContactsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakte'**
+  String get parentSchoolContactsTitle;
+
+  /// No description provided for @parentSchoolLettersTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternbriefe'**
+  String get parentSchoolLettersTitle;
+
+  /// No description provided for @parentSchoolCommitteeTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternbeirat'**
+  String get parentSchoolCommitteeTitle;
+
+  /// No description provided for @parentSchoolCommitteeChat.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternbeirat-Chat'**
+  String get parentSchoolCommitteeChat;
+
+  /// No description provided for @parentSchoolCommitteeVotes.
+  ///
+  /// In de, this message translates to:
+  /// **'Abstimmungen & Beschlüsse'**
+  String get parentSchoolCommitteeVotes;
+
+  /// No description provided for @parentRoleBadge.
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil'**
+  String get parentRoleBadge;
+
+  /// No description provided for @parentSchoolMySchool.
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Schule'**
+  String get parentSchoolMySchool;
+
+  /// No description provided for @aiTeacherGreetingMorning.
+  ///
+  /// In de, this message translates to:
+  /// **'Guten Morgen, {name}!'**
+  String aiTeacherGreetingMorning(String name);
+
+  /// No description provided for @aiTeacherGreetingDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo, {name}! Was darf ich vorbereiten?'**
+  String aiTeacherGreetingDay(String name);
+
+  /// No description provided for @aiTeacherGreetingEvening.
+  ///
+  /// In de, this message translates to:
+  /// **'Schönen Abend, {name}! Noch etwas zu planen?'**
+  String aiTeacherGreetingEvening(String name);
+
+  /// No description provided for @aiTeacherTile1Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Test erstellen'**
+  String get aiTeacherTile1Title;
+
+  /// No description provided for @aiTeacherTile1Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'KI generiert Fragen & Antworten'**
+  String get aiTeacherTile1Subtitle;
+
+  /// No description provided for @aiTeacherTile2Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Planung'**
+  String get aiTeacherTile2Title;
+
+  /// No description provided for @aiTeacherTile2Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Methodisch & strukturiert'**
+  String get aiTeacherTile2Subtitle;
+
+  /// No description provided for @aiTeacherTile3Title.
+  ///
+  /// In de, this message translates to:
+  /// **'Arbeiten prüfen'**
+  String get aiTeacherTile3Title;
+
+  /// No description provided for @aiTeacherTile3Subtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler per Beschreibung erkennen'**
+  String get aiTeacherTile3Subtitle;
+
+  /// No description provided for @aiTeacherChipTest.
+  ///
+  /// In de, this message translates to:
+  /// **'Test zu einem Thema erstellen'**
+  String get aiTeacherChipTest;
+
+  /// No description provided for @aiTeacherChipPlan.
+  ///
+  /// In de, this message translates to:
+  /// **'Stundenplan entwerfen'**
+  String get aiTeacherChipPlan;
+
+  /// No description provided for @aiTeacherChipCheck.
+  ///
+  /// In de, this message translates to:
+  /// **'Schülerarbeit bewerten'**
+  String get aiTeacherChipCheck;
+
+  /// No description provided for @aiTeacherChipIdea.
+  ///
+  /// In de, this message translates to:
+  /// **'Unterrichtsidee vorschlagen'**
+  String get aiTeacherChipIdea;
+
+  /// No description provided for @aiTeacherToolsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'KI-Werkzeuge'**
+  String get aiTeacherToolsTitle;
+
+  /// No description provided for @aiTeacherToolsSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Diktat · Quiz · Eltern-E-Mail'**
+  String get aiTeacherToolsSubtitle;
+
+  /// No description provided for @aiTeacherToolsSheetSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Werkzeug auswählen — KI erledigt den Rest'**
+  String get aiTeacherToolsSheetSubtitle;
+
+  /// No description provided for @aiTeacherVoiceReportLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Diktat zum Bericht'**
+  String get aiTeacherVoiceReportLabel;
+
+  /// No description provided for @aiTeacherVoiceReportSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprachnotizen → fertiger Bericht'**
+  String get aiTeacherVoiceReportSub;
+
+  /// No description provided for @aiTeacherVoiceReportPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle einen strukturierten Bericht aus folgenden Sprachnotizen:'**
+  String get aiTeacherVoiceReportPrefill;
+
+  /// No description provided for @aiTeacherQuizGenLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Quiz-Generator'**
+  String get aiTeacherQuizGenLabel;
+
+  /// No description provided for @aiTeacherQuizGenSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Thema → Aufgaben & Antworten'**
+  String get aiTeacherQuizGenSub;
+
+  /// No description provided for @aiTeacherQuizGenPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle einen Quiz mit 10 Fragen zum Thema:'**
+  String get aiTeacherQuizGenPrefill;
+
+  /// No description provided for @aiTeacherParentEmailLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern-E-Mail'**
+  String get aiTeacherParentEmailLabel;
+
+  /// No description provided for @aiTeacherParentEmailSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Anlass → fertige E-Mail'**
+  String get aiTeacherParentEmailSub;
+
+  /// No description provided for @aiTeacherParentEmailPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Schreibe eine professionelle E-Mail an die Eltern über:'**
+  String get aiTeacherParentEmailPrefill;
+
+  /// No description provided for @teacherJournalSubjectMath.
+  ///
+  /// In de, this message translates to:
+  /// **'Mathe'**
+  String get teacherJournalSubjectMath;
+
+  /// No description provided for @teacherJournalSubjectGerman.
+  ///
+  /// In de, this message translates to:
+  /// **'Deutsch'**
+  String get teacherJournalSubjectGerman;
+
+  /// No description provided for @teacherJournalSubjectEnglish.
+  ///
+  /// In de, this message translates to:
+  /// **'Englisch'**
+  String get teacherJournalSubjectEnglish;
+
+  /// No description provided for @teacherGrade1Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Sehr gut'**
+  String get teacherGrade1Label;
+
+  /// No description provided for @teacherGrade2Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Gut'**
+  String get teacherGrade2Label;
+
+  /// No description provided for @teacherGrade3Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Befriedigend'**
+  String get teacherGrade3Label;
+
+  /// No description provided for @teacherGrade4Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausreichend'**
+  String get teacherGrade4Label;
+
+  /// No description provided for @teacherGrade5Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Mangelhaft'**
+  String get teacherGrade5Label;
+
+  /// No description provided for @teacherGrade6Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Ungenügend'**
+  String get teacherGrade6Label;
+
+  /// No description provided for @teacherMarkAbsent.
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend'**
+  String get teacherMarkAbsent;
+
+  /// No description provided for @teacherGradeDialogTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Note eintragen'**
+  String get teacherGradeDialogTitle;
+
+  /// No description provided for @teacherGradeAdded.
+  ///
+  /// In de, this message translates to:
+  /// **'Note gespeichert'**
+  String get teacherGradeAdded;
+
+  /// No description provided for @teacherNoStudents.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Schüler in dieser Klasse'**
+  String get teacherNoStudents;
+
+  /// No description provided for @teacherSelectClass.
+  ///
+  /// In de, this message translates to:
+  /// **'Klasse auswählen'**
+  String get teacherSelectClass;
+
+  /// No description provided for @teacherGradeTypeOral.
+  ///
+  /// In de, this message translates to:
+  /// **'Mündlich'**
+  String get teacherGradeTypeOral;
+
+  /// No description provided for @teacherGradeTypeWritten.
+  ///
+  /// In de, this message translates to:
+  /// **'Schriftlich'**
+  String get teacherGradeTypeWritten;
+
+  /// No description provided for @teacherGradeTypeTest.
+  ///
+  /// In de, this message translates to:
+  /// **'Klassenarbeit'**
+  String get teacherGradeTypeTest;
+
+  /// No description provided for @teacherGradeTypeHomework.
+  ///
+  /// In de, this message translates to:
+  /// **'Hausaufgabe'**
+  String get teacherGradeTypeHomework;
+
+  /// No description provided for @teacherGradeDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get teacherGradeDate;
+
+  /// No description provided for @teacherGradeTypeLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Art'**
+  String get teacherGradeTypeLabel;
+
+  /// No description provided for @teacherGradeSubjectLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Fach'**
+  String get teacherGradeSubjectLabel;
+
+  /// No description provided for @teacherGradeToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get teacherGradeToday;
+
+  /// No description provided for @teacherGradeYesterday.
+  ///
+  /// In de, this message translates to:
+  /// **'Gestern'**
+  String get teacherGradeYesterday;
+
+  /// No description provided for @teacherGradeFor.
+  ///
+  /// In de, this message translates to:
+  /// **'Note für {name}'**
+  String teacherGradeFor(String name);
+
+  /// No description provided for @teacherSchoolMySchedule.
+  ///
+  /// In de, this message translates to:
+  /// **'Mein Stundenplan'**
+  String get teacherSchoolMySchedule;
+
+  /// No description provided for @teacherSchoolMyClasses.
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Klassen'**
+  String get teacherSchoolMyClasses;
+
+  /// No description provided for @teacherSchoolColleagues.
+  ///
+  /// In de, this message translates to:
+  /// **'Kollegium'**
+  String get teacherSchoolColleagues;
+
+  /// No description provided for @teacherSchoolNextClass.
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Stunde'**
+  String get teacherSchoolNextClass;
+
+  /// No description provided for @teacherSchoolNowTeaching.
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get teacherSchoolNowTeaching;
+
+  /// No description provided for @teacherSchoolFreeNow.
+  ///
+  /// In de, this message translates to:
+  /// **'Freistunde'**
+  String get teacherSchoolFreeNow;
+
+  /// No description provided for @teacherSchoolRoleBadge.
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrkraft'**
+  String get teacherSchoolRoleBadge;
+
+  /// No description provided for @teacherSchoolStudents.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Schüler'**
+  String teacherSchoolStudents(int count);
 }
 
 class _AppLocalizationsDelegate

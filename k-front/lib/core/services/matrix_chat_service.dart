@@ -191,7 +191,6 @@ class MatrixChatService {
         type: chatType,
         unread: unread,
         lastMessage: lastMsg,
-        lastMessageTime: lastTime,
         lastActivity: lastTime,
         schoolId: schoolId,
         schoolName: schoolName,

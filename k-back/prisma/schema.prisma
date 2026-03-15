@@ -6,66 +6,190 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id                    String    @id @default(uuid())
   email                 String    @unique
   password              String
-  username              String    @unique
-  vtNumber              String    @unique
+
+  // Knoty fields
+  firstName             String?
+  lastName              String?
+  knNumber              String?   @unique
+  role                  String?   @default("student")       // student|parent|teacher|schoolAdmin|appAdmin
+  verificationLevel     String?   @default("sandbox")       // sandbox|schoolVerified|fullyVerified
+  isApproved            Boolean   @default(false)
+  status                String    @default("active")        // active|banned|deleted
+  schoolId              String?
+  classId               String?   // stores class name string, e.g. "10B"
+  banReason             String?
+  bannedAt              DateTime?
+  bannedBy              String?
+
+  // Legacy vtalk fields (kept for migration safety)
+  username              String?   @unique
+  vtNumber              String?   @unique
   emailVerified         Boolean   @default(false)
   emailVerificationToken String?
-  
-  // Ban status
   isBanned              Boolean   @default(false)
-  
-  // Premium
   isPremium             Boolean   @default(false)
   premiumPlan           String?
   premiumExpiresAt      DateTime?
   premiumActivatedWith  String?
-  
-  // VPN Access
   hasVpnAccess          Boolean   @default(false)
   vpnExpiresAt          DateTime?
-  
-  // AI Access
   hasAiAccess           Boolean   @default(false)
   aiExpiresAt           DateTime?
-  
-  // Username change tracking
   lastUsernameChangeAt  DateTime?
-  
-  // Login tracking
   lastLoginAt           DateTime?
   lastLoginIp           String?
   registrationIp        String?
-  
-  // Device Info
   lastDevice            String?
   lastPlatform          String?
   appVersion            String?
-  
-  // Geo
   country               String?
   city                  String?
-  
-  // Matrix integration
   matrixUserId          String?   @unique
   matrixAccessToken     String?
-  
-  // Metadata
   region                String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  
+
   // Relations
+  school                School?           @relation(fields: [schoolId], references: [id])
   loginHistory          LoginHistory[]
   sessions              Session[]
-  vpnConnections        VpnConnection[]
-  
+  chatParticipants      ChatParticipant[]
+  sentMessages          Message[]
+  parentLinks           ParentChild[]     @relation("ParentOf")
+  childLinks            ParentChild[]     @relation("ChildOf")
+
   @@index([email])
-  @@index([vtNumber])
-  @@index([username])
+  @@index([knNumber])
+  @@index([schoolId])
+  @@index([schoolId, classId])
+}
+
+model School {
+  id          String    @id @default(uuid())
+  name        String
+  city        String
+  address     String?
+  adminId     String?
+  createdAt   DateTime  @default(now())
+
+  users            User[]
+  activationCodes  ActivationCode[]
+  classes          SchoolClass[]
+
+  @@index([name])
+}
+
+// School class, e.g. "10B", "5A". classId on User stores the class name string.
+model SchoolClass {
+  id        String   @id @default(uuid())
+  name      String   // "10B", "5A" etc.
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  teacherId String?  // optional: primary teacher
+  createdAt DateTime @default(now())
+
+  @@unique([name, schoolId])
+  @@index([schoolId])
+}
+
+// ── Chat models ───────────────────────────────────────────────────────────────
+
+model Chat {
+  id            String            @id @default(uuid())
+  type          String            // personal | classGroup | schoolGroup
+  name          String?           // display name for group chats
+  schoolId      String?           // set for class/school group chats
+  className     String?           // set for classGroup chats (matches User.classId)
+  lastMessageAt DateTime?
+  createdAt     DateTime          @default(now())
+
+  participants  ChatParticipant[]
+  messages      Message[]
+
+  @@index([schoolId])
+  @@index([type, schoolId, className])
+}
+
+model ChatParticipant {
+  id       String   @id @default(uuid())
+  chatId   String
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unread   Int      @default(0)
+  joinedAt DateTime @default(now())
+
+  @@unique([chatId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String    @id @default(uuid())
+  chatId    String
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User      @relation(fields: [senderId], references: [id])
+  text      String
+  type      String    @default("text")   // text | system
+  status    String    @default("sent")   // sent | delivered | read
+  replyToId String?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@index([chatId, createdAt])
+  @@index([senderId])
+}
+
+// ── Family / Parent-Child ─────────────────────────────────────────────────────
+
+model ParentChild {
+  id        String   @id @default(uuid())
+  parentId  String
+  parent    User     @relation("ParentOf", fields: [parentId], references: [id], onDelete: Cascade)
+  childId   String
+  child     User     @relation("ChildOf",  fields: [childId],  references: [id], onDelete: Cascade)
+  status    String   @default("pending")  // pending | active | rejected
+
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, childId])
+  @@index([parentId])
+  @@index([childId])
+}
+
+// ── Global settings ───────────────────────────────────────────────────────────
+
+model GlobalSettings {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+// ── Legacy / other models ─────────────────────────────────────────────────────
+
+model ActivationCode {
+  code        String    @id
+  schoolId    String
+  school      School    @relation(fields: [schoolId], references: [id])
+  classId     String
+  role        String    @default("student")  // student|teacher
+  firstName   String
+  lastName    String
+  status      String    @default("unused")   // unused|used|expired
+  usedBy      String?
+  expiresAt   DateTime
+  createdBy   String
+  createdAt   DateTime  @default(now())
+
+  @@index([schoolId])
+  @@index([status])
 }
 
 model ActivationPassword {
@@ -78,7 +202,7 @@ model ActivationPassword {
   isActive      Boolean   @default(true)
   createdBy     String    @default("admin")
   createdAt     DateTime  @default(now())
-  
+
   @@index([password])
 }
 
@@ -86,16 +210,14 @@ model LoginHistory {
   id          String   @id @default(uuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   ip          String
   userAgent   String?
   platform    String?
   country     String?
   city        String?
   success     Boolean  @default(true)
-  
   timestamp   DateTime @default(now())
-  
+
   @@index([userId])
   @@index([timestamp])
 }
@@ -104,77 +226,27 @@ model Session {
   id          String   @id @default(uuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   token       String   @unique
   ip          String
   device      String?
   platform    String?
-  
   createdAt   DateTime @default(now())
   expiresAt   DateTime
   lastActive  DateTime @default(now())
   isActive    Boolean  @default(true)
-  
+
   @@index([userId])
   @@index([token])
 }
 
-model VpnConnection {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  nodeId      String
-  ip          String
-  device      String?
-  
-  connectedAt DateTime @default(now())
-  disconnectedAt DateTime?
-  duration    Int?     // seconds
-  
-  bytesUp     BigInt?
-  bytesDown   BigInt?
-  
-  @@index([userId])
-  @@index([nodeId])
-  @@index([connectedAt])
-}
-
 model BannedEmail {
-  id              String    @id @default(uuid())
-  email           String    @unique
+  id               String   @id @default(uuid())
+  email            String   @unique
   previousUsername String?
   previousVtNumber String?
-  reason          String?
-  bannedBy        String    @default("admin")
-  bannedAt        DateTime  @default(now())
-  
-  @@index([email])
-}
+  reason           String?
+  bannedBy         String   @default("admin")
+  bannedAt         DateTime @default(now())
 
-model VpnNode {
-  id              String    @id @default(uuid())
-  nodeId          String    @unique
-  location        String
-  countryCode     String
-  endpoint        String
-  
-  purpose         String    @default("general")
-  capacity        Int       @default(1000)
-  currentLoad     Int       @default(0)
-  
-  configType      String    @default("vless")
-  vlessUri        String?
-  singboxConfig   String?
-  
-  status          String    @default("active")
-  healthCheckUrl  String?
-  lastHealthCheck DateTime?
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  @@index([status])
-  @@index([purpose])
-  @@index([countryCode])
+  @@index([email])
 }

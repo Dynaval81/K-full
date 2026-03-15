@@ -70,14 +70,18 @@ class ThemeProvider extends ChangeNotifier {
   Future<void> initializeTheme() async {
     if (_isInitialized) return;
 
+    // System brightness as fallback when no preference is saved
+    final systemIsDark =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark;
+
     try {
       final prefs = await SharedPreferences.getInstance();
-      _isDarkMode = prefs.getBool('is_dark_mode') ?? true;
+      _isDarkMode = prefs.getBool('is_dark_mode') ?? systemIsDark;
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
-      // Если произошла ошибка, используем темную тему по умолчанию
-      _isDarkMode = true;
+      _isDarkMode = systemIsDark;
       _isInitialized = true;
       notifyListeners();
     }

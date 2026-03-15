@@ -90,22 +90,6 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  // ⭐ СМЕНА ИМЕНИ ПОЛЬЗОВАТЕЛЯ
-  Future<void> updateUsername(String newName, BuildContext context) async {
-    try {
-      final updatedData = await _apiService.changeUsername(newName);
-      
-      if (updatedData['success']) {
-        _user = _user?.copyWith(username: updatedData['username']);
-        notifyListeners(); // Мгновенно обновляем ник во всем приложении
-      } else {
-        showUsernameError(updatedData['error'], updatedData['nextChangeDate'], context);
-      }
-    } catch (e) {
-      showUsernameError('Ошибка сети: ${e.toString()}', null, context);
-    }
-  }
-
   // ⭐ ПОКАЗ ОШИБКИ СМЕНЫ ИМЕНИ
   void showUsernameError(String error, String? nextChangeDate, BuildContext context) {
     if (nextChangeDate != null) {

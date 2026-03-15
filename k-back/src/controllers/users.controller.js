@@ -1,6 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
+const log = require('../lib/logger');
 
 // Список запрещенных слов в username
 const RESTRICTED_WORDS = [
@@ -93,7 +92,7 @@ exports.updateUsername = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Update username error:', error);
+    log.error(error, 'Update username error:');
     res.status(500).json({
       success: false,
       error: 'Failed to update username'
@@ -106,57 +105,41 @@ exports.searchUsers = async (req, res) => {
   try {
     const { query } = req.query;
 
-    // Валидация
     if (!query || query.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        error: 'Search query is required'
-      });
+      return res.status(400).json({ success: false, error: 'Search query is required' });
     }
 
     const searchTerm = query.trim();
+    // Normalise KN number: accept "12345", "KN-12345", "kn-12345"
+    const knNorm = searchTerm.toUpperCase().startsWith('KN-')
+      ? searchTerm.toUpperCase()
+      : `KN-${searchTerm}`;
 
-    // Поиск по username (частичное совпадение) или VT-номеру (точное совпадение)
     const users = await prisma.user.findMany({
       where: {
+        status: 'active',
         OR: [
-          {
-            username: {
-              contains: searchTerm,
-              mode: 'insensitive' // Регистронезависимый поиск
-            }
-          },
-          {
-            vtNumber: searchTerm // Точное совпадение VT-номера
-          },
-          {
-            vtNumber: `VT-${searchTerm}` // Если ввели только цифры
-          }
-        ]
+          { firstName: { contains: searchTerm, mode: 'insensitive' } },
+          { lastName:  { contains: searchTerm, mode: 'insensitive' } },
+          { knNumber: knNorm },
+          { email: { contains: searchTerm, mode: 'insensitive' } },
+        ],
       },
       select: {
         id: true,
-        username: true,
-        vtNumber: true,
-        matrixUserId: true,
-        isPremium: true
-        // НЕ возвращаем email, password и другие приватные данные!
+        firstName: true,
+        lastName: true,
+        knNumber: true,
+        role: true,
+        schoolId: true,
+        classId: true,
       },
-      take: 20 // Ограничиваем результаты
+      take: 20,
     });
 
-    res.json({
-      success: true,
-      data: {
-        users,
-        total: users.length
-      }
-    });
+    res.json({ success: true, data: { users, total: users.length } });
   } catch (error) {
-    console.error('Search users error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Search failed'
-    });
+    log.error(error, 'Search users error:');
+    res.status(500).json({ success: false, error: 'Search failed' });
   }
 };

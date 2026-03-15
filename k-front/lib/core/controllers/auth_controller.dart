@@ -72,7 +72,7 @@ class AuthController extends ChangeNotifier {
         return;
       }
 
-      final result = await _api.getUser();
+      final result = await _api.getUserData();
       if (result['success'] == true && result['user'] != null) {
         final user = User.fromJson(result['user'] as Map<String, dynamic>);
         _setAuthenticated(user);
@@ -230,7 +230,7 @@ class AuthController extends ChangeNotifier {
   /// Перезапрашивает данные пользователя с сервера.
   Future<void> refreshUser() async {
     try {
-      final result = await _api.getUser();
+      final result = await _api.getUserData();
       if (result['success'] == true && result['user'] != null) {
         final user = User.fromJson(result['user'] as Map<String, dynamic>);
         _setAuthenticated(user);

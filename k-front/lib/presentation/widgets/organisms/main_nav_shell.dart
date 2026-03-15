@@ -1,8 +1,10 @@
-// v1.2.0
+// v1.3.1
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
+import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
+import 'package:knoty/core/controllers/swipe_lock_controller.dart';
 import 'package:knoty/core/enums/user_role.dart';
 import 'package:knoty/presentation/screens/ai/ai_assistant_screen.dart';
 import 'package:knoty/presentation/screens/chats_screen.dart';
@@ -31,6 +33,7 @@ class _TabDef {
 List<_TabDef> _buildActiveTabs(
   UserRole role,
   TabVisibilityController visibility,
+  AppLocalizations l10n,
 ) {
   final tabs = <_TabDef>[];
 
@@ -38,7 +41,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'chats',
       icon: Icons.chat_bubble_outline_rounded,
-      label: 'Chats',
+      label: l10n.tabChats,
       screen: const ChatsScreen(key: PageStorageKey('chats')),
     ));
 
@@ -46,7 +49,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'ai',
       icon: Icons.psychology_rounded,
-      label: 'KI',
+      label: l10n.navTabAi,
       screen: const AiAssistantScreen(key: PageStorageKey('ai')),
     ));
 
@@ -54,7 +57,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'school',
       icon: Icons.school_rounded,
-      label: 'Schule',
+      label: l10n.navTabSchool,
       screen: const SchoolScreen(key: PageStorageKey('school')),
     ));
 
@@ -62,7 +65,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'kind',
       icon: Icons.child_care_rounded,
-      label: 'Kind',
+      label: l10n.settingsTabKind,
       screen: const ParentControlScreen(key: PageStorageKey('kind')),
     ));
 
@@ -70,7 +73,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'classes',
       icon: Icons.class_rounded,
-      label: 'Klassen',
+      label: l10n.settingsTabClasses,
       screen: const MyClassesScreen(key: PageStorageKey('classes')),
     ));
 
@@ -78,7 +81,7 @@ List<_TabDef> _buildActiveTabs(
     tabs.add(_TabDef(
       id: 'verwaltung',
       icon: Icons.admin_panel_settings_rounded,
-      label: 'Verwaltung',
+      label: l10n.settingsTabVerwaltung,
       screen: const VerwaltungScreen(key: PageStorageKey('verwaltung')),
     ));
 
@@ -86,7 +89,7 @@ List<_TabDef> _buildActiveTabs(
   tabs.add(_TabDef(
     id: 'dashboard',
     icon: Icons.dashboard_rounded,
-    label: 'Dashboard',
+    label: l10n.tabDashboard,
     screen: const DashboardScreen(key: PageStorageKey('dashboard')),
   ));
 
@@ -117,6 +120,10 @@ class _MainNavShellState extends State<MainNavShell> {
   void _onTabTapped(int index) {
     if (_activeIndex == index) return;
     setState(() => _activeIndex = index);
+    // Always release the swipe lock when the user explicitly taps a tab.
+    // This prevents the AI screen (or any screen that locks swipe) from
+    // leaving the shell permanently frozen if its own unlock path was missed.
+    context.read<SwipeLockController>().unlock();
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -130,31 +137,40 @@ class _MainNavShellState extends State<MainNavShell> {
     }
   }
 
-  // Пересчитываем список вкладок и восстанавливаем индекс
+  // Пересчитываем список вкладок и восстанавливаем индекс.
+  // PageView использует NeverScrollableScrollPhysics — позиция меняется ТОЛЬКО
+  // через animateToPage/jumpToPage. Это гарантирует, что замена контроллера
+  // с initialPage корректно отрабатывает без конфликтов с live-физикой.
   void _syncTabs(List<_TabDef> newTabs) {
     if (newTabs.length == _tabs.length &&
-        _zip(newTabs, _tabs).every((p) => p.$1.id == p.$2.id)) {
-      return; // Ничего не изменилось
+        _zip(newTabs, _tabs).every(
+          (p) => p.$1.id == p.$2.id && p.$1.label == p.$2.label,
+        )) {
+      return; // ничего не изменилось
     }
 
-    final activeId =
-        _tabs.isNotEmpty && _activeIndex < _tabs.length
-            ? _tabs[_activeIndex].id
-            : 'chats';
+    final activeId = _tabs.isNotEmpty && _activeIndex < _tabs.length
+        ? _tabs[_activeIndex].id
+        : 'chats';
 
     _tabs = newTabs;
 
-    // Найти тот же экран в новом списке
     int newIndex = newTabs.indexWhere((t) => t.id == activeId);
-    if (newIndex < 0) newIndex = newTabs.length - 1; // dashboard
+    if (newIndex < 0) newIndex = newTabs.length - 1; // вкладка удалена → Dashboard
 
     if (_activeIndex != newIndex) {
       _activeIndex = newIndex;
-      // PageController пересоздаём с новой initialPage
+      // Пересоздаём контроллер с правильной initialPage.
+      // С NeverScrollableScrollPhysics это работает корректно: live-физики нет,
+      // позиция контролируется только программно.
       _pageController.dispose();
       _pageController = PageController(initialPage: newIndex);
-    } else {
-      _tabs = newTabs;
+      // Страховка: если по какой-то причине позиция сместилась — корректируем.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _pageController.hasClients) {
+          _pageController.jumpToPage(_activeIndex);
+        }
+      });
     }
   }
 
@@ -163,22 +179,32 @@ class _MainNavShellState extends State<MainNavShell> {
     final user = context.watch<AuthController>().currentUser;
     final role = user?.role ?? UserRole.student;
     final visibility = context.watch<TabVisibilityController>();
+    final swipeLocked = context.watch<SwipeLockController>().locked;
 
-    final newTabs = _buildActiveTabs(role, visibility);
+    final l10n = AppLocalizations.of(context)!;
+    final newTabs = _buildActiveTabs(role, visibility, l10n);
     _syncTabs(newTabs);
 
     final safeIndex = _activeIndex.clamp(0, _tabs.length - 1);
+
+    // Key включает активный индекс: при смене набора вкладок PageView
+    // пересоздаётся с чистым ScrollPosition и применяет initialPage контроллера,
+    // а не переносит старые пиксели из предыдущего состояния.
+    final pageViewKey = ValueKey('pv_${_tabs.map((t) => t.id).join('_')}');
 
     return Scaffold(
       body: _SwipeTabDetector(
         tabCount: _tabs.length,
         activeIndex: safeIndex,
         onSwipe: _onTabTapped,
+        locked: swipeLocked,
         child: PageView(
+          key: pageViewKey,
           controller: _pageController,
+          // NeverScrollableScrollPhysics обязателен: с live-физикой (SpringPhysics)
+          // при смене числа дочерних виджетов позиция сбивается, вызывая мигание.
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: _onPageChanged,
-          // Только активные вкладки — скрытых нет в дереве
           children: _tabs.map((t) => t.screen).toList(),
         ),
       ),
@@ -217,18 +243,22 @@ Iterable<(A, B)> _zip<A, B>(List<A> a, List<B> b) sync* {
   for (var i = 0; i < len; i++) yield (a[i], b[i]);
 }
 
-// ── Swipe detector ────────────────────────────────────────────────────────────
+// ── Swipe detector ─────────────────────────────────────────────────────────────
+// Обрабатывает горизонтальные свайпы поверх NeverScrollableScrollPhysics PageView.
+// Свайп вызывает _onTabTapped, который анимирует переход через animateToPage.
 
 class _SwipeTabDetector extends StatefulWidget {
   final int tabCount;
   final int activeIndex;
   final ValueChanged<int> onSwipe;
+  final bool locked;
   final Widget child;
 
   const _SwipeTabDetector({
     required this.tabCount,
     required this.activeIndex,
     required this.onSwipe,
+    required this.locked,
     required this.child,
   });
 
@@ -238,22 +268,25 @@ class _SwipeTabDetector extends StatefulWidget {
 
 class _SwipeTabDetectorState extends State<_SwipeTabDetector> {
   double _dragStart = 0;
-  // Используем velocity а не только distance — точнее распознаёт намерение
-  static const double _threshold    = 50.0;  // px
-  static const double _velocityMin  = 200.0; // px/s
+  static const double _threshold      = 50.0;   // px
+  static const double _velocityMin    = 300.0;  // px/s (raised — taps can hit 200)
+  static const double _minDisplacement = 20.0;  // px — required to rule out tap drift
 
   @override
   Widget build(BuildContext context) {
+    if (widget.locked) return widget.child;
+
     return GestureDetector(
-      // translucent — детектор видит жесты поверх дочерних скроллов,
-      // не перехватывает их (GestureArena решает победителя по velocity)
       behavior: HitTestBehavior.translucent,
       onHorizontalDragStart: (d) => _dragStart = d.globalPosition.dx,
       onHorizontalDragEnd: (d) {
         final dx       = d.globalPosition.dx - _dragStart;
         final velocity = d.primaryVelocity ?? 0;
-        // Засчитываем свайп если достаточно дистанции ИЛИ достаточно скорости
-        final isSwipe  = dx.abs() > _threshold || velocity.abs() > _velocityMin;
+        // Both a minimum displacement AND threshold/velocity are required.
+        // Without _minDisplacement, quick chip taps with slight finger drift
+        // can produce high velocity (>200 px/s) and falsely trigger tab switches.
+        final isSwipe  = dx.abs() >= _minDisplacement &&
+                         (dx.abs() > _threshold || velocity.abs() > _velocityMin);
         if (!isSwipe) return;
         final idx = widget.activeIndex;
         if ((dx < 0 || velocity < -_velocityMin) && idx < widget.tabCount - 1) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/l10n/app_localizations.dart';
+import 'package:knoty/locale_provider.dart';
 import 'package:knoty/core/constants.dart';
 import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
@@ -156,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LocaleProvider>(); // rebuild on locale change
     final l10n = AppLocalizations.of(context)!;
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 50;
 
@@ -170,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen>
       },
       child: GestureDetector(
         onHorizontalDragEnd: (details) {
-          if ((details.primaryVelocity ?? 0) > 300 && _step == 1) {
+          if ((details.primaryVelocity ?? 0) > 80 && _step == 1) {
             _goBack();
           }
         },
@@ -198,7 +200,13 @@ class _LoginScreenState extends State<LoginScreen>
                     padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: Column(
                       children: [
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 16),
+                        // ── Language picker ───────────────────────
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _LangPickerRow(),
+                        ),
+                        const SizedBox(height: 24),
 
                         // ── Logo ──────────────────────────────────
                         Image.asset(
@@ -322,15 +330,15 @@ class _LoginScreenState extends State<LoginScreen>
         AiryInputField(
           controller: _loginController,
           focusNode: _loginFocus,
-          label: 'Anmelden',
+          label: l10n.loginTitle,
           hint: '',
           keyboardType: TextInputType.emailAddress,
           onSubmitted: (_) => _goToPassword(),
         ),
         const SizedBox(height: 8),
-        const Text(
-          '@Benutzername, Knoty-ID oder E-Mail eingeben',
-          style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+        Text(
+          l10n.loginIdentifierHint,
+          style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
         ),
       ],
     );
@@ -396,6 +404,71 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Language picker ───────────────────────────────────────────────────────────
+
+class _LangPickerRow extends StatelessWidget {
+  static const _langs = [
+    ('de', '🇩🇪', 'Deutsch'),
+    ('en', '🇬🇧', 'English'),
+    ('ru', '🇷🇺', 'Русский'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final localeProvider = context.watch<LocaleProvider>();
+    final current = localeProvider.locale.languageCode;
+    final currentFlag = _langs.firstWhere((e) => e.$1 == current,
+        orElse: () => _langs.first).$2;
+
+    return PopupMenuButton<String>(
+      onSelected: (code) =>
+          context.read<LocaleProvider>().setLocale(Locale(code)),
+      offset: const Offset(0, 40),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: Colors.white,
+      elevation: 8,
+      itemBuilder: (_) => _langs
+          .map((e) => PopupMenuItem<String>(
+                value: e.$1,
+                child: Row(children: [
+                  Text(e.$2, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: 10),
+                  Text(e.$3,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: e.$1 == current
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: e.$1 == current
+                            ? const Color(0xFFE6B800)
+                            : const Color(0xFF1A1A1A),
+                      )),
+                  if (e.$1 == current) ...[
+                    const Spacer(),
+                    const Icon(Icons.check_rounded,
+                        size: 16, color: Color(0xFFE6B800)),
+                  ],
+                ]),
+              ))
+          .toList(),
+      child: Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(currentFlag, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 4),
+          const Icon(Icons.keyboard_arrow_down_rounded,
+              size: 16, color: Color(0xFF9E9E9E)),
+        ]),
+      ),
     );
   }
 }

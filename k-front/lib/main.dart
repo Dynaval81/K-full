@@ -8,6 +8,7 @@ import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/controllers/chat_controller.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
+import 'package:knoty/core/controllers/swipe_lock_controller.dart';
 import 'package:knoty/presentation/screens/auth/login_screen.dart';
 import 'package:knoty/presentation/screens/auth/register_screen.dart' as reg_screen;
 import 'package:knoty/presentation/screens/auth/registration_success_screen.dart';
@@ -21,6 +22,7 @@ import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/providers/user_provider.dart';
 import 'package:knoty/theme_provider.dart';
 import 'package:knoty/theme/app_theme.dart';
+import 'package:knoty/locale_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'package:knoty/core/utils/app_logger.dart';
 
@@ -47,6 +49,9 @@ void main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.initializeTheme();
 
+  final localeProvider = LocaleProvider();
+  await localeProvider.init();
+
   runApp(
     MultiProvider(
       providers: [
@@ -54,17 +59,20 @@ void main() async {
         ChangeNotifierProvider.value(value: userProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: chatController),
+        ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider(create: (_) => TabVisibilityController()..load()),
+        ChangeNotifierProvider(create: (_) => SwipeLockController()),
       ],
-      child: KnotyApp(initialLocation: initialLocation),
+      child: KnotyApp(initialLocation: initialLocation, authController: authController),
     ),
   );
 }
 
 class KnotyApp extends StatefulWidget {
   final String initialLocation;
+  final AuthController authController;
 
-  const KnotyApp({super.key, required this.initialLocation});
+  const KnotyApp({super.key, required this.initialLocation, required this.authController});
 
   @override
   State<KnotyApp> createState() => _KnotyAppState();
@@ -78,6 +86,16 @@ class _KnotyAppState extends State<KnotyApp> {
     super.initState();
     _router = GoRouter(
       initialLocation: widget.initialLocation,
+      refreshListenable: widget.authController,
+      redirect: (context, state) {
+        final auth = widget.authController;
+        if (auth.isRestoringSession) return null;
+        final isAuth = auth.isAuthenticated;
+        const publicPaths = {'/splash', '/auth', '/register', '/verify-email', '/register-success'};
+        final isPublic = publicPaths.contains(state.matchedLocation);
+        if (!isAuth && !isPublic) return AppRoutes.auth;
+        return null;
+      },
       routes: [
         GoRoute(
           path: AppRoutes.splash,
@@ -135,12 +153,13 @@ class _KnotyAppState extends State<KnotyApp> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
 
     return MaterialApp.router(
       routerConfig: _router,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light, // Тёмная тема отключена до MVP
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -149,7 +168,7 @@ class _KnotyAppState extends State<KnotyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('de'),
+      locale: localeProvider.locale,
     );
   }
 }

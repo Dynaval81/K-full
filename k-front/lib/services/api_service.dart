@@ -9,20 +9,19 @@ class ApiService {
   );
   static const String _tokenKey = 'auth_token';
   static const Duration _timeout = Duration(seconds: 30);
-  
+
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   // Регистрация пользователя
   Future<Map<String, dynamic>> register({
     required String email,
     required String password,
-    String? username,
     String? firstName,
     String? lastName,
-    String? role,          // 'student' | 'parent' | 'teacher'
-    String? schoolCode,    // SCH-XXXX
-    String? linkedChildKn, // для parent: KN-номер ребёнка
-    String region = 'DE',
+    String? role,            // 'student' | 'parent' | 'teacher'
+    String? activationCode,  // KNOTY-XXXX-XXXX
+    String? schoolId,
+    String? classId,
   }) async {
     try {
       final response = await http.post(
@@ -31,18 +30,17 @@ class ApiService {
         body: jsonEncode({
           'email': email,
           'password': password,
-          if (username != null)       'username': username,
           if (firstName != null)      'firstName': firstName,
           if (lastName != null)       'lastName': lastName,
           if (role != null)           'role': role,
-          if (schoolCode != null)     'schoolCode': schoolCode,
-          if (linkedChildKn != null)  'linkedChildKn': linkedChildKn,
-          'region': region,
+          if (activationCode != null) 'activationCode': activationCode,
+          if (schoolId != null)       'schoolId': schoolId,
+          if (classId != null)        'classId': classId,
         }),
       ).timeout(_timeout);
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 201) {
         final token = data['token'] ?? data['data']?['token'];
         final userData = data['user'] ?? data['data']?['user'];
@@ -50,28 +48,11 @@ class ApiService {
           await _secureStorage.write(key: _tokenKey, value: token);
         }
         return {'success': true, 'user': userData, 'token': token};
-      } else if (response.statusCode == 400) {
-        final errorData = jsonDecode(response.body);
-        final matrixError = errorData['error'] ?? errorData['message'] ?? 'Registration failed';
-        return {'success': false, 'error': matrixError};
       } else {
-        final otherError = data['error'] ?? data['message'] ?? 'Registration failed';
-        return {'success': false, 'error': otherError};
+        return {'success': false, 'error': data['error'] ?? data['message'] ?? 'Registration failed'};
       }
     } catch (e) {
-      String errorMessage = 'Registration failed';
-      try {
-        if (e.toString().contains('Exception:')) {
-          final errorString = e.toString().split('Exception: ')[1];
-          errorMessage = errorString.replaceAll(RegExp(r'[{}"]'), '').trim();
-        } else {
-          final errorString = e.toString().replaceAll('Exception: ', '');
-          errorMessage = errorString.replaceAll(RegExp(r'[{}"]'), '').trim();
-        }
-      } catch (_) {
-        errorMessage = 'Network error: ${e.toString()}';
-      }
-      return {'success': false, 'error': errorMessage};
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
     }
   }
 
@@ -85,59 +66,45 @@ class ApiService {
         Uri.parse('$_baseUrl/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'identifier': email,
+          'email': email,
           'password': password,
-          'appVersion': '0.0.1',   // ⭐ версия для админки
-          'platform': 'android',
         }),
       ).timeout(_timeout);
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200) {
         final token = data['token'] ?? data['data']?['token'];
         final userData = data['user'] ?? data['data']?['user'];
         if (token != null) {
           await _secureStorage.write(key: _tokenKey, value: token);
         }
-        // Store Matrix access token separately
-        final matrixToken = data['matrixAccessToken'] ?? data['data']?['matrixAccessToken'];
-        if (matrixToken != null) {
-          await _secureStorage.write(key: 'matrix_access_token', value: matrixToken.toString());
-        }
         return {
           'success': true,
           'user': userData,
           'token': token,
-          'matrixUserId': data['matrixUserId'] ?? data['data']?['matrixUserId'],
-          'matrixAccessToken': matrixToken,
-          'isFirstLogin': userData?['isFirstLogin'] ?? false,
         };
       } else if (response.statusCode == 403) {
+        final errorCode = data['code'];
+        if (errorCode == 'ACCOUNT_BANNED') {
+          return {
+            'success': false,
+            'error': data['error'] ?? 'Account banned',
+            'isBanned': true,
+            'banReason': data['banReason'],
+          };
+        }
         return {
           'success': false,
-          'error': data['error'] ?? 'Email not verified',
-          'isEmailNotVerified': true,
+          'error': data['error'] ?? data['message'] ?? 'Access denied',
         };
       } else {
-        return {'success': false, 'error': data['message'] ?? 'Login failed'};
+        return {'success': false, 'error': data['message'] ?? data['error'] ?? 'Login failed'};
       }
     } catch (e) {
-      String errorMessage = 'Network error';
-      try {
-        if (e.toString().contains('Exception:')) {
-          final errorString = e.toString().split('Exception: ')[1];
-          errorMessage = errorString.replaceAll(RegExp(r'[{}"]'), '').trim();
-        }
-      } catch (_) {
-        errorMessage = 'Network error: ${e.toString()}';
-      }
-      return {'success': false, 'error': errorMessage};
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
     }
   }
-
-  /// Алиас → [getUserData]. Используй [getUserData] напрямую для новых вызовов.
-  Future<Map<String, dynamic>> getUser() => getUserData();
 
   // Проверка наличия токена
   Future<bool> hasToken() async {
@@ -145,41 +112,7 @@ class ApiService {
     return token != null;
   }
 
-  // ⭐ СМЕНА ИМЕНИ ПОЛЬЗОВАТЕЛЯ
-  Future<Map<String, dynamic>> changeUsername(String newName) async {
-    try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token found'};
-      
-      final response = await http.put(
-        Uri.parse('$_baseUrl/users/me'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({'username': newName}),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return {'success': true, 'username': data['username']};
-      } else if (response.statusCode == 400) {
-        return {'success': false, 'error': data['message'] ?? 'Это имя зарезервировано системой. Пожалуйста, выберите другое'};
-      } else if (response.statusCode == 429) {
-        return {
-          'success': false,
-          'error': data['message'] ?? 'Превышен лимит попыток смены имени',
-          'nextChangeDate': data['nextChangeDate'],
-        };
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Ошибка смены имени'};
-      }
-    } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
-    }
-  }
-
-  // ⭐ ПОЛУЧЕНИЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ
+  // Получение данных текущего пользователя
   Future<Map<String, dynamic>> getUserData() async {
     try {
       final token = await _secureStorage.read(key: _tokenKey);
@@ -205,7 +138,7 @@ class ApiService {
     }
   }
 
-  // 🎯 ГЛОБАЛЬНЫЙ ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+  // Глобальный поиск пользователей
   Future<Map<String, dynamic>> searchUsers(String query) async {
     try {
       final token = await _secureStorage.read(key: _tokenKey);
@@ -235,61 +168,6 @@ class ApiService {
     }
   }
 
-  // ⭐ ПРОВЕРКА СТАТУСА ВЕРИФИКАЦИИ
-  Future<Map<String, dynamic>> checkVerificationStatus(String email) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/check-verification'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return {
-          'success': true,
-          'verified': data['verified'] ?? false,
-          'message': data['message'] ?? 'Verification checked',
-        };
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Verification check failed'};
-      }
-    } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
-    }
-  }
-
-  // ⭐ АКТИВАЦИЯ PREMIUM
-  Future<Map<String, dynamic>> activatePremium(String code) async {
-    try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token found'};
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/premium/activate'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({'password': code}), // ⭐ backend expects 'password'
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        final userData = data['data']?['user'];
-        return {
-          'success': true,
-          'message': data['message'] ?? 'Активировано успешно',
-          if (userData != null) 'user': userData,
-        };
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Ошибка активации'};
-      }
-    } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
-    }
-  }
-
   // Восстановление доступа
   Future<void> recoverAccess(String email) async {
     final response = await http.post(
@@ -300,7 +178,61 @@ class ApiService {
     if (response.statusCode != 200) throw Exception('Recovery failed');
   }
 
-  // ⭐ СОЗДАНИЕ ЧАТА
+  // Проверка активационного кода (до регистрации)
+  Future<Map<String, dynamic>> verifyCode({
+    required String code,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/auth/verify-code'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'code': code,
+          'firstName': firstName,
+          'lastName': lastName,
+        }),
+      ).timeout(_timeout);
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'valid': data['valid'] ?? false,
+          'schoolName': data['schoolName'],
+          'className': data['className'],
+          'role': data['role'],
+          'reason': data['reason'],
+        };
+      } else {
+        return {'success': false, 'error': data['error'] ?? 'Verification failed'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  // Публичный список школ (для регистрации)
+  Future<Map<String, dynamic>> getSchools() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/schools'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(_timeout);
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return {'success': true, 'schools': data['schools'] ?? []};
+      } else {
+        return {'success': false, 'error': data['error'] ?? 'Failed to load schools'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  // Создание чата
   Future<Map<String, dynamic>> createChat(String userId) async {
     try {
       final token = await _secureStorage.read(key: _tokenKey);
@@ -326,7 +258,7 @@ class ApiService {
     }
   }
 
-  // ⭐ ПОЛУЧЕНИЕ СПИСКА ЧАТОВ
+  // Получение списка чатов
   Future<Map<String, dynamic>> listChats() async {
     try {
       final token = await _secureStorage.read(key: _tokenKey);
@@ -351,35 +283,147 @@ class ApiService {
     }
   }
 
-  // ⭐ VPN СЕРВЕРЫ
-  Future<Map<String, dynamic>> getVpnServers({String? purpose}) async {
+  // ─── Admin API ────────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> _adminGet(String path, {Map<String, String>? query}) async {
     try {
       final token = await _secureStorage.read(key: _tokenKey);
       if (token == null) return {'success': false, 'error': 'No token'};
-
-      final uri = Uri.parse('$_baseUrl/vpn/servers').replace(
-        queryParameters: purpose != null ? {'purpose': purpose} : null,
-      );
-
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(_timeout);
-
+      final uri = Uri.parse('$_baseUrl/admin/$path').replace(queryParameters: query);
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }).timeout(_timeout);
       final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        final servers = data['servers'] ?? data['data']?['servers'] ?? [];
-        return {'success': true, 'servers': servers};
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Failed to load servers'};
-      }
+      if (response.statusCode == 200 || response.statusCode == 201) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
     } catch (e) {
       return {'success': false, 'error': 'Network error: ${e.toString()}'};
     }
   }
+
+  Future<Map<String, dynamic>> _adminPost(String path, Map<String, dynamic> body) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.post(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> _adminPut(String path, Map<String, dynamic> body) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.put(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> _adminDelete(String path) async {
+    try {
+      final token = await _secureStorage.read(key: _tokenKey);
+      if (token == null) return {'success': false, 'error': 'No token'};
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/admin/$path'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+      ).timeout(_timeout);
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+    }
+  }
+
+  // Статистика
+  Future<Map<String, dynamic>> adminGetStats() => _adminGet('stats');
+
+  // Школы
+  Future<Map<String, dynamic>> adminListSchools() => _adminGet('schools');
+
+  Future<Map<String, dynamic>> adminCreateSchool({
+    required String name,
+    required String city,
+    String? address,
+  }) => _adminPost('schools', {'name': name, 'city': city, if (address != null) 'address': address});
+
+  Future<Map<String, dynamic>> adminUpdateSchool(
+    String id, {
+    String? name,
+    String? city,
+    String? address,
+  }) => _adminPut('schools/$id', {
+        if (name != null) 'name': name,
+        if (city != null) 'city': city,
+        if (address != null) 'address': address,
+      });
+
+  // Коды активации
+  Future<Map<String, dynamic>> adminListCodes({String? schoolId, String? status, String? classId}) =>
+      _adminGet('codes', query: {
+        if (schoolId != null) 'schoolId': schoolId,
+        if (status != null) 'status': status,
+        if (classId != null) 'classId': classId,
+      });
+
+  Future<Map<String, dynamic>> adminGenerateCodes({
+    required String schoolId,
+    required String classId,
+    required List<Map<String, String>> entries, // [{firstName, lastName}]
+    String role = 'student',
+    int expiresInDays = 30,
+  }) => _adminPost('codes/generate', {
+        'schoolId': schoolId,
+        'classId': classId,
+        'role': role,
+        'entries': entries,
+        'expiresInDays': expiresInDays,
+      });
+
+  Future<Map<String, dynamic>> adminDeleteCode(String code) => _adminDelete('codes/$code');
+
+  // Пользователи
+  Future<Map<String, dynamic>> adminListUsers({
+    String? schoolId,
+    String? status,
+    String? role,
+    bool? pending,
+    String? search,
+    int page = 1,
+    int limit = 50,
+  }) => _adminGet('users', query: {
+        if (schoolId != null) 'schoolId': schoolId,
+        if (status != null) 'status': status,
+        if (role != null) 'role': role,
+        if (pending != null) 'pending': pending.toString(),
+        if (search != null) 'search': search,
+        'page': page.toString(),
+        'limit': limit.toString(),
+      });
+
+  Future<Map<String, dynamic>> adminApproveUser(String id) => _adminPost('users/$id/approve', {});
+
+  Future<Map<String, dynamic>> adminBanUser(String id, {String? reason}) =>
+      _adminPost('users/$id/ban', {if (reason != null) 'reason': reason});
+
+  Future<Map<String, dynamic>> adminUnbanUser(String id) => _adminPost('users/$id/unban', {});
 
   // Выход
   Future<void> logout() async {

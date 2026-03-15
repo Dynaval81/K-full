@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:knoty/core/constants.dart';
 import 'package:knoty/core/constants/app_constants.dart';
+import 'package:knoty/l10n/app_localizations.dart';
 
 class RegistrationSuccessScreen extends StatefulWidget {
   final String nickname;
@@ -55,6 +56,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Theme(
       data: ThemeData.light().copyWith(
         scaffoldBackgroundColor: Colors.white,
@@ -91,7 +93,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
 
                   // ── Title ─────────────────────────────────────────
                   Text(
-                    'Добро пожаловать!',
+                    l10n.registerSuccessWelcome,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
@@ -120,7 +122,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                     child: Column(
                       children: [
                         Text(
-                          'Ваш Deine Knoty-ID',
+                          l10n.registerSuccessKnotyIdLabel,
                           style: TextStyle(
                             fontSize: 13,
                             color: AppColors.onSurfaceVariant,
@@ -184,7 +186,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Запомните этот номер — он нужен для входа',
+                          l10n.registerSuccessRememberHint,
                           style: TextStyle(
                             fontSize: 13,
                             color: AppColors.onSurfaceVariant.withOpacity(0.7),
@@ -217,10 +219,10 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                       child: InkWell(
                         onTap: () => context.go(AppRoutes.home),
                         borderRadius: BorderRadius.circular(20),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Начать',
-                            style: TextStyle(
+                            l10n.registerSuccessButton,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,

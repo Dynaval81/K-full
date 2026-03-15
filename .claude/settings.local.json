@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze 2>&1)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter devices 2>&1)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter run -d RZ8MA30LX8D 2>&1)",
+      "Bash(flutter run:*)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter gen-l10n 2>&1)",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze lib/presentation/screens/dashboard/dashboard_screen.dart lib/presentation/widgets/knoty_app_bar.dart lib/presentation/screens/auth/login_screen.dart 2>&1 | grep -E \"^error|Error\")",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze lib/presentation/screens/dashboard/dashboard_screen.dart lib/presentation/widgets/knoty_app_bar.dart 2>&1 | grep -v \"^Analyzing\\\\|^Downloading\\\\|packages\\\\|available\\\\|Try\\\\|flutter pub\\\\|A new version\\\\|To update\\\\|upgrade\")",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze lib/presentation/screens/dashboard/dashboard_screen.dart lib/presentation/widgets/knoty_app_bar.dart lib/presentation/screens/auth/login_screen.dart lib/presentation/screens/auth/register_screen.dart 2>&1 | grep \"^error\\\\|^  error\")",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze lib/presentation/widgets/organisms/main_nav_shell.dart lib/presentation/screens/chat/chat_room_screen.dart lib/presentation/screens/chats_screen.dart lib/presentation/screens/auth/login_screen.dart 2>&1 | grep \"^error\\\\|  error\")",
+      "Bash(cd D:/projects/Kn_project/k-front && flutter analyze lib/presentation/widgets/organisms/main_nav_shell.dart 2>&1 | grep -v \"^Analyzing\\\\|^Resolving\\\\|^Downloading\\\\|package\\\\|upgrade\\\\|available\\\\|version\")",
+      "Bash(npm install:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//d/projects/Kn_project/k-back/**)",
+      "Bash(done)",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter pub get 2>&1 | tail -5 && flutter gen-l10n 2>&1)",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter pub get 2>&1 | tail -5)",
+      "Bash(flutter gen-l10n:*)",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter analyze lib/presentation/screens/parent/parent_control_screen.dart lib/presentation/screens/ai/ai_assistant_screen.dart lib/presentation/screens/school/school_screen.dart 2>&1 | tail -30)",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter analyze lib/presentation/screens/parent/parent_control_screen.dart lib/presentation/screens/ai/ai_assistant_screen.dart 2>&1 | grep \"error\")",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter analyze lib/presentation/widgets/organisms/main_nav_shell.dart lib/presentation/screens/ai/ai_assistant_screen.dart lib/presentation/screens/parent/parent_control_screen.dart 2>&1 | grep \"error\")",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter analyze lib/l10n/app_localizations.dart 2>&1 | grep -E \"error|navTabAi|navTabSchool|aiStop\" | head -20)",
+      "Bash(cd \"D:/projects/Kn_project/k-front\" && flutter analyze lib/presentation/widgets/organisms/main_nav_shell.dart lib/presentation/screens/ai/ai_assistant_screen.dart lib/presentation/screens/parent/parent_control_screen.dart 2>&1 | head -40)",
+      "Bash(cd \"D:\\\\projects\\\\Kn_project\\\\k-front\" && flutter analyze lib/presentation/screens/ai/ai_assistant_screen.dart lib/presentation/screens/parent/parent_control_screen.dart lib/presentation/screens/school/school_screen.dart 2>&1)",
+      "Bash(flutter analyze:*)",
+      "Bash(grep -n \"shrinkWrap\\\\|NeverScrollable\\\\|ListView\\\\|Column\\(\" \"D:/projects/Kn_project/k-front/lib/presentation/screens/school/school_screen.dart\" | grep -v \"//\" | head -40)",
+      "Bash(cd /d/projects/Kn_project/k-back && node --check src/server.js && node --check src/app.js && node --check src/controllers/auth.controller.js && node --check src/controllers/admin.api.controller.js && node --check src/routes/auth.routes.js && echo \"All OK\")"
+    ]
+  }
+}

@@ -49,7 +49,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     setState(() => _isLoading = true);
 
     try {
-      final result = await ApiService().getUser();
+      final result = await ApiService().getUserData();
       debugPrint('[VERIFY] result: $result');
 
       if (!mounted) return;

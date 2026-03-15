@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
 import 'package:knoty/core/enums/user_role.dart';
@@ -12,6 +10,8 @@ import 'package:knoty/core/utils/app_logger.dart';
 import 'package:knoty/data/models/user_model.dart';
 import 'package:knoty/providers/user_provider.dart';
 import 'package:knoty/l10n/app_localizations.dart';
+import 'package:knoty/locale_provider.dart';
+import 'package:knoty/theme_provider.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -19,11 +19,11 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n     = AppLocalizations.of(context)!;
-    final auth     = context.watch<AuthController>();
-    final user     = auth.currentUser;
-    final role     = user?.role ?? UserRole.student;
-    final vis      = context.watch<TabVisibilityController>();
+    final l10n  = AppLocalizations.of(context)!;
+    final auth  = context.watch<AuthController>();
+    final user  = auth.currentUser;
+    final role  = user?.role ?? UserRole.student;
+    final vis   = context.watch<TabVisibilityController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -35,11 +35,11 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-            // ── User info card ───────────────────────────────────
-            _UserInfoCard(user: user, role: role),
-            const SizedBox(height: 16),
+            // ── Theme ─────────────────────────────────────────────
+            _ThemeCard(),
+            const SizedBox(height: 4),
 
-            // ── Tab visibility — общие вкладки (у всех) ──────────
+            // ── Tab visibility ────────────────────────────────────
             _ExpandCard(
               icon: Icons.tune_rounded,
               title: l10n.settingsTabsTitle,
@@ -66,7 +66,6 @@ class DashboardScreen extends StatelessWidget {
                   onChanged: vis.setScheduleTab,
                   allValues: _baseTabValues(vis, role),
                 ),
-                // Role-specific toggles
                 if (role.hasChildTab)
                   _TabToggle(
                     icon: Icons.child_care_rounded,
@@ -93,7 +92,9 @@ class DashboardScreen extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 4),
+
+            // ── Language ──────────────────────────────────────────
+            _LanguageExpandCard(),
 
             // ── App info ─────────────────────────────────────────
             _ExpandCard(
@@ -101,7 +102,7 @@ class DashboardScreen extends StatelessWidget {
               title: l10n.dashboardAppInfo,
               children: [
                 _InfoRow('App', 'Knoty'),
-                _InfoRow('Version', '1.0.0 (1)'),
+                _InfoRow(l10n.settingsVersion, '1.0.0 (1)'),
                 _InfoRow('Build', '1'),
                 _InfoRow('API', 'v1.0'),
               ],
@@ -110,99 +111,133 @@ class DashboardScreen extends StatelessWidget {
             // ── Bug report ───────────────────────────────────────
             _ReportButton(user: user),
             const SizedBox(height: 8),
-
-            // ── Logout ───────────────────────────────────────────
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  await context.read<AuthController>().logout();
-                  if (context.mounted) context.go(AppRoutes.auth);
-                },
-                icon: const Icon(Icons.logout_rounded, size: 18),
-                label: Text(l10n.dashboardLogout),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                ),
-              ),
-            ),
           ],
-          ),  // Column
+          ),
         ),
       ),
     );
   }
 
-  /// Все значения базовых вкладок + роль-специфичных — для защиты от отключения последней
   List<bool> _baseTabValues(TabVisibilityController vis, UserRole role) {
     return [
       vis.showChatsTab,
       vis.showAiTab,
       vis.showScheduleTab,
-      if (role.hasChildTab)    vis.showKindTab,
-      if (role.hasMyClassesTab) vis.showClassesTab,
+      if (role.hasChildTab)      vis.showKindTab,
+      if (role.hasMyClassesTab)  vis.showClassesTab,
       if (role.hasManagementTab) vis.showVerwaltungTab,
     ];
   }
 }
 
-// ── User info card ────────────────────────────────────────────────────────────
+// ── Theme card ────────────────────────────────────────────────────────────────
 
-class _UserInfoCard extends StatelessWidget {
-  final User? user;
-  final UserRole role;
-  const _UserInfoCard({required this.user, required this.role});
+class _ThemeCard extends StatelessWidget {
+  const _ThemeCard();
 
   @override
   Widget build(BuildContext context) {
+    final l10n  = AppLocalizations.of(context)!;
+    final theme = context.watch<ThemeProvider>();
+    final isDark = theme.isDarkMode;
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10, offset: const Offset(0, 2))],
       ),
       child: Row(children: [
-        // Avatar circle
         Container(
-          width: 52, height: 52,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [Color(0xFFE6B800), Color(0xFFFFD84D)],
-              begin: Alignment.topLeft, end: Alignment.bottomRight,
-            ),
-          ),
-          child: Center(child: Text(
-            (user?.username ?? '?').substring(0, 1).toUpperCase(),
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
-          )),
-        ),
-        const SizedBox(width: 14),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(user?.username ?? '–',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF1A1A1A)),
-            overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 2),
-          Text(user?.email ?? '–',
-            style: const TextStyle(fontSize: 14, color: Color(0xFF9E9E9E)),
-            overflow: TextOverflow.ellipsis),
-        ])),
-        // Role badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          width: 34, height: 34,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF8E1),
-            borderRadius: BorderRadius.circular(20),
+            color: const Color(0xFFE6B800).withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(role.displayName,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFFE6B800))),
+          child: Icon(
+            isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+            color: const Color(0xFFE6B800), size: 17),
+        ),
+        const SizedBox(width: 12),
+        Expanded(child: Text(l10n.settingsTheme,
+          style: const TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87))),
+        // Segmented toggle
+        Container(
+          height: 34,
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F3F5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _ThemeSegment(
+                icon: Icons.light_mode_rounded,
+                label: l10n.settingsThemeLight,
+                active: !isDark,
+                onTap: () => theme.setTheme(false),
+              ),
+              const SizedBox(width: 2),
+              _ThemeSegment(
+                icon: Icons.dark_mode_rounded,
+                label: l10n.settingsThemeDark,
+                active: isDark,
+                onTap: () => theme.setTheme(true),
+              ),
+            ],
+          ),
         ),
       ]),
+    );
+  }
+}
+
+class _ThemeSegment extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _ThemeSegment({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: active ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(9),
+          boxShadow: active
+              ? [BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 4, offset: const Offset(0, 1))]
+              : null,
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(icon,
+            size: 14,
+            color: active ? const Color(0xFFE6B800) : const Color(0xFF9E9E9E)),
+          const SizedBox(width: 4),
+          Text(label,
+            style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w600,
+              color: active ? const Color(0xFF1A1A1A) : const Color(0xFF9E9E9E))),
+        ]),
+      ),
     );
   }
 }
@@ -214,12 +249,14 @@ class _ExpandCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final bool initiallyExpanded;
+  final String? subtitle;
 
   const _ExpandCard({
     required this.icon,
     required this.title,
     required this.children,
     this.initiallyExpanded = false,
+    this.subtitle,
   });
 
   @override
@@ -229,7 +266,9 @@ class _ExpandCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10, offset: const Offset(0, 2))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -240,8 +279,22 @@ class _ExpandCard extends StatelessWidget {
           backgroundColor: Colors.transparent,
           tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          leading: Icon(icon, color: const Color(0xFFE6B800), size: 24),
-          title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+          leading: Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6B800).withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: const Color(0xFFE6B800), size: 17),
+          ),
+          title: Text(title,
+            style: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+          subtitle: subtitle != null
+              ? Text(subtitle!,
+                  style: const TextStyle(
+                    fontSize: 12, color: Color(0xFF9E9E9E)))
+              : null,
           children: children,
         ),
       ),
@@ -387,6 +440,66 @@ class _ReportButton extends StatelessWidget {
   }
 }
 
+// ── Language expand card ──────────────────────────────────────────────────────
+
+class _LanguageExpandCard extends StatelessWidget {
+  const _LanguageExpandCard();
+
+  static const _langs = [
+    ('de', '🇩🇪', 'Deutsch'),
+    ('en', '🇬🇧', 'English'),
+    ('ru', '🇷🇺', 'Русский'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n    = AppLocalizations.of(context)!;
+    final current = context.watch<LocaleProvider>().locale.languageCode;
+    final currentEntry = _langs.firstWhere(
+        (e) => e.$1 == current, orElse: () => _langs.first);
+
+    return _ExpandCard(
+      icon: Icons.language_rounded,
+      title: l10n.settingsLanguage,
+      subtitle: '${currentEntry.$2} ${currentEntry.$3}',
+      children: _langs.map((e) {
+        final active = e.$1 == current;
+        return GestureDetector(
+          onTap: () =>
+              context.read<LocaleProvider>().setLocale(Locale(e.$1)),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: active
+                  ? const Color(0xFFE6B800).withValues(alpha: 0.08)
+                  : const Color(0xFFF8F8F8),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: active
+                    ? const Color(0xFFE6B800).withValues(alpha: 0.4)
+                    : Colors.transparent,
+              ),
+            ),
+            child: Row(children: [
+              Text(e.$2, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: 12),
+              Expanded(child: Text(e.$3,
+                style: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.w500,
+                  color: active ? const Color(0xFFE6B800) : const Color(0xFF1A1A1A)))),
+              if (active)
+                const Icon(Icons.check_circle_rounded,
+                    size: 18, color: Color(0xFFE6B800)),
+            ]),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 // ── Report sheet ──────────────────────────────────────────────────────────────
 
 class _ReportSheet extends StatefulWidget {
@@ -430,12 +543,12 @@ class _ReportSheetState extends State<_ReportSheet> {
         Text(l10n.dashboardReportHint, style: const TextStyle(fontSize: 14, color: Colors.grey)),
         const SizedBox(height: 16),
         if (_sent)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Row(children: [
-              Icon(Icons.check_circle, color: Colors.green),
-              SizedBox(width: 8),
-              Text('Bericht gesendet', style: TextStyle(color: Colors.green, fontSize: 15)),
+              const Icon(Icons.check_circle, color: Colors.green),
+              const SizedBox(width: 8),
+              Text(l10n.dashboardReportSent, style: const TextStyle(color: Colors.green, fontSize: 15)),
             ]),
           )
         else ...[
@@ -444,11 +557,11 @@ class _ReportSheetState extends State<_ReportSheet> {
             child: TextField(
               controller: _ctrl, maxLines: 5, autofocus: true,
               style: const TextStyle(fontSize: 15, color: Colors.black87),
-              decoration: const InputDecoration(
-                hintText: 'Was ist passiert?',
-                hintStyle: TextStyle(color: Colors.black38, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: l10n.dashboardReportPlaceholder,
+                hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.all(14),
+                contentPadding: const EdgeInsets.all(14),
               ),
             ),
           ),
@@ -463,7 +576,7 @@ class _ReportSheetState extends State<_ReportSheet> {
               ),
               child: _sending
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : const Text('Senden', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                : Text(l10n.dashboardReportSend, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
             ),
           ),
         ],
