@@ -25,6 +25,7 @@ import 'package:knoty/theme/app_theme.dart';
 import 'package:knoty/locale_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'package:knoty/core/utils/app_logger.dart';
+import 'package:knoty/core/connectivity_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +63,7 @@ void main() async {
         ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider(create: (_) => TabVisibilityController()..load()),
         ChangeNotifierProvider(create: (_) => SwipeLockController()),
+        ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
       ],
       child: KnotyApp(initialLocation: initialLocation, authController: authController),
     ),
