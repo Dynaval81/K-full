@@ -451,7 +451,7 @@ class _LangPickerRow extends StatelessWidget {
                             : FontWeight.w400,
                         color: e.$1 == current
                             ? const Color(0xFFE6B800)
-                            : const Color(0xFF1A1A1A),
+                            : Theme.of(context).colorScheme.onSurface,
                       )),
                   if (e.$1 == current) ...[
                     const Spacer(),
@@ -465,14 +465,14 @@ class _LangPickerRow extends StatelessWidget {
         padding:
             const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Text(currentFlag, style: const TextStyle(fontSize: 18)),
           const SizedBox(width: 4),
-          const Icon(Icons.keyboard_arrow_down_rounded,
-              size: 16, color: Color(0xFF9E9E9E)),
+          Icon(Icons.keyboard_arrow_down_rounded,
+              size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ]),
       ),
     );

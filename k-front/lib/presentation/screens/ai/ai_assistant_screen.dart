@@ -490,13 +490,17 @@ class _SmartHeaderState extends State<_SmartHeader>
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
     final theme = _theme();
     const accent = _kGold;
+    // In dark mode use dark-gold tinted backgrounds so text remains visible
+    final bgFrom = isDark ? const Color(0xFF2A2200) : theme.from;
+    final bgTo   = isDark ? const Color(0xFF3A3000) : theme.to;
     return AnimatedBuilder(
       animation: _ctrl,
       builder: (_, __) {
         final t = (sin(_ctrl.value * 2 * pi) + 1) / 2;
-        final bg = Color.lerp(theme.from, theme.to, t)!;
+        final bg = Color.lerp(bgFrom, bgTo, t)!;
 
         // Pulsing rings use same phase
         final ringT1 = (_ctrl.value * 1.2) % 1.0;

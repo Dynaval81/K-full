@@ -1075,42 +1075,34 @@ class _WeekDayRow extends StatelessWidget {
               ),
             ]),
           ),
-          // Expanded lesson list.
-          // AnimatedSize is a CHILD of the outer Column → outer Column is never
-          // constrained and cannot overflow.
-          // OverflowBox inside AnimatedSize gives the content unconstrained height
-          // so the inner Column never receives tight constraints during animation
-          // → no RenderFlex overflow stripes even at the intermediate animated size.
+          // Expanded lesson list. Clip.hardEdge on AnimatedSize handles
+          // overflow during the collapse/expand animation.
           AnimatedSize(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             clipBehavior: Clip.hardEdge,
             alignment: Alignment.topCenter,
             child: expanded
-                ? OverflowBox(
-                    maxHeight: double.infinity,
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(children: [
-                          Icon(s.icon, size: 13, color: s.color),
-                          const SizedBox(width: 8),
-                          Text('${s.startStr}–${s.endStr}',
-                              style: const TextStyle(
-                                  fontSize: 11, color: Color(0xFF9E9E9E))),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text(s.subject ?? '',
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w600,
-                                  color: cs.onSurface))),
-                          Text(s.room ?? '',
-                              style: const TextStyle(
-                                  fontSize: 11, color: Color(0xFF9E9E9E))),
-                        ]),
-                      )).toList()),
-                    ),
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(children: [
+                        Icon(s.icon, size: 13, color: s.color),
+                        const SizedBox(width: 8),
+                        Text('${s.startStr}–${s.endStr}',
+                            style: const TextStyle(
+                                fontSize: 11, color: Color(0xFF9E9E9E))),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(s.subject ?? '',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w600,
+                                color: cs.onSurface))),
+                        Text(s.room ?? '',
+                            style: const TextStyle(
+                                fontSize: 11, color: Color(0xFF9E9E9E))),
+                      ]),
+                    )).toList()),
                   )
                 : const SizedBox.shrink(),
           ),

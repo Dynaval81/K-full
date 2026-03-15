@@ -385,19 +385,19 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           tooltip: AppLocalizations.of(context)!.chatCallVoice,
-          icon: const Icon(Icons.call_rounded,
-              color: Color(0xFF1A1A1A), size: 22),
+          icon: Icon(Icons.call_rounded,
+              color: Theme.of(context).colorScheme.onSurface, size: 22),
           onPressed: () => _showCallSnack(context, isVideo: false),
         ),
         IconButton(
           tooltip: AppLocalizations.of(context)!.chatCallVideo,
-          icon: const Icon(Icons.videocam_rounded,
-              color: Color(0xFF1A1A1A), size: 22),
+          icon: Icon(Icons.videocam_rounded,
+              color: Theme.of(context).colorScheme.onSurface, size: 22),
           onPressed: () => _showCallSnack(context, isVideo: true),
         ),
         IconButton(
-          icon: const Icon(Icons.more_vert_rounded,
-              color: Color(0xFF1A1A1A), size: 22),
+          icon: Icon(Icons.more_vert_rounded,
+              color: Theme.of(context).colorScheme.onSurface, size: 22),
           onPressed: () {}, // TODO: chat options
         ),
       ],
