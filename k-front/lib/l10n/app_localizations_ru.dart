@@ -447,6 +447,110 @@ class AppLocalizationsRu extends AppLocalizations {
       'У тебя есть суперадмин-доступ ко всем школам.';
 
   @override
+  String get adminTabStats => 'Обзор';
+
+  @override
+  String get adminTabUsers => 'Пользователи';
+
+  @override
+  String get adminTabCodes => 'Коды';
+
+  @override
+  String get adminTabSchools => 'Школы';
+
+  @override
+  String get adminTabSettings => 'Настройки';
+
+  @override
+  String get adminStatUsers => 'Пользователи';
+
+  @override
+  String get adminStatSchools => 'Школы';
+
+  @override
+  String get adminStatPending => 'На проверке';
+
+  @override
+  String get adminStatCodes => 'Коды';
+
+  @override
+  String get adminUsersTitle => 'Управление пользователями';
+
+  @override
+  String get adminUsersPending => 'На проверке';
+
+  @override
+  String get adminUsersAll => 'Все';
+
+  @override
+  String get adminApprove => 'Одобрить';
+
+  @override
+  String get adminBan => 'Заблокировать';
+
+  @override
+  String get adminUnban => 'Разблокировать';
+
+  @override
+  String get adminCodesTitle => 'Коды активации';
+
+  @override
+  String get adminCodesGenerate => 'Сгенерировать';
+
+  @override
+  String get adminCodesGenerateHint => 'Сколько кодов?';
+
+  @override
+  String get adminCodesEmpty => 'Кодов пока нет';
+
+  @override
+  String get adminSchoolsTitle => 'Школы';
+
+  @override
+  String get adminSchoolsAdd => 'Добавить школу';
+
+  @override
+  String get adminSchoolsEmpty => 'Школ пока нет';
+
+  @override
+  String get adminSettingsTitle => 'Глобальные настройки';
+
+  @override
+  String get adminSettingsMaintenance => 'Режим обслуживания';
+
+  @override
+  String get adminSettingsMaintenanceHint => 'Блокирует доступ пользователей';
+
+  @override
+  String get adminSettingsRegistration => 'Открытая регистрация';
+
+  @override
+  String get adminSettingsRegistrationHint =>
+      'Разрешить регистрацию новых пользователей';
+
+  @override
+  String get adminSettingsSaved => 'Настройки сохранены';
+
+  @override
+  String get adminConfirmBan => 'Заблокировать пользователя?';
+
+  @override
+  String get adminConfirmBanMessage =>
+      'Пользователь потеряет доступ к приложению.';
+
+  @override
+  String get adminSchoolNameHint => 'Название школы';
+
+  @override
+  String get adminSchoolCityHint => 'Город';
+
+  @override
+  String get adminCancel => 'Отмена';
+
+  @override
+  String get adminConfirm => 'Подтвердить';
+
+  @override
   String get lockedDefaultTitle => 'Функция заблокирована';
 
   @override

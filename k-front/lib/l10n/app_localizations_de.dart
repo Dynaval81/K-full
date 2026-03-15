@@ -450,6 +450,110 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du hast Superadmin-Zugriff auf alle Schulen.';
 
   @override
+  String get adminTabStats => 'Übersicht';
+
+  @override
+  String get adminTabUsers => 'Nutzer';
+
+  @override
+  String get adminTabCodes => 'Codes';
+
+  @override
+  String get adminTabSchools => 'Schulen';
+
+  @override
+  String get adminTabSettings => 'Einstellungen';
+
+  @override
+  String get adminStatUsers => 'Nutzer';
+
+  @override
+  String get adminStatSchools => 'Schulen';
+
+  @override
+  String get adminStatPending => 'Ausstehend';
+
+  @override
+  String get adminStatCodes => 'Codes';
+
+  @override
+  String get adminUsersTitle => 'Nutzerverwaltung';
+
+  @override
+  String get adminUsersPending => 'Ausstehend';
+
+  @override
+  String get adminUsersAll => 'Alle';
+
+  @override
+  String get adminApprove => 'Freigeben';
+
+  @override
+  String get adminBan => 'Sperren';
+
+  @override
+  String get adminUnban => 'Entsperren';
+
+  @override
+  String get adminCodesTitle => 'Aktivierungscodes';
+
+  @override
+  String get adminCodesGenerate => 'Generieren';
+
+  @override
+  String get adminCodesGenerateHint => 'Wie viele Codes?';
+
+  @override
+  String get adminCodesEmpty => 'Noch keine Aktivierungscodes';
+
+  @override
+  String get adminSchoolsTitle => 'Schulen';
+
+  @override
+  String get adminSchoolsAdd => 'Schule hinzufügen';
+
+  @override
+  String get adminSchoolsEmpty => 'Noch keine Schulen';
+
+  @override
+  String get adminSettingsTitle => 'Globale Einstellungen';
+
+  @override
+  String get adminSettingsMaintenance => 'Wartungsmodus';
+
+  @override
+  String get adminSettingsMaintenanceHint =>
+      'Blockiert den Nutzerzugang wenn aktiv';
+
+  @override
+  String get adminSettingsRegistration => 'Registrierung offen';
+
+  @override
+  String get adminSettingsRegistrationHint =>
+      'Neue Nutzer können sich registrieren';
+
+  @override
+  String get adminSettingsSaved => 'Einstellungen gespeichert';
+
+  @override
+  String get adminConfirmBan => 'Nutzer sperren?';
+
+  @override
+  String get adminConfirmBanMessage => 'Der Nutzer wird vom Zugang gesperrt.';
+
+  @override
+  String get adminSchoolNameHint => 'Schulname';
+
+  @override
+  String get adminSchoolCityHint => 'Stadt';
+
+  @override
+  String get adminCancel => 'Abbrechen';
+
+  @override
+  String get adminConfirm => 'Bestätigen';
+
+  @override
   String get lockedDefaultTitle => 'Funktion gesperrt';
 
   @override
