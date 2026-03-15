@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth.middleware');
 const requireRole = require('../middleware/require-role.middleware');
 const ctrl = require('../controllers/admin.api.controller');
+const settings = require('../controllers/settings.controller');
 
 // All admin API routes require JWT + appAdmin role
 router.use(authMiddleware);
@@ -26,5 +27,9 @@ router.get('/users', ctrl.listUsers);
 router.post('/users/:id/approve', ctrl.approveUser);
 router.post('/users/:id/ban', ctrl.banUser);
 router.post('/users/:id/unban', ctrl.unbanUser);
+
+// Global settings
+router.get('/settings',  settings.getSettings);
+router.put('/settings',  settings.updateSettings);
 
 module.exports = router;

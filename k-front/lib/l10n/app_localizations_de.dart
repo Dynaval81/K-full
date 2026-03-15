@@ -258,6 +258,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get chatNewMessages => 'Neue Nachrichten';
 
   @override
+  String get chatCallVoice => 'Anruf';
+
+  @override
+  String get chatCallVideo => 'Videoanruf';
+
+  @override
+  String get chatCallComingSoon => 'Anrufe kommen bald';
+
+  @override
   String get chatDateToday => 'Heute';
 
   @override
@@ -1077,7 +1086,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aiTeacherTile1Subtitle => 'KI generiert Fragen & Antworten';
 
   @override
-  String get aiTeacherTile2Title => 'Stundenplan';
+  String get aiTeacherTile2Title => 'Planung';
 
   @override
   String get aiTeacherTile2Subtitle => 'Methodisch & strukturiert';
@@ -1099,6 +1108,46 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get aiTeacherChipIdea => 'Unterrichtsidee vorschlagen';
+
+  @override
+  String get aiTeacherToolsTitle => 'KI-Werkzeuge';
+
+  @override
+  String get aiTeacherToolsSubtitle => 'Diktat · Quiz · Eltern-E-Mail';
+
+  @override
+  String get aiTeacherToolsSheetSubtitle =>
+      'Werkzeug auswählen — KI erledigt den Rest';
+
+  @override
+  String get aiTeacherVoiceReportLabel => 'Diktat zum Bericht';
+
+  @override
+  String get aiTeacherVoiceReportSub => 'Sprachnotizen → fertiger Bericht';
+
+  @override
+  String get aiTeacherVoiceReportPrefill =>
+      'Erstelle einen strukturierten Bericht aus folgenden Sprachnotizen:';
+
+  @override
+  String get aiTeacherQuizGenLabel => 'Quiz-Generator';
+
+  @override
+  String get aiTeacherQuizGenSub => 'Thema → Aufgaben & Antworten';
+
+  @override
+  String get aiTeacherQuizGenPrefill =>
+      'Erstelle einen Quiz mit 10 Fragen zum Thema:';
+
+  @override
+  String get aiTeacherParentEmailLabel => 'Eltern-E-Mail';
+
+  @override
+  String get aiTeacherParentEmailSub => 'Anlass → fertige E-Mail';
+
+  @override
+  String get aiTeacherParentEmailPrefill =>
+      'Schreibe eine professionelle E-Mail an die Eltern über:';
 
   @override
   String get teacherJournalSubjectMath => 'Mathe';

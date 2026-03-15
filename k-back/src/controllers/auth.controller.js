@@ -1,10 +1,37 @@
 const bcrypt = require('bcryptjs');
+const log = require('../lib/logger');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const prisma = require('../lib/prisma');
 const emailService = require('../services/email.service');
 
-function generateToken(userId) {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
+// Access token — short-lived, stateless
+function generateAccessToken(userId) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '15m' });
+}
+
+// Refresh token — random hex, stored as SHA-256 hash in Session table
+function generateRefreshToken() {
+  return crypto.randomBytes(48).toString('hex'); // 96-char hex
+}
+
+function hashToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+async function createSession(userId, refreshToken, req) {
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  return prisma.session.create({
+    data: {
+      userId,
+      token: hashToken(refreshToken),
+      ip: req.ip ?? '0.0.0.0',
+      device: req.headers['x-device'] ?? null,
+      platform: req.headers['x-platform'] ?? null,
+      expiresAt,
+      isActive: true,
+    },
+  });
 }
 
 async function generateKnNumber() {
@@ -53,7 +80,7 @@ exports.verifyCode = async (req, res) => {
       role: activation.role,
     });
   } catch (error) {
-    console.error('verifyCode error:', error);
+    log.error(error, 'verifyCode error:');
     return res.status(500).json({ success: false, error: 'Verification failed' });
   }
 };
@@ -137,7 +164,9 @@ exports.register = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id);
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken();
+    await createSession(user.id, refreshToken, req);
 
     return res.status(201).json({
       success: true,
@@ -152,11 +181,13 @@ exports.register = async (req, res) => {
           verificationLevel: user.verificationLevel,
           isApproved: user.isApproved,
         },
-        token,
+        accessToken,
+        refreshToken,
+        expiresIn: 900, // seconds
       },
     });
   } catch (error) {
-    console.error('Register error:', error);
+    log.error(error, 'Register error:');
     return res.status(500).json({ success: false, error: 'Registration failed: ' + error.message });
   }
 };
@@ -207,7 +238,9 @@ exports.login = async (req, res) => {
       data: { lastLoginAt: new Date() },
     });
 
-    const token = generateToken(user.id);
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken();
+    await createSession(user.id, refreshToken, req);
 
     return res.json({
       success: true,
@@ -225,11 +258,13 @@ exports.login = async (req, res) => {
           schoolId: user.schoolId,
           classId: user.classId,
         },
-        token,
+        accessToken,
+        refreshToken,
+        expiresIn: 900, // seconds
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    log.error(error, 'Login error:');
     return res.status(500).json({ success: false, error: 'Login failed' });
   }
 };
@@ -276,7 +311,7 @@ exports.verifyEmail = async (req, res) => {
 </body>
 </html>`);
   } catch (error) {
-    console.error('Email verification error:', error);
+    log.error(error, 'Email verification error:');
     return res.status(400).send('<p>Ungültiger oder abgelaufener Link.</p>');
   }
 };
@@ -300,15 +335,109 @@ exports.recovery = async (req, res) => {
       message: 'If this email is registered, recovery instructions have been sent.',
     });
   } catch (error) {
-    console.error('Recovery error:', error);
+    log.error(error, 'Recovery error:');
     return res.status(500).json({ success: false, error: 'Recovery failed' });
+  }
+};
+
+// Обновить access token по refresh token
+exports.refresh = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).json({ success: false, error: 'refreshToken is required' });
+    }
+
+    const hashed = hashToken(refreshToken);
+    const session = await prisma.session.findUnique({ where: { token: hashed } });
+
+    if (!session || !session.isActive) {
+      return res.status(401).json({ success: false, error: 'Invalid or expired refresh token', code: 'REFRESH_INVALID' });
+    }
+    if (session.expiresAt < new Date()) {
+      await prisma.session.update({ where: { id: session.id }, data: { isActive: false } });
+      return res.status(401).json({ success: false, error: 'Refresh token expired', code: 'REFRESH_EXPIRED' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    if (!user || user.status !== 'active') {
+      return res.status(401).json({ success: false, error: 'User not found or inactive' });
+    }
+
+    // Rotate refresh token (invalidate old, issue new)
+    const newRefreshToken = generateRefreshToken();
+    await prisma.$transaction([
+      prisma.session.update({ where: { id: session.id }, data: { isActive: false } }),
+      prisma.session.create({
+        data: {
+          userId: user.id,
+          token: hashToken(newRefreshToken),
+          ip: req.ip ?? '0.0.0.0',
+          device: session.device,
+          platform: session.platform,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          isActive: true,
+        },
+      }),
+    ]);
+
+    return res.json({
+      success: true,
+      data: {
+        accessToken: generateAccessToken(user.id),
+        refreshToken: newRefreshToken,
+        expiresIn: 900,
+      },
+    });
+  } catch (error) {
+    log.error(error, 'refresh error:');
+    return res.status(500).json({ success: false, error: 'Token refresh failed' });
+  }
+};
+
+// Logout — revoke current session
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+      await prisma.session.updateMany({
+        where: { token: hashToken(refreshToken), userId: req.user.id },
+        data: { isActive: false },
+      });
+    }
+    return res.json({ success: true });
+  } catch (error) {
+    log.error(error, 'logout error:');
+    return res.status(500).json({ success: false, error: 'Logout failed' });
+  }
+};
+
+// Logout all — revoke all sessions for the user
+exports.logoutAll = async (req, res) => {
+  try {
+    await prisma.session.updateMany({
+      where: { userId: req.user.id },
+      data: { isActive: false },
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    log.error(error, 'logoutAll error:');
+    return res.status(500).json({ success: false, error: 'Logout failed' });
   }
 };
 
 // Получить текущего пользователя
 exports.getCurrentUser = async (req, res) => {
   try {
-    const user = req.user;
+    // Re-fetch to include school relation
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: { school: { select: { id: true, name: true, city: true } } },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
 
     return res.json({
       success: true,
@@ -324,13 +453,15 @@ exports.getCurrentUser = async (req, res) => {
           isApproved: user.isApproved,
           status: user.status,
           schoolId: user.schoolId,
+          schoolName: user.school?.name ?? null,
+          schoolCity: user.school?.city ?? null,
           classId: user.classId,
           createdAt: user.createdAt,
         },
       },
     });
   } catch (error) {
-    console.error('getCurrentUser error:', error);
+    log.error(error, 'getCurrentUser error:');
     return res.status(500).json({ success: false, error: 'Failed to get user' });
   }
 };

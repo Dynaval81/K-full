@@ -253,6 +253,30 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
+  void _showCallSnack(BuildContext context, {required bool isVideo}) {
+    final l10n = AppLocalizations.of(context)!;
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isVideo ? Icons.videocam_rounded : Icons.call_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(l10n.chatCallComingSoon),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: const Color(0xFF1A1A1A),
+      ));
+  }
+
   String _getInitials(String? name) {
     if (name == null || name.isEmpty) return '?';
     final parts = name.trim().split(' ');
@@ -360,6 +384,18 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.chatCallVoice,
+          icon: const Icon(Icons.call_rounded,
+              color: Color(0xFF1A1A1A), size: 22),
+          onPressed: () => _showCallSnack(context, isVideo: false),
+        ),
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.chatCallVideo,
+          icon: const Icon(Icons.videocam_rounded,
+              color: Color(0xFF1A1A1A), size: 22),
+          onPressed: () => _showCallSnack(context, isVideo: true),
+        ),
         IconButton(
           icon: const Icon(Icons.more_vert_rounded,
               color: Color(0xFF1A1A1A), size: 22),

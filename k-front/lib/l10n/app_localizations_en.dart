@@ -259,6 +259,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatNewMessages => 'New messages';
 
   @override
+  String get chatCallVoice => 'Voice call';
+
+  @override
+  String get chatCallVideo => 'Video call';
+
+  @override
+  String get chatCallComingSoon => 'Calls coming soon';
+
+  @override
   String get chatDateToday => 'Today';
 
   @override
@@ -1073,7 +1082,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiTeacherTile1Subtitle => 'AI generates questions & answers';
 
   @override
-  String get aiTeacherTile2Title => 'Lesson Plan';
+  String get aiTeacherTile2Title => 'Planner';
 
   @override
   String get aiTeacherTile2Subtitle => 'Methodical & structured';
@@ -1095,6 +1104,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiTeacherChipIdea => 'Suggest a teaching idea';
+
+  @override
+  String get aiTeacherToolsTitle => 'AI Tools';
+
+  @override
+  String get aiTeacherToolsSubtitle => 'Dictation · Quiz · Parent Email';
+
+  @override
+  String get aiTeacherToolsSheetSubtitle => 'Choose a tool — AI does the rest';
+
+  @override
+  String get aiTeacherVoiceReportLabel => 'Dictation to Report';
+
+  @override
+  String get aiTeacherVoiceReportSub => 'Voice notes → finished report';
+
+  @override
+  String get aiTeacherVoiceReportPrefill =>
+      'Create a structured report from the following voice notes:';
+
+  @override
+  String get aiTeacherQuizGenLabel => 'Quiz Generator';
+
+  @override
+  String get aiTeacherQuizGenSub => 'Topic → questions & answers';
+
+  @override
+  String get aiTeacherQuizGenPrefill =>
+      'Create a quiz with 10 questions on the topic:';
+
+  @override
+  String get aiTeacherParentEmailLabel => 'Parent Email';
+
+  @override
+  String get aiTeacherParentEmailSub => 'Occasion → ready-to-send email';
+
+  @override
+  String get aiTeacherParentEmailPrefill =>
+      'Write a professional email to parents about:';
 
   @override
   String get teacherJournalSubjectMath => 'Math';

@@ -120,6 +120,10 @@ class _MainNavShellState extends State<MainNavShell> {
   void _onTabTapped(int index) {
     if (_activeIndex == index) return;
     setState(() => _activeIndex = index);
+    // Always release the swipe lock when the user explicitly taps a tab.
+    // This prevents the AI screen (or any screen that locks swipe) from
+    // leaving the shell permanently frozen if its own unlock path was missed.
+    context.read<SwipeLockController>().unlock();
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -264,8 +268,9 @@ class _SwipeTabDetector extends StatefulWidget {
 
 class _SwipeTabDetectorState extends State<_SwipeTabDetector> {
   double _dragStart = 0;
-  static const double _threshold   = 50.0;   // px
-  static const double _velocityMin = 200.0;  // px/s
+  static const double _threshold      = 50.0;   // px
+  static const double _velocityMin    = 300.0;  // px/s (raised — taps can hit 200)
+  static const double _minDisplacement = 20.0;  // px — required to rule out tap drift
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +282,11 @@ class _SwipeTabDetectorState extends State<_SwipeTabDetector> {
       onHorizontalDragEnd: (d) {
         final dx       = d.globalPosition.dx - _dragStart;
         final velocity = d.primaryVelocity ?? 0;
-        final isSwipe  = dx.abs() > _threshold || velocity.abs() > _velocityMin;
+        // Both a minimum displacement AND threshold/velocity are required.
+        // Without _minDisplacement, quick chip taps with slight finger drift
+        // can produce high velocity (>200 px/s) and falsely trigger tab switches.
+        final isSwipe  = dx.abs() >= _minDisplacement &&
+                         (dx.abs() > _threshold || velocity.abs() > _velocityMin);
         if (!isSwipe) return;
         final idx = widget.activeIndex;
         if ((dx < 0 || velocity < -_velocityMin) && idx < widget.tabCount - 1) {

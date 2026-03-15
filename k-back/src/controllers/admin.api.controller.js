@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const log = require('../lib/logger');
 
 // ─── constants ───────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ exports.getStats = async (req, res) => {
       data: { totalUsers, pendingUsers, totalSchools, unusedCodes, usedCodes },
     });
   } catch (error) {
-    console.error('getStats error:', error);
+    log.error(error, 'getStats error:');
     return res.status(500).json({ success: false, error: 'Failed to get stats' });
   }
 };
@@ -58,7 +59,7 @@ exports.listSchools = async (req, res) => {
 
     return res.json({ success: true, data: schools });
   } catch (error) {
-    console.error('listSchools error:', error);
+    log.error(error, 'listSchools error:');
     return res.status(500).json({ success: false, error: 'Failed to list schools' });
   }
 };
@@ -77,7 +78,7 @@ exports.createSchool = async (req, res) => {
 
     return res.status(201).json({ success: true, data: school });
   } catch (error) {
-    console.error('createSchool error:', error);
+    log.error(error, 'createSchool error:');
     return res.status(500).json({ success: false, error: 'Failed to create school' });
   }
 };
@@ -101,7 +102,7 @@ exports.updateSchool = async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ success: false, error: 'School not found' });
     }
-    console.error('updateSchool error:', error);
+    log.error(error, 'updateSchool error:');
     return res.status(500).json({ success: false, error: 'Failed to update school' });
   }
 };
@@ -125,7 +126,7 @@ exports.listCodes = async (req, res) => {
 
     return res.json({ success: true, data: codes });
   } catch (error) {
-    console.error('listCodes error:', error);
+    log.error(error, 'listCodes error:');
     return res.status(500).json({ success: false, error: 'Failed to list codes' });
   }
 };
@@ -195,7 +196,7 @@ exports.generateCodes = async (req, res) => {
 
     return res.status(201).json({ success: true, count: created.count, data: codes });
   } catch (error) {
-    console.error('generateCodes error:', error);
+    log.error(error, 'generateCodes error:');
     return res.status(500).json({ success: false, error: 'Failed to generate codes' });
   }
 };
@@ -216,7 +217,7 @@ exports.deleteCode = async (req, res) => {
 
     return res.json({ success: true, message: 'Code deleted' });
   } catch (error) {
-    console.error('deleteCode error:', error);
+    log.error(error, 'deleteCode error:');
     return res.status(500).json({ success: false, error: 'Failed to delete code' });
   }
 };
@@ -265,7 +266,7 @@ exports.listUsers = async (req, res) => {
       pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / parseInt(limit)) },
     });
   } catch (error) {
-    console.error('listUsers error:', error);
+    log.error(error, 'listUsers error:');
     return res.status(500).json({ success: false, error: 'Failed to list users' });
   }
 };
@@ -284,7 +285,7 @@ exports.approveUser = async (req, res) => {
 
     return res.json({ success: true, message: 'User approved' });
   } catch (error) {
-    console.error('approveUser error:', error);
+    log.error(error, 'approveUser error:');
     return res.status(500).json({ success: false, error: 'Failed to approve user' });
   }
 };
@@ -316,7 +317,7 @@ exports.banUser = async (req, res) => {
 
     return res.json({ success: true, message: 'User banned' });
   } catch (error) {
-    console.error('banUser error:', error);
+    log.error(error, 'banUser error:');
     return res.status(500).json({ success: false, error: 'Failed to ban user' });
   }
 };
@@ -337,7 +338,7 @@ exports.unbanUser = async (req, res) => {
 
     return res.json({ success: true, message: 'User unbanned' });
   } catch (error) {
-    console.error('unbanUser error:', error);
+    log.error(error, 'unbanUser error:');
     return res.status(500).json({ success: false, error: 'Failed to unban user' });
   }
 };

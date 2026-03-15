@@ -21,7 +21,7 @@ model User {
   isApproved            Boolean   @default(false)
   status                String    @default("active")        // active|banned|deleted
   schoolId              String?
-  classId               String?
+  classId               String?   // stores class name string, e.g. "10B"
   banReason             String?
   bannedAt              DateTime?
   bannedBy              String?
@@ -56,12 +56,18 @@ model User {
   updatedAt             DateTime  @updatedAt
 
   // Relations
-  school                School?   @relation(fields: [schoolId], references: [id])
+  school                School?           @relation(fields: [schoolId], references: [id])
   loginHistory          LoginHistory[]
   sessions              Session[]
+  chatParticipants      ChatParticipant[]
+  sentMessages          Message[]
+  parentLinks           ParentChild[]     @relation("ParentOf")
+  childLinks            ParentChild[]     @relation("ChildOf")
 
   @@index([email])
   @@index([knNumber])
+  @@index([schoolId])
+  @@index([schoolId, classId])
 }
 
 model School {
@@ -74,9 +80,99 @@ model School {
 
   users            User[]
   activationCodes  ActivationCode[]
+  classes          SchoolClass[]
 
   @@index([name])
 }
+
+// School class, e.g. "10B", "5A". classId on User stores the class name string.
+model SchoolClass {
+  id        String   @id @default(uuid())
+  name      String   // "10B", "5A" etc.
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  teacherId String?  // optional: primary teacher
+  createdAt DateTime @default(now())
+
+  @@unique([name, schoolId])
+  @@index([schoolId])
+}
+
+// ── Chat models ───────────────────────────────────────────────────────────────
+
+model Chat {
+  id            String            @id @default(uuid())
+  type          String            // personal | classGroup | schoolGroup
+  name          String?           // display name for group chats
+  schoolId      String?           // set for class/school group chats
+  className     String?           // set for classGroup chats (matches User.classId)
+  lastMessageAt DateTime?
+  createdAt     DateTime          @default(now())
+
+  participants  ChatParticipant[]
+  messages      Message[]
+
+  @@index([schoolId])
+  @@index([type, schoolId, className])
+}
+
+model ChatParticipant {
+  id       String   @id @default(uuid())
+  chatId   String
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unread   Int      @default(0)
+  joinedAt DateTime @default(now())
+
+  @@unique([chatId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String    @id @default(uuid())
+  chatId    String
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User      @relation(fields: [senderId], references: [id])
+  text      String
+  type      String    @default("text")   // text | system
+  status    String    @default("sent")   // sent | delivered | read
+  replyToId String?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@index([chatId, createdAt])
+  @@index([senderId])
+}
+
+// ── Family / Parent-Child ─────────────────────────────────────────────────────
+
+model ParentChild {
+  id        String   @id @default(uuid())
+  parentId  String
+  parent    User     @relation("ParentOf", fields: [parentId], references: [id], onDelete: Cascade)
+  childId   String
+  child     User     @relation("ChildOf",  fields: [childId],  references: [id], onDelete: Cascade)
+  status    String   @default("pending")  // pending | active | rejected
+
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, childId])
+  @@index([parentId])
+  @@index([childId])
+}
+
+// ── Global settings ───────────────────────────────────────────────────────────
+
+model GlobalSettings {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+// ── Legacy / other models ─────────────────────────────────────────────────────
 
 model ActivationCode {
   code        String    @id

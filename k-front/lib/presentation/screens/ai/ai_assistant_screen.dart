@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
-import 'package:knoty/core/controllers/swipe_lock_controller.dart';
 import 'package:knoty/core/enums/user_role.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
@@ -22,8 +21,7 @@ const Color _kBorder    = Color(0xFFE0E0E0);
 
 // ── Enums & Models ───────────────────────────────────────────────────────────
 
-enum _AiView { hub, chat, stickerLab, photoMagic }
-enum _PhotoState { empty, loaded, processing, done }
+enum _AiView { chat, stickerLab }
 
 class _ChatMsg {
   final bool isUser;
@@ -152,6 +150,77 @@ Ich bin dein persönlicher Lernassistent. So helfe ich dir:
 Tippe deine Frage oder tippe auf einen der Vorschläge oben.
 
 *Womit möchtest du heute anfangen?*''',
+  'bericht': '''**Strukturierter Bericht** 📋
+
+Hier ist eine Vorlage basierend auf deinen Sprachnotizen:
+
+---
+
+**Bericht: [Thema einfügen]**
+
+**Einleitung:**
+Datum, Klasse und Lernziel der Unterrichtsstunde.
+
+**Verlauf:**
+1. **Einstieg** (10 Min.) — Wiederholung / Hausaufgaben
+2. **Erarbeitung** (25 Min.) — Kernthema erklärt & geübt
+3. **Sicherung** (10 Min.) — Fragen, Zusammenfassung
+
+**Ergebnisse:**
+- Mehrheit der Schüler hat das Lernziel erreicht ✅
+- 2–4 Schüler benötigen Nacharbeit
+
+**Maßnahmen:**
+Differenzierungsmaterial für die nächste Stunde vorbereiten.
+
+---
+
+*Diktiere deine Notizen — ich formuliere den Bericht fertig!*''',
+  'quiz': '''**Quiz generiert** 🎯
+
+**Thema: [dein Thema]** — 10 Fragen
+
+**1.** Was ist die Hauptaussage von ...?
+   a) Antwort A &nbsp; b) Antwort B &nbsp; **c) Richtige Antwort ✅** &nbsp; d) Antwort D
+
+**2.** Welches Jahr ...?
+   a) 1815 &nbsp; **b) 1848 ✅** &nbsp; c) 1871 &nbsp; d) 1918
+
+**3.** Wer war ...?
+   a) Person A &nbsp; b) Person B &nbsp; **c) Richtige Person ✅** &nbsp; d) Person D
+
+> *Fragen 4–10 nach gleichem Schema*
+
+---
+
+**Auswertung:**
+- 9–10 Punkte — Sehr gut ⭐
+- 7–8 Punkte — Gut ✓
+- 5–6 Punkte — Ausreichend
+- < 5 Punkte — Nacharbeit empfohlen
+
+*Nenne ein Thema und ich erstelle den vollständigen Quiz!*''',
+  'email': '''**Eltern-E-Mail** ✉️
+
+---
+
+**Betreff:** [Anlass] — Klasse [X]
+
+Sehr geehrte Eltern,
+
+ich möchte Sie über [Anlass] informieren.
+
+[Hauptteil — sachlich, freundlich, konkret]
+
+Bei Rückfragen stehe ich Ihnen gerne zur Verfügung.
+
+Mit freundlichen Grüßen,
+[Ihr Name]
+Klassenleitung [Klasse]
+
+---
+
+*Beschreibe den Anlass — ich formuliere die E-Mail fertig!*''',
 };
 
 // ── Parent mock responses ─────────────────────────────────────────────────────
@@ -239,122 +308,81 @@ Ich begleite dich im Schulalltag deines Kindes. So kann ich helfen:
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 
-class AiAssistantScreen extends StatefulWidget {
+class AiAssistantScreen extends StatelessWidget {
   const AiAssistantScreen({super.key});
 
-  @override
-  State<AiAssistantScreen> createState() => _AiAssistantScreenState();
-}
-
-class _AiAssistantScreenState extends State<AiAssistantScreen> {
-  _AiView _view = _AiView.hub;
-
-  void _navigate(_AiView v, {String? prefill}) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _view = v;
-      _chatPrefill = prefill;
-    });
-    final lock = context.read<SwipeLockController>();
-    if (v == _AiView.hub) {
-      lock.unlock();
-    } else {
-      lock.lock();
-    }
+  void _openChat(BuildContext context, {String? prefill, String? title}) {
+    final topPad = MediaQuery.of(context).padding.top;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragEnd: (d) {
+          if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
+        },
+        child: Padding(
+          padding: EdgeInsets.only(top: topPad + 40),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: _kBg,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: _AiChatView(
+              onBack: () => Navigator.of(ctx).pop(),
+              prefill: prefill,
+              title: title,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  String? _chatPrefill;
-
-  @override
-  void dispose() {
-    context.read<SwipeLockController>().unlock();
-    super.dispose();
+  void _openSticker(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragEnd: (d) {
+          if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
+        },
+        child: Padding(
+          padding: EdgeInsets.only(top: topPad + 40),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: _kBg,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: _StickerLabView(
+              onBack: () => Navigator.of(ctx).pop(),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return PopScope(
-      canPop: _view == _AiView.hub,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && _view != _AiView.hub) _navigate(_AiView.hub);
-      },
-      child: Scaffold(
-        backgroundColor: _kBg,
-        appBar: _view == _AiView.hub
-            ? KnotyAppBar(title: l10n.tabAi)
-            : null,
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
-          transitionBuilder: (child, anim) => FadeTransition(
-            opacity: anim,
-            child: SlideTransition(
-              position: Tween(
-                begin: const Offset(0.04, 0),
-                end: Offset.zero,
-              ).animate(anim),
-              child: child,
-            ),
-          ),
-          child: switch (_view) {
-            _AiView.hub => _AiHub(
-                onNavigate: _navigate,
-                key: const ValueKey('hub'),
-              ),
-            _AiView.chat => _SwipeBackWrapper(
-                onBack: () => _navigate(_AiView.hub),
-                key: const ValueKey('chat_wrap'),
-                child: _AiChatView(
-                  onBack: () => _navigate(_AiView.hub),
-                  prefill: _chatPrefill,
-                  key: ValueKey('chat_$_chatPrefill'),
-                ),
-              ),
-            _AiView.stickerLab => _SwipeBackWrapper(
-                onBack: () => _navigate(_AiView.hub),
-                key: const ValueKey('sticker_wrap'),
-                child: _StickerLabView(
-                  onBack: () => _navigate(_AiView.hub),
-                  key: const ValueKey('sticker'),
-                ),
-              ),
-            _AiView.photoMagic => _SwipeBackWrapper(
-                onBack: () => _navigate(_AiView.hub),
-                key: const ValueKey('photo_wrap'),
-                child: _PhotoMagicView(
-                  onBack: () => _navigate(_AiView.hub),
-                  key: const ValueKey('photo'),
-                ),
-              ),
-          },
-        ),
-      ),
-    );
-  }
-}
-
-// ── Swipe Back Wrapper ────────────────────────────────────────────────────────
-
-class _SwipeBackWrapper extends StatelessWidget {
-  final Widget child;
-  final VoidCallback onBack;
-  const _SwipeBackWrapper({
-    required this.child,
-    required this.onBack,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onHorizontalDragEnd: (details) {
-        if ((details.primaryVelocity ?? 0) > 280) {
+    return Scaffold(
+      backgroundColor: _kBg,
+      appBar: KnotyAppBar(title: l10n.tabAi),
+      body: _AiHub(
+        onNavigate: (view, {prefill, title}) {
           HapticFeedback.lightImpact();
-          onBack();
-        }
-      },
-      child: child,
+          if (view == _AiView.stickerLab) {
+            _openSticker(context);
+          } else {
+            _openChat(context, prefill: prefill, title: title);
+          }
+        },
+      ),
     );
   }
 }
@@ -575,7 +603,7 @@ class _SmartHeaderState extends State<_SmartHeader>
 // ── Hub ───────────────────────────────────────────────────────────────────────
 
 class _AiHub extends StatelessWidget {
-  final void Function(_AiView, {String? prefill}) onNavigate;
+  final void Function(_AiView, {String? prefill, String? title}) onNavigate;
   const _AiHub({required this.onNavigate, super.key});
 
   @override
@@ -648,16 +676,7 @@ class _AiHub extends StatelessWidget {
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _FeatureTile(
-                icon: Icons.rate_review_rounded,
-                title: l10n.aiTeacherTile3Title,
-                subtitle: l10n.aiTeacherTile3Subtitle,
-                badge: 'NEU',
-                horizontal: true,
-                bgColor: _kSurface,
-                accentColor: _kPrimary,
-                onTap: () => onNavigate(_AiView.chat, prefill: l10n.aiTeacherChipCheck),
-              ),
+              child: _TeacherScanTile(onNavigate: onNavigate),
             ),
             const SizedBox(height: 20),
             // Quick chips
@@ -956,7 +975,8 @@ class _FeatureTileState extends State<_FeatureTile>
 class _AiChatView extends StatefulWidget {
   final VoidCallback onBack;
   final String? prefill;
-  const _AiChatView({required this.onBack, this.prefill, super.key});
+  final String? title;
+  const _AiChatView({required this.onBack, this.prefill, this.title, super.key});
 
   @override
   State<_AiChatView> createState() => _AiChatViewState();
@@ -973,7 +993,10 @@ class _AiChatViewState extends State<_AiChatView> {
   void initState() {
     super.initState();
     if (widget.prefill != null && widget.prefill!.isNotEmpty) {
-      _input.text = widget.prefill!;
+      // Auto-send so the tool opens with an immediate response instead of blank input.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _send(widget.prefill!);
+      });
     }
   }
 
@@ -1030,8 +1053,18 @@ class _AiChatViewState extends State<_AiChatView> {
       }
       return _kParentResponses['default']!;
     }
-    if (lower.contains('explain') || lower.contains('erkläre') ||
-        lower.contains(RegExp(r'(aiChipExplain|topic|thema)'))) {
+    // Teacher-specific tools
+    if (lower.contains('bericht') || lower.contains('sprachnotizen') || lower.contains('diktat')) {
+      return _kMockResponses['bericht']!;
+    }
+    if (lower.contains('quiz') && (lower.contains('erstell') || lower.contains('generier') || lower.contains('fragen'))) {
+      return _kMockResponses['quiz']!;
+    }
+    if (lower.contains('e-mail') || lower.contains('eltern-e') || lower.contains('eltern schreib')) {
+      return _kMockResponses['email']!;
+    }
+    // General
+    if (lower.contains('explain') || lower.contains('erkläre') || lower.contains('thema')) {
       return _kMockResponses['explain']!;
     }
     if (lower.contains('grammar') || lower.contains('grammatik')) {
@@ -1092,7 +1125,7 @@ class _AiChatViewState extends State<_AiChatView> {
     return Column(
       children: [
         _ChatHeader(
-          title: l10n.aiChatTitle,
+          title: widget.title ?? l10n.aiChatTitle,
           onBack: () {
             _cancelStream();
             widget.onBack();
@@ -1900,289 +1933,250 @@ class _GeneratedCardState extends State<_GeneratedCard>
   }
 }
 
-// ── Photo Magic ───────────────────────────────────────────────────────────────
+// ── Teacher AI Scan Tile ──────────────────────────────────────────────────────
 
-class _PhotoMagicView extends StatefulWidget {
-  final VoidCallback onBack;
-  const _PhotoMagicView({required this.onBack, super.key});
-
-  @override
-  State<_PhotoMagicView> createState() => _PhotoMagicViewState();
-}
-
-class _PhotoMagicViewState extends State<_PhotoMagicView> {
-  _PhotoState _state = _PhotoState.empty;
-  double _split = 0.5;
-
-  void _upload() {
-    setState(() => _state = _PhotoState.loaded);
-  }
-
-  void _process() {
-    setState(() => _state = _PhotoState.processing);
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      setState(() => _state = _PhotoState.done);
-    });
-  }
+class _TeacherScanTile extends StatelessWidget {
+  final void Function(_AiView, {String? prefill, String? title}) onNavigate;
+  const _TeacherScanTile({required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        _ChatHeader(title: l10n.aiPhotoTitle, onBack: widget.onBack),
-        Expanded(child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            if (_state == _PhotoState.empty) _UploadPrompt(onTap: _upload, l10n: l10n),
-            if (_state == _PhotoState.loaded || _state == _PhotoState.done)
-              _BeforeAfterSlider(
-                split: _split,
-                onSplitChanged: (v) => setState(() => _split = v),
-                isDone: _state == _PhotoState.done,
-              ),
-            if (_state == _PhotoState.processing)
-              Container(
-                height: 300,
-                decoration: BoxDecoration(
-                  color: _kSurface,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: _kBorder),
-                ),
-                child: const Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(color: _kGold, strokeWidth: 2),
-                      SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-            if (_state == _PhotoState.loaded || _state == _PhotoState.done) ...[
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _ToolBtn(
-                      icon: Icons.content_cut_rounded,
-                      label: l10n.aiRemoveBg,
-                      onTap: _process,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _ToolBtn(
-                      icon: Icons.enhance_photo_translate_rounded,
-                      label: l10n.aiEnhance,
-                      onTap: _process,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _ToolBtn(
-                      icon: Icons.style_rounded,
-                      label: l10n.aiStylize,
-                      onTap: _process,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (_) => _TeacherAiSheet(onNavigate: onNavigate),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _kBg,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: _kGold.withValues(alpha: 0.40)),
+          boxShadow: [
+            BoxShadow(
+              color: _kGold.withValues(alpha: 0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
           ],
         ),
-      )),
-    ],
-    );
-  }
-}
-
-class _UploadPrompt extends StatelessWidget {
-  final VoidCallback onTap;
-  final AppLocalizations l10n;
-  const _UploadPrompt({required this.onTap, required this.l10n});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 260,
-        decoration: BoxDecoration(
-          color: _kSurface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: _kBorder),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
                 color: _kGold.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.add_photo_alternate_rounded,
-                  color: _kGold, size: 30),
+              child: const Icon(Icons.bolt_rounded, color: _kGold, size: 22),
             ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.aiUploadPhoto,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: _kPrimary,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'JPG, PNG',
-              style: const TextStyle(fontSize: 13, color: _kSecondary),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BeforeAfterSlider extends StatelessWidget {
-  final double split;
-  final void Function(double) onSplitChanged;
-  final bool isDone;
-  const _BeforeAfterSlider({
-    required this.split,
-    required this.onSplitChanged,
-    required this.isDone,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (d) {
-        final box = context.findRenderObject() as RenderBox?;
-        if (box == null) return;
-        final newSplit = (split + d.delta.dx / box.size.width).clamp(0.05, 0.95);
-        onSplitChanged(newSplit);
-      },
-      child: LayoutBuilder(
-        builder: (_, constraints) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: SizedBox(
-              height: 300,
-              width: constraints.maxWidth,
-              child: Stack(
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // "After" layer (right side — processed)
-                  Container(
-                    color: isDone
-                        ? const Color(0xFFE8F5E9)
-                        : const Color(0xFFF5F5F5),
-                    child: Center(
-                      child: Icon(
-                        Icons.auto_fix_high_rounded,
-                        size: 64,
-                        color: isDone
-                            ? const Color(0xFF2E7D32)
-                            : const Color(0xFFE0E0E0),
+                  Row(children: [
+                    Flexible(
+                      child: Text(
+                        l10n.aiTeacherToolsTitle,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: _kPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ),
-                  // "Before" layer (left side — original), clipped
-                  ClipRect(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: split,
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        height: 300,
-                        child: Container(
-                          color: _kSurface,
-                          child: const Center(
-                            child: Icon(
-                              Icons.image_outlined,
-                              size: 64,
-                              color: Color(0xFFE0E0E0),
-                            ),
-                          ),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: _kGold.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'NEU',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: _kGold,
                         ),
                       ),
                     ),
-                  ),
-                  // Divider line
-                  Positioned(
-                    left: constraints.maxWidth * split - 1,
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 2,
-                      color: _kGold,
-                    ),
-                  ),
-                  // Handle
-                  Positioned(
-                    left: constraints.maxWidth * split - 18,
-                    top: 130,
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(
-                        color: _kGold,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.unfold_more_rounded,
-                        color: _kPrimary,
-                        size: 20,
-                      ),
-                    ),
+                  ]),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.aiTeacherToolsSubtitle,
+                    style: const TextStyle(fontSize: 13, color: _kSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-          );
-        },
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right_rounded, color: _kSecondary, size: 20),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _ToolBtn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _ToolBtn({required this.icon, required this.label, required this.onTap});
+// ── Teacher AI Sheet ──────────────────────────────────────────────────────────
+
+class _TeacherAiSheet extends StatelessWidget {
+  final void Function(_AiView, {String? prefill, String? title}) onNavigate;
+  const _TeacherAiSheet({required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    final l10n = AppLocalizations.of(context)!;
+
+    final actions = [
+      (
+        icon: Icons.mic_rounded,
+        label: l10n.aiTeacherVoiceReportLabel,
+        sub: l10n.aiTeacherVoiceReportSub,
+        prefill: l10n.aiTeacherVoiceReportPrefill,
+        color: const Color(0xFF5B8DEF),
+      ),
+      (
+        icon: Icons.quiz_rounded,
+        label: l10n.aiTeacherQuizGenLabel,
+        sub: l10n.aiTeacherQuizGenSub,
+        prefill: l10n.aiTeacherQuizGenPrefill,
+        color: _kGold,
+      ),
+      (
+        icon: Icons.mail_rounded,
+        label: l10n.aiTeacherParentEmailLabel,
+        sub: l10n.aiTeacherParentEmailSub,
+        prefill: l10n.aiTeacherParentEmailPrefill,
+        color: const Color(0xFF43A047),
+      ),
+    ];
+
+    return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: _kSurface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _kBorder),
+        decoration: const BoxDecoration(
+          color: _kBg,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: _kGold, size: 22),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: _kPrimary,
+            // Handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: _kBorder,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
+            const SizedBox(height: 20),
+            // Gold accent bar + title
+            Row(children: [
+              Container(
+                width: 4,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: _kGold,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(
+                  l10n.aiTeacherToolsTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: _kPrimary,
+                  ),
+                ),
+                Text(
+                  l10n.aiTeacherToolsSheetSubtitle,
+                  style: const TextStyle(fontSize: 13, color: _kSecondary),
+                ),
+              ]),
+            ]),
+            const SizedBox(height: 20),
+            for (final action in actions)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    onNavigate(_AiView.chat, prefill: action.prefill, title: action.label);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: _kSurface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _kBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: action.color.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(13),
+                          ),
+                          child: Icon(action.icon, color: action.color, size: 22),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                action.label,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: _kPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                action.sub,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: _kSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded,
+                            size: 14, color: _kGold),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

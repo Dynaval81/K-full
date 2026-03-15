@@ -255,6 +255,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chatNewMessages => 'Новые сообщения';
 
   @override
+  String get chatCallVoice => 'Аудиозвонок';
+
+  @override
+  String get chatCallVideo => 'Видеозвонок';
+
+  @override
+  String get chatCallComingSoon => 'Звонки скоро появятся';
+
+  @override
   String get chatDateToday => 'Сегодня';
 
   @override
@@ -1094,6 +1103,46 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aiTeacherChipIdea => 'Предложить идею урока';
+
+  @override
+  String get aiTeacherToolsTitle => 'KI-Werkzeuge';
+
+  @override
+  String get aiTeacherToolsSubtitle => 'Diktat · Quiz · Eltern-E-Mail';
+
+  @override
+  String get aiTeacherToolsSheetSubtitle =>
+      'Werkzeug auswählen — KI erledigt den Rest';
+
+  @override
+  String get aiTeacherVoiceReportLabel => 'Diktat zum Bericht';
+
+  @override
+  String get aiTeacherVoiceReportSub => 'Sprachnotizen → fertiger Bericht';
+
+  @override
+  String get aiTeacherVoiceReportPrefill =>
+      'Erstelle einen strukturierten Bericht aus folgenden Sprachnotizen:';
+
+  @override
+  String get aiTeacherQuizGenLabel => 'Quiz-Generator';
+
+  @override
+  String get aiTeacherQuizGenSub => 'Thema → Aufgaben & Antworten';
+
+  @override
+  String get aiTeacherQuizGenPrefill =>
+      'Erstelle einen Quiz mit 10 Fragen zum Thema:';
+
+  @override
+  String get aiTeacherParentEmailLabel => 'Eltern-E-Mail';
+
+  @override
+  String get aiTeacherParentEmailSub => 'Anlass → fertige E-Mail';
+
+  @override
+  String get aiTeacherParentEmailPrefill =>
+      'Schreibe eine professionelle E-Mail an die Eltern über:';
 
   @override
   String get teacherJournalSubjectMath => 'Математика';

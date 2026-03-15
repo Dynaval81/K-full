@@ -330,7 +330,6 @@ exports.togglePermission = async (req, res) => {
         updateData.premiumExpiresAt = null;
       }
     } else if (type === 'vpn') {
-    } else if (type === 'vpn') {
       updateData.hasVpnAccess = enabled;
     } else if (type === 'ai') {
       updateData.hasAiAccess = enabled;

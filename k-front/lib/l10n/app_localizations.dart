@@ -592,6 +592,24 @@ abstract class AppLocalizations {
   /// **'Neue Nachrichten'**
   String get chatNewMessages;
 
+  /// No description provided for @chatCallVoice.
+  ///
+  /// In de, this message translates to:
+  /// **'Anruf'**
+  String get chatCallVoice;
+
+  /// No description provided for @chatCallVideo.
+  ///
+  /// In de, this message translates to:
+  /// **'Videoanruf'**
+  String get chatCallVideo;
+
+  /// No description provided for @chatCallComingSoon.
+  ///
+  /// In de, this message translates to:
+  /// **'Anrufe kommen bald'**
+  String get chatCallComingSoon;
+
   /// No description provided for @chatDateToday.
   ///
   /// In de, this message translates to:
@@ -2143,7 +2161,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiTeacherTile2Title.
   ///
   /// In de, this message translates to:
-  /// **'Stundenplan'**
+  /// **'Planung'**
   String get aiTeacherTile2Title;
 
   /// No description provided for @aiTeacherTile2Subtitle.
@@ -2187,6 +2205,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Unterrichtsidee vorschlagen'**
   String get aiTeacherChipIdea;
+
+  /// No description provided for @aiTeacherToolsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'KI-Werkzeuge'**
+  String get aiTeacherToolsTitle;
+
+  /// No description provided for @aiTeacherToolsSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Diktat · Quiz · Eltern-E-Mail'**
+  String get aiTeacherToolsSubtitle;
+
+  /// No description provided for @aiTeacherToolsSheetSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Werkzeug auswählen — KI erledigt den Rest'**
+  String get aiTeacherToolsSheetSubtitle;
+
+  /// No description provided for @aiTeacherVoiceReportLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Diktat zum Bericht'**
+  String get aiTeacherVoiceReportLabel;
+
+  /// No description provided for @aiTeacherVoiceReportSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprachnotizen → fertiger Bericht'**
+  String get aiTeacherVoiceReportSub;
+
+  /// No description provided for @aiTeacherVoiceReportPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle einen strukturierten Bericht aus folgenden Sprachnotizen:'**
+  String get aiTeacherVoiceReportPrefill;
+
+  /// No description provided for @aiTeacherQuizGenLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Quiz-Generator'**
+  String get aiTeacherQuizGenLabel;
+
+  /// No description provided for @aiTeacherQuizGenSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Thema → Aufgaben & Antworten'**
+  String get aiTeacherQuizGenSub;
+
+  /// No description provided for @aiTeacherQuizGenPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle einen Quiz mit 10 Fragen zum Thema:'**
+  String get aiTeacherQuizGenPrefill;
+
+  /// No description provided for @aiTeacherParentEmailLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern-E-Mail'**
+  String get aiTeacherParentEmailLabel;
+
+  /// No description provided for @aiTeacherParentEmailSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Anlass → fertige E-Mail'**
+  String get aiTeacherParentEmailSub;
+
+  /// No description provided for @aiTeacherParentEmailPrefill.
+  ///
+  /// In de, this message translates to:
+  /// **'Schreibe eine professionelle E-Mail an die Eltern über:'**
+  String get aiTeacherParentEmailPrefill;
 
   /// No description provided for @teacherJournalSubjectMath.
   ///

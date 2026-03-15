@@ -1066,33 +1066,42 @@ class _WeekDayRow extends StatelessWidget {
               ),
             ]),
           ),
-          // Expanded lesson list — AnimatedSize INSIDE Column so Column is never constrained
+          // Expanded lesson list.
+          // AnimatedSize is a CHILD of the outer Column → outer Column is never
+          // constrained and cannot overflow.
+          // OverflowBox inside AnimatedSize gives the content unconstrained height
+          // so the inner Column never receives tight constraints during animation
+          // → no RenderFlex overflow stripes even at the intermediate animated size.
           AnimatedSize(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             clipBehavior: Clip.hardEdge,
             alignment: Alignment.topCenter,
             child: expanded
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Row(children: [
-                        Icon(s.icon, size: 13, color: s.color),
-                        const SizedBox(width: 8),
-                        Text('${s.startStr}–${s.endStr}',
-                            style: const TextStyle(
-                                fontSize: 11, color: Color(0xFF9E9E9E))),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(s.subject ?? '',
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w600,
-                                color: Color(0xFF1A1A1A)))),
-                        Text(s.room ?? '',
-                            style: const TextStyle(
-                                fontSize: 11, color: Color(0xFF9E9E9E))),
-                      ]),
-                    )).toList()),
+                ? OverflowBox(
+                    maxHeight: double.infinity,
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(children: [
+                          Icon(s.icon, size: 13, color: s.color),
+                          const SizedBox(width: 8),
+                          Text('${s.startStr}–${s.endStr}',
+                              style: const TextStyle(
+                                  fontSize: 11, color: Color(0xFF9E9E9E))),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(s.subject ?? '',
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1A1A1A)))),
+                          Text(s.room ?? '',
+                              style: const TextStyle(
+                                  fontSize: 11, color: Color(0xFF9E9E9E))),
+                        ]),
+                      )).toList()),
+                    ),
                   )
                 : const SizedBox.shrink(),
           ),
@@ -2656,330 +2665,553 @@ class _TeacherSchoolViewState extends State<_TeacherSchoolView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    // Find current/next slot
-    final now  = DateTime.now();
-    final nowM = now.hour * 60 + now.minute;
-    final _TeachSlot? currentSlot = _kTeachSchedule.cast<_TeachSlot?>().firstWhere(
+    final l10n        = AppLocalizations.of(context)!;
+    final now         = DateTime.now();
+    final nowM        = now.hour * 60 + now.minute;
+    final currentSlot = _kTeachSchedule.cast<_TeachSlot?>().firstWhere(
         (s) => s!.isNow, orElse: () => null);
-    final _TeachSlot? nextSlot = _kTeachSchedule.cast<_TeachSlot?>().firstWhere(
+    final nextSlot    = _kTeachSchedule.cast<_TeachSlot?>().firstWhere(
         (s) => nowM < s!.startH * 60 + s.startM, orElse: () => null);
+    final schoolName  = widget.user?.school ?? l10n.schoolTitle;
+    final monday      = now.subtract(Duration(days: now.weekday - 1));
 
-    final schoolName = widget.user?.school ?? l10n.schoolTitle;
-
-    return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Header card ─────────────────────────────────────────────
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft, end: Alignment.bottomRight,
-                colors: [Color(0xFFE6B800), Color(0xFFFFD84D)],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(
-                  color: const Color(0xFFE6B800).withOpacity(0.30),
-                  blurRadius: 12, offset: const Offset(0, 4))],
-            ),
-            child: Row(children: [
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(schoolName,
-                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800,
-                        color: Colors.white),
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Row(children: [
-                  const Icon(Icons.person_rounded, size: 13, color: Colors.white70),
-                  const SizedBox(width: 4),
-                  Text(widget.user?.firstName != null
-                      ? '${widget.user!.firstName} ${widget.user!.lastName ?? ''}'.trim()
-                      : '',
-                      style: const TextStyle(fontSize: 13, color: Colors.white70)),
-                ]),
-              ])),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    return LayoutBuilder(
+      builder: (context, _) => CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          // ── Header card ──────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Text(l10n.teacherSchoolRoleBadge,
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
-                        color: Colors.white)),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft, end: Alignment.bottomRight,
+                    colors: [Color(0xFFE6B800), Color(0xFFFFD84D)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [BoxShadow(
+                      color: const Color(0xFFE6B800).withOpacity(0.30),
+                      blurRadius: 12, offset: const Offset(0, 4))],
+                ),
+                child: Row(children: [
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(schoolName,
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800,
+                            color: Colors.white),
+                        overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 4),
+                    Row(children: [
+                      const Icon(Icons.person_rounded, size: 13, color: Colors.white70),
+                      const SizedBox(width: 4),
+                      Text(widget.user?.firstName != null
+                          ? '${widget.user!.firstName} ${widget.user!.lastName ?? ''}'.trim()
+                          : '',
+                          style: const TextStyle(fontSize: 13, color: Colors.white70)),
+                    ]),
+                  ])),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.25),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(l10n.teacherSchoolRoleBadge,
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
+                            color: Colors.white)),
+                  ),
+                ]),
               ),
-            ]),
+            ),
           ),
-          const SizedBox(height: 14),
+          const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
           // ── Live status card ─────────────────────────────────────────
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: _kTBorder),
-              boxShadow: [BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 8, offset: const Offset(0, 2))],
-            ),
-            child: Row(children: [
-              // Status icon
-              Container(
-                width: 48, height: 48,
-                decoration: BoxDecoration(
-                  color: currentSlot != null
-                      ? currentSlot.color.withOpacity(0.12)
-                      : _kTSurface,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  currentSlot != null
-                      ? Icons.cast_for_education_rounded
-                      : nextSlot != null
-                          ? Icons.access_time_rounded
-                          : Icons.check_circle_rounded,
-                  color: currentSlot != null
-                      ? currentSlot.color
-                      : _kTSubtext,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(child: currentSlot != null
-                  ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(l10n.teacherSchoolNowTeaching,
-                          style: const TextStyle(fontSize: 11, color: _kTSubtext,
-                              fontWeight: FontWeight.w600, letterSpacing: 0.4)),
-                      const SizedBox(height: 2),
-                      Text('${currentSlot.subject} · ${currentSlot.className}',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800,
-                              color: _kTText)),
-                      Text('${l10n.schoolRoom} ${currentSlot.room}  ·  ${currentSlot.timeStr}',
-                          style: const TextStyle(fontSize: 12, color: _kTSubtext)),
-                    ])
-                  : nextSlot != null
-                      ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(l10n.teacherSchoolNextClass,
-                              style: const TextStyle(fontSize: 11, color: _kTSubtext,
-                                  fontWeight: FontWeight.w600, letterSpacing: 0.4)),
-                          const SizedBox(height: 2),
-                          Text('${nextSlot.subject} · ${nextSlot.className}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800,
-                                  color: _kTText)),
-                          Text('${l10n.schoolRoom} ${nextSlot.room}  ·  ${nextSlot.timeStr}',
-                              style: const TextStyle(fontSize: 12, color: _kTSubtext)),
-                        ])
-                      : Text(l10n.teacherSchoolFreeNow,
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700,
-                              color: _kTSubtext)),
-              ),
-            ]),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Schedule section with Today/Week toggle ───────────────
-          Row(children: [
-            _TTeacherSectionHeader(
-                icon: Icons.today_rounded,
-                title: l10n.teacherSchoolMySchedule),
-            const Spacer(),
-            _ViewToggle(
-              value: _schedView,
-              todayLabel: l10n.schoolScheduleToday,
-              weekLabel: l10n.schoolWeekView,
-              onChanged: (v) => setState(() => _schedView = v),
-            ),
-          ]),
-          const SizedBox(height: 10),
-          if (_schedView == _SchedView.today)
-            SizedBox(
-              height: 90,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: _kTeachSchedule.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-                itemBuilder: (_, i) {
-                  final slot = _kTeachSchedule[i];
-                  final isActive = slot.isNow;
-                  return Container(
-                    width: 130,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isActive ? slot.color : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isActive ? slot.color : _kTBorder,
-                        width: isActive ? 2 : 1,
-                      ),
-                      boxShadow: isActive ? [BoxShadow(
-                          color: slot.color.withOpacity(0.25),
-                          blurRadius: 8, offset: const Offset(0, 3))] : null,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isActive
-                                  ? Colors.white.withOpacity(0.25)
-                                  : slot.color.withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(slot.className,
-                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800,
-                                    color: isActive ? Colors.white : slot.color)),
-                          ),
-                          const Spacer(),
-                          if (isActive)
-                            Container(
-                              width: 6, height: 6,
-                              decoration: const BoxDecoration(
-                                  color: Colors.white, shape: BoxShape.circle),
-                            ),
-                        ]),
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(slot.subject,
-                              style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w700,
-                                color: isActive ? Colors.white : _kTText,
-                              ),
-                              maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text(slot.timeStr,
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  color: isActive ? Colors.white70 : _kTSubtext)),
-                        ]),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            )
-          else
-            _WeekScheduleView(horizontalPadding: 0),
-          const SizedBox(height: 20),
-
-          // ── My classes ───────────────────────────────────────────────
-          _TTeacherSectionHeader(
-              icon: Icons.groups_2_rounded,
-              title: l10n.teacherSchoolMyClasses),
-          const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 2.2,
-            ),
-            itemCount: _kTeachClasses.length,
-            itemBuilder: (_, i) {
-              final cls = _kTeachClasses[i];
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: _kTBorder),
                   boxShadow: [BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 6, offset: const Offset(0, 2))],
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 8, offset: const Offset(0, 2))],
                 ),
                 child: Row(children: [
                   Container(
-                    width: 38, height: 38,
+                    width: 48, height: 48,
                     decoration: BoxDecoration(
-                        color: _kTGoldLight,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                      child: Text(cls.name,
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800,
-                              color: _kTGold)),
+                      color: currentSlot != null
+                          ? currentSlot.color.withOpacity(0.12) : _kTSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      currentSlot != null
+                          ? Icons.cast_for_education_rounded
+                          : nextSlot != null
+                              ? Icons.access_time_rounded
+                              : Icons.check_circle_rounded,
+                      color: currentSlot != null ? currentSlot.color : _kTSubtext,
+                      size: 22,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(cls.subject,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
-                              color: _kTText),
-                          maxLines: 1, overflow: TextOverflow.ellipsis),
-                      Text(l10n.teacherSchoolStudents(cls.studentCount),
-                          style: const TextStyle(fontSize: 11, color: _kTSubtext)),
-                    ],
-                  )),
+                  const SizedBox(width: 14),
+                  Expanded(child: currentSlot != null
+                      ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(l10n.teacherSchoolNowTeaching,
+                              style: const TextStyle(fontSize: 11, color: _kTSubtext,
+                                  fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+                          const SizedBox(height: 2),
+                          Text('${currentSlot.subject} · ${currentSlot.className}',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800,
+                                  color: _kTText)),
+                          Text('${l10n.schoolRoom} ${currentSlot.room}  ·  ${currentSlot.timeStr}',
+                              style: const TextStyle(fontSize: 12, color: _kTSubtext)),
+                        ])
+                      : nextSlot != null
+                          ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text(l10n.teacherSchoolNextClass,
+                                  style: const TextStyle(fontSize: 11, color: _kTSubtext,
+                                      fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+                              const SizedBox(height: 2),
+                              Text('${nextSlot.subject} · ${nextSlot.className}',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800,
+                                      color: _kTText)),
+                              Text('${l10n.schoolRoom} ${nextSlot.room}  ·  ${nextSlot.timeStr}',
+                                  style: const TextStyle(fontSize: 12, color: _kTSubtext)),
+                            ])
+                          : Text(l10n.teacherSchoolFreeNow,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700,
+                                  color: _kTSubtext)),
+                  ),
                 ]),
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-
-          // ── Colleagues ───────────────────────────────────────────────
-          _TTeacherSectionHeader(
-              icon: Icons.people_alt_rounded,
-              title: l10n.teacherSchoolColleagues),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: _kTBorder),
+              ),
             ),
-            child: Column(
-              children: List.generate(_kColleagues.length, (i) {
-                final col = _kColleagues[i];
-                final bgColor = _kCollegueColors[col.colorIdx % _kCollegueColors.length];
-                final needsWhite = bgColor.computeLuminance() < 0.4;
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+          // ── Schedule section header + toggle ─────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(children: [
+                _TTeacherSectionHeader(
+                    icon: Icons.today_rounded,
+                    title: l10n.teacherSchoolMySchedule),
+                const Spacer(),
+                _ViewToggle(
+                  value: _schedView,
+                  todayLabel: l10n.schoolScheduleToday,
+                  weekLabel: l10n.schoolWeekView,
+                  onChanged: (v) => setState(() => _schedView = v),
+                ),
+              ]),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+          // ── Schedule content ─────────────────────────────────────────
+          if (_schedView == _SchedView.today)
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 100,
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _kTeachSchedule.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  itemBuilder: (_, i) {
+                    final slot     = _kTeachSchedule[i];
+                    final isActive = slot.isNow;
+                    return Container(
+                      width: 130,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isActive ? slot.color : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isActive ? slot.color : _kTBorder,
+                          width: isActive ? 2 : 1,
+                        ),
+                        boxShadow: isActive ? [BoxShadow(
+                            color: slot.color.withOpacity(0.25),
+                            blurRadius: 8, offset: const Offset(0, 3))] : null,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? Colors.white.withOpacity(0.25)
+                                    : slot.color.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(slot.className,
+                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800,
+                                      color: isActive ? Colors.white : slot.color)),
+                            ),
+                            const Spacer(),
+                            if (isActive)
+                              Container(
+                                width: 6, height: 6,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white, shape: BoxShape.circle),
+                              ),
+                          ]),
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(slot.subject,
+                                style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w700,
+                                  color: isActive ? Colors.white : _kTText,
+                                ),
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(slot.timeStr,
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: isActive ? Colors.white70 : _kTSubtext)),
+                          ]),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+          else
+            // ── Week schedule: flat SliverList, each lesson = white card R24/P20
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (ctx, i) {
+                    final slotsPerDay  = _kTeachSchedule.length;
+                    final itemsPerDay  = 1 + slotsPerDay;
+                    final dayIdx       = i ~/ itemsPerDay;
+                    final localIdx     = i % itemsPerDay;
+                    final dayDate      = monday.add(Duration(days: dayIdx));
+                    final isToday      = dayDate.day   == now.day &&
+                                        dayDate.month  == now.month &&
+                                        dayDate.year   == now.year;
+
+                    if (localIdx == 0) {
+                      // Day section header
+                      final locale  = Localizations.localeOf(ctx).toString();
+                      final dayName = DateFormat.EEEE(locale).format(dayDate);
+                      final dateStr = DateFormat('d. MMM', locale).format(dayDate);
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 8),
+                        child: Row(children: [
+                          Container(
+                            width: 8, height: 8,
+                            decoration: BoxDecoration(
+                              color: isToday
+                                  ? const Color(0xFFE6B800) : _kTBorder,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${dayName[0].toUpperCase()}${dayName.substring(1)}, $dateStr',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: isToday
+                                  ? const Color(0xFFE6B800) : _kTSubtext,
+                            ),
+                          ),
+                          if (isToday) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFF8E1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text('Heute',
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFFE6B800))),
+                            ),
+                          ],
+                        ]),
+                      );
+                    }
+
+                    final slot     = _kTeachSchedule[localIdx - 1];
+                    final isActive = isToday && slot.isNow;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _TeacherLessonCard(
+                        slot: slot, isActive: isActive, l10n: l10n),
+                    );
+                  },
+                  childCount: 5 * (1 + _kTeachSchedule.length),
+                ),
+              ),
+            ),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+          // ── My classes ──────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _TTeacherSectionHeader(
+                    icon: Icons.groups_2_rounded,
+                    title: l10n.teacherSchoolMyClasses),
+                const SizedBox(height: 10),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 2.2,
+                  ),
+                  itemCount: _kTeachClasses.length,
+                  itemBuilder: (_, i) {
+                    final cls = _kTeachClasses[i];
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: _kTBorder),
+                        boxShadow: [BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 6, offset: const Offset(0, 2))],
+                      ),
                       child: Row(children: [
                         Container(
-                          width: 38, height: 38,
-                          decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+                          width: 36, height: 36,
+                          decoration: BoxDecoration(
+                              color: _kTGoldLight,
+                              borderRadius: BorderRadius.circular(10)),
                           child: Center(
-                            child: Text(col.initials,
-                                style: TextStyle(
-                                    fontSize: 13, fontWeight: FontWeight.w800,
-                                    color: needsWhite ? Colors.white : _kTText)),
+                            child: Text(cls.name,
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800,
+                                    color: _kTGold)),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         Expanded(child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(col.name,
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
-                                    color: _kTText)),
-                            Text(col.subject,
-                                style: const TextStyle(fontSize: 12, color: _kTSubtext)),
+                            Text(cls.subject,
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                                    color: _kTText),
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(l10n.teacherSchoolStudents(cls.studentCount),
+                                style: const TextStyle(fontSize: 11, color: _kTSubtext)),
                           ],
                         )),
-                        Icon(Icons.chat_bubble_outline_rounded,
-                            size: 18, color: _kTBorder),
                       ]),
-                    ),
-                    if (i < _kColleagues.length - 1)
-                      const Divider(height: 1, indent: 66, color: _kTBorder),
-                  ],
-                );
-              }),
+                    );
+                  },
+                ),
+              ]),
             ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+          // ── Colleagues ──────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _TTeacherSectionHeader(
+                    icon: Icons.people_alt_rounded,
+                    title: l10n.teacherSchoolColleagues),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: _kTBorder),
+                  ),
+                  child: Column(
+                    children: List.generate(_kColleagues.length, (i) {
+                      final col      = _kColleagues[i];
+                      final bgColor  = _kCollegueColors[col.colorIdx % _kCollegueColors.length];
+                      final needsWhite = bgColor.computeLuminance() < 0.4;
+                      return Column(children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(children: [
+                            Container(
+                              width: 38, height: 38,
+                              decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+                              child: Center(
+                                child: Text(col.initials,
+                                    style: TextStyle(
+                                        fontSize: 13, fontWeight: FontWeight.w800,
+                                        color: needsWhite ? Colors.white : _kTText)),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(col.name,
+                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
+                                        color: _kTText)),
+                                Text(col.subject,
+                                    style: const TextStyle(fontSize: 12, color: _kTSubtext)),
+                              ],
+                            )),
+                            Icon(Icons.chat_bubble_outline_rounded,
+                                size: 18, color: _kTBorder),
+                          ]),
+                        ),
+                        if (i < _kColleagues.length - 1)
+                          const Divider(height: 1, indent: 66, color: _kTBorder),
+                      ]);
+                    }),
+                  ),
+                ),
+              ]),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Teacher lesson card: white, R24, P20 ─────────────────────────────────────
+
+class _TeacherLessonCard extends StatelessWidget {
+  final _TeachSlot slot;
+  final bool isActive;
+  final AppLocalizations l10n;
+  const _TeacherLessonCard({
+    required this.slot,
+    required this.isActive,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isActive ? slot.color : _kTBorder,
+          width: isActive ? 1.5 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+      child: Row(children: [
+        // Time block
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${slot.startH.toString().padLeft(2, '0')}:${slot.startM.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: isActive ? slot.color : _kTText,
+              ),
+            ),
+            Text(
+              '${slot.endH.toString().padLeft(2, '0')}:${slot.endM.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isActive ? slot.color.withOpacity(0.70) : _kTSubtext,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(width: 16),
+        // Color bar
+        Container(
+          width: 3,
+          height: 44,
+          decoration: BoxDecoration(
+            color: slot.color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 16),
+        // Subject + class + room
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                slot.subject,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: _kTText,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: slot.color.withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    slot.className,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: slot.color,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${l10n.schoolRoom} ${slot.room}',
+                  style: const TextStyle(fontSize: 12, color: _kTSubtext),
+                ),
+              ]),
+            ],
+          ),
+        ),
+        if (isActive)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: slot.color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'JETZT',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+            ),
+          ),
+      ]),
     );
   }
 }
