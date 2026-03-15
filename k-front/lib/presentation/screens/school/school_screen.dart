@@ -1075,36 +1075,38 @@ class _WeekDayRow extends StatelessWidget {
               ),
             ]),
           ),
-          // Expanded lesson list. Clip.hardEdge on AnimatedSize handles
-          // overflow during the collapse/expand animation.
-          AnimatedSize(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            clipBehavior: Clip.hardEdge,
-            alignment: Alignment.topCenter,
-            child: expanded
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Row(children: [
-                        Icon(s.icon, size: 13, color: s.color),
-                        const SizedBox(width: 8),
-                        Text('${s.startStr}–${s.endStr}',
-                            style: const TextStyle(
-                                fontSize: 11, color: Color(0xFF9E9E9E))),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(s.subject ?? '',
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w600,
-                                color: cs.onSurface))),
-                        Text(s.room ?? '',
-                            style: const TextStyle(
-                                fontSize: 11, color: Color(0xFF9E9E9E))),
-                      ]),
-                    )).toList()),
-                  )
-                : const SizedBox.shrink(),
+          // Expanded lesson list.
+          // ClipRect + AnimatedAlign(heightFactor) is the standard overflow-free
+          // Flutter pattern: the child renders at its natural height, the clip
+          // handles the visual slide without triggering RenderFlex overflow.
+          ClipRect(
+            child: AnimatedAlign(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              heightFactor: expanded ? 1.0 : 0.0,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                child: Column(mainAxisSize: MainAxisSize.min, children: lessons.map((s) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(children: [
+                    Icon(s.icon, size: 13, color: s.color),
+                    const SizedBox(width: 8),
+                    Text('${s.startStr}–${s.endStr}',
+                        style: const TextStyle(
+                            fontSize: 11, color: Color(0xFF9E9E9E))),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(s.subject ?? '',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w600,
+                            color: cs.onSurface))),
+                    Text(s.room ?? '',
+                        style: const TextStyle(
+                            fontSize: 11, color: Color(0xFF9E9E9E))),
+                  ]),
+                )).toList()),
+              ),
+            ),
           ),
         ]),
       ),
