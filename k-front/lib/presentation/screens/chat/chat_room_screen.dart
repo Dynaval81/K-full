@@ -358,8 +358,8 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 Text(
                   chat.name ?? AppLocalizations.of(context)!.chatUnknown,
-                  style: const TextStyle(
-                    color: Color(0xFF1A1A1A),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),

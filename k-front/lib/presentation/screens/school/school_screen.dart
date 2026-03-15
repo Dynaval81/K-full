@@ -467,13 +467,14 @@ class _LiveLesson extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final prog = slot.progress(now.hour, now.minute);
     final mins = slot.minsLeft(now.hour, now.minute);
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -495,9 +496,9 @@ class _LiveLesson extends StatelessWidget {
                     fontSize: 10, fontWeight: FontWeight.w700,
                     color: slot.color, letterSpacing: 1.0)),
             Text(slot.subject ?? '',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 17, fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A1A))),
+                    color: cs.onSurface)),
           ])),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -548,11 +549,12 @@ class _LiveBreak extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final mins = slot.minsLeft(now.hour, now.minute);
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -565,7 +567,7 @@ class _LiveBreak extends StatelessWidget {
           Container(
             width: 36, height: 36,
             decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: cs.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(10)),
             child: Icon(slot.icon, color: const Color(0xFF9E9E9E), size: 20)),
           const SizedBox(width: 10),
@@ -575,9 +577,9 @@ class _LiveBreak extends StatelessWidget {
                     fontSize: 10, fontWeight: FontWeight.w700,
                     color: Color(0xFF9E9E9E), letterSpacing: 1.0)),
             Text(slot.subject ?? l10n.schoolBreak,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 17, fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A1A))),
+                    color: cs.onSurface)),
           ])),
           Text('$mins ${l10n.schoolMinLeft}',
               style: const TextStyle(
@@ -600,10 +602,11 @@ class _LiveNextOnly extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white, borderRadius: BorderRadius.circular(20),
+        color: cs.surface, borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(
             color: Colors.black.withOpacity(0.06),
             blurRadius: 12, offset: const Offset(0, 4))]),
@@ -622,10 +625,11 @@ class _LiveAfterHours extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white, borderRadius: BorderRadius.circular(20),
+        color: cs.surface, borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(
             color: Colors.black.withOpacity(0.06),
             blurRadius: 12, offset: const Offset(0, 4))]),
@@ -633,7 +637,7 @@ class _LiveAfterHours extends StatelessWidget {
         Container(
           width: 36, height: 36,
           decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: cs.surfaceContainerLow,
               borderRadius: BorderRadius.circular(10)),
           child: const Icon(Icons.nights_stay_rounded,
               color: Color(0xFF9E9E9E), size: 20)),
@@ -656,10 +660,11 @@ class _NextLessonChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-          color: const Color(0xFFF5F6FA),
+          color: cs.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12)),
       child: Row(children: [
         Icon(next.icon, size: 14, color: next.color),
@@ -671,9 +676,9 @@ class _NextLessonChip extends StatelessWidget {
                     fontSize: 10, color: Color(0xFF9E9E9E),
                     fontWeight: FontWeight.w600)),
             Text(next.subject ?? '',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 14, fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A1A))),
+                    color: cs.onSurface)),
           ])),
           Text('${next.startStr}',
               style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E))),
@@ -682,9 +687,9 @@ class _NextLessonChip extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E))),
           const SizedBox(width: 6),
           Expanded(child: Text(next.subject ?? '',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12, fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A1A)),
+                  color: cs.onSurface),
               overflow: TextOverflow.ellipsis)),
           Text(next.startStr,
               style: const TextStyle(fontSize: 11, color: Color(0xFF9E9E9E))),
@@ -764,10 +769,11 @@ class _ViewToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       height: 28,
       decoration: BoxDecoration(
-          color: const Color(0xFFF0F0F0),
+          color: cs.surfaceContainerLow,
           borderRadius: BorderRadius.circular(10)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         _Tab(
@@ -791,6 +797,7 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -801,7 +808,7 @@ class _Tab extends StatelessWidget {
         margin: const EdgeInsets.all(3),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: active ? Colors.white : Colors.transparent,
+          color: active ? cs.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           boxShadow: active
               ? [BoxShadow(
@@ -814,7 +821,7 @@ class _Tab extends StatelessWidget {
               style: TextStyle(
                   fontSize: 11, fontWeight: FontWeight.w700,
                   color: active
-                      ? const Color(0xFF1A1A1A)
+                      ? cs.onSurface
                       : const Color(0xFF9E9E9E))),
         ),
       ),
@@ -875,6 +882,7 @@ class _ScheduleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final notes  = context.watch<_NotesModel>();
     final hasNote = notes.hasNote(slot.noteKey);
     final accent = isNow
@@ -889,7 +897,7 @@ class _ScheduleTile extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: isNow ? slot.color.withOpacity(0.10) : Colors.white,
+          color: isNow ? slot.color.withOpacity(0.10) : cs.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
               color: isNow ? slot.color : Colors.transparent, width: 1.5),
@@ -915,7 +923,7 @@ class _ScheduleTile extends StatelessWidget {
                       fontSize: 12, fontWeight: FontWeight.w700,
                       color: isDone
                           ? const Color(0xFFBDBDBD)
-                          : const Color(0xFF1A1A1A)),
+                          : cs.onSurface),
                   overflow: TextOverflow.ellipsis, maxLines: 2),
             ],
           ),
@@ -1000,6 +1008,7 @@ class _WeekDayRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final locale  = Localizations.localeOf(context).toString();
     final dayName = DateFormat.E(locale).format(day);
     final dateStr = DateFormat.d(locale).format(day);
@@ -1009,7 +1018,7 @@ class _WeekDayRow extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 6),
         decoration: BoxDecoration(
-          color: isToday ? const Color(0xFFFFF8E1) : Colors.white,
+          color: isToday ? const Color(0xFFFFF8E1) : cs.surface,
           borderRadius: BorderRadius.circular(14),
           border: isToday
               ? Border.all(color: const Color(0xFFE6B800), width: 1.5)
@@ -1028,7 +1037,7 @@ class _WeekDayRow extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isToday
                       ? const Color(0xFFE6B800)
-                      : const Color(0xFFF5F5F5),
+                      : cs.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -1039,7 +1048,7 @@ class _WeekDayRow extends StatelessWidget {
                   Text(dateStr,
                       style: TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w800,
-                          color: isToday ? Colors.white : const Color(0xFF1A1A1A))),
+                          color: isToday ? Colors.white : cs.onSurface)),
                 ]),
               ),
               const SizedBox(width: 12),
@@ -1093,9 +1102,9 @@ class _WeekDayRow extends StatelessWidget {
                                   fontSize: 11, color: Color(0xFF9E9E9E))),
                           const SizedBox(width: 8),
                           Expanded(child: Text(s.subject ?? '',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 12, fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1A1A1A)))),
+                                  color: cs.onSurface))),
                           Text(s.room ?? '',
                               style: const TextStyle(
                                   fontSize: 11, color: Color(0xFF9E9E9E))),
@@ -1230,6 +1239,7 @@ class _BentoTileState extends State<_BentoTile>
   }
 
   void _openSheet() {
+    final cs = Theme.of(context).colorScheme;
     HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
@@ -1241,9 +1251,9 @@ class _BentoTileState extends State<_BentoTile>
         maxChildSize: 0.92,
         expand: false,
         builder: (_, ctrl) => Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFF5F6FA),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerLow,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: Column(children: [
             const SizedBox(height: 12),
@@ -1263,9 +1273,9 @@ class _BentoTileState extends State<_BentoTile>
                         color: widget.data.color, size: 22)),
                 const SizedBox(width: 12),
                 Text(widget.data.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A1A))),
+                        color: cs.onSurface)),
               ]),
             ),
             const SizedBox(height: 12),
@@ -1282,6 +1292,7 @@ class _BentoTileState extends State<_BentoTile>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTapDown:   (_) => _ctrl.forward(),
       onTapUp:     (_) { _ctrl.reverse(); _openSheet(); },
@@ -1291,7 +1302,7 @@ class _BentoTileState extends State<_BentoTile>
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: cs.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -1307,9 +1318,9 @@ class _BentoTileState extends State<_BentoTile>
                       color: widget.data.color, size: 22)),
               const SizedBox(height: 10),
               Text(widget.data.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A)),
+                      color: cs.onSurface),
                   overflow: TextOverflow.ellipsis),
               const SizedBox(height: 2),
               Text(widget.data.subtitle,
@@ -1337,6 +1348,7 @@ class _BentoTileState extends State<_BentoTile>
 class _TeachersCard extends StatelessWidget {
   void _openSheet(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
@@ -1348,9 +1360,9 @@ class _TeachersCard extends StatelessWidget {
         maxChildSize: 0.92,
         expand: false,
         builder: (_, ctrl) => Container(
-          decoration: const BoxDecoration(
-              color: Color(0xFFF5F6FA),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+          decoration: BoxDecoration(
+              color: cs.surfaceContainerLow,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
           child: Column(children: [
             const SizedBox(height: 12),
             Container(width: 40, height: 4,
@@ -1369,9 +1381,9 @@ class _TeachersCard extends StatelessWidget {
                         color: Color(0xFF43A047), size: 22)),
                 const SizedBox(width: 12),
                 Text(l10n.schoolTeachersTitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A1A))),
+                        color: cs.onSurface)),
               ]),
             ),
             const SizedBox(height: 12),
@@ -1384,6 +1396,7 @@ class _TeachersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => _openSheet(context),
@@ -1391,7 +1404,7 @@ class _TeachersCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -1407,9 +1420,9 @@ class _TeachersCard extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l10n.schoolTeachersTitle,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 13, fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A1A))),
+                    color: cs.onSurface)),
             Text('${_kTeachers.length} ${l10n.schoolTeacherLabel.toLowerCase()}',
                 style: const TextStyle(fontSize: 11, color: Color(0xFF9E9E9E))),
           ])),
@@ -1430,7 +1443,7 @@ class _TeachersCard extends StatelessWidget {
                         const Color(0xFF7C4DFF),
                       ][i % 4],
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: cs.surface, width: 2),
                     ),
                     child: Center(child: Text(_kTeachers[i].initials,
                         style: const TextStyle(
@@ -1524,6 +1537,7 @@ class _GradesSheetState extends State<_GradesSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Column(children: [
       // Average badge
@@ -1567,7 +1581,7 @@ class _GradesSheetState extends State<_GradesSheet> {
             child: Container(
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(14)),
+                  color: cs.surface, borderRadius: BorderRadius.circular(14)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 // Subject row
                 Padding(
@@ -1620,8 +1634,8 @@ class _GradesSheetState extends State<_GradesSheet> {
                                     color: gc)))),
                           const SizedBox(width: 10),
                           Expanded(child: Text(g.topic,
-                              style: const TextStyle(
-                                  fontSize: 12, color: Color(0xFF1A1A1A)))),
+                              style: TextStyle(
+                                  fontSize: 12, color: cs.onSurface))),
                           Text(g.date,
                               style: const TextStyle(
                                   fontSize: 11, color: Color(0xFF9E9E9E))),
@@ -1646,6 +1660,7 @@ class _DocumentsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     const items = [
       ('Stundenplan 2024-25.pdf',   '1.2 MB', Icons.picture_as_pdf_rounded),
       ('Hausordnung.pdf',           '340 KB', Icons.picture_as_pdf_rounded),
@@ -1658,7 +1673,7 @@ class _DocumentsSheet extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(14)),
+              color: cs.surface, borderRadius: BorderRadius.circular(14)),
           child: Row(children: [
             Icon(e.$3, color: const Color(0xFFE6B800), size: 22),
             const SizedBox(width: 12),
@@ -1682,6 +1697,7 @@ class _ClubsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     const clubs = [
       ('Theater AG', 'Mi 14:00–16:00 · Aula',             Icons.theater_comedy_rounded),
       ('Schach AG',  'Do 13:30–15:00 · R. 115',           Icons.casino_rounded),
@@ -1693,7 +1709,7 @@ class _ClubsSheet extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(14)),
+              color: cs.surface, borderRadius: BorderRadius.circular(14)),
           child: Row(children: [
             Container(width: 38, height: 38,
                 decoration: BoxDecoration(
@@ -1723,6 +1739,7 @@ class _CafeteriaSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     const menu = [
       ('Menü 1', 'Schnitzel mit Pommes & Salat',  '4.50 €', '🥩'),
@@ -1751,7 +1768,7 @@ class _CafeteriaSheet extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(14)),
+              color: cs.surface, borderRadius: BorderRadius.circular(14)),
           child: Row(children: [
             Text(e.$4,
                 style: const TextStyle(fontSize: 24)),
@@ -1790,6 +1807,7 @@ class _TeachersSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return ListView.builder(
       controller: scrollCtrl,
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1801,7 +1819,7 @@ class _TeachersSheet extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              color: cs.surface, borderRadius: BorderRadius.circular(16)),
           child: Row(children: [
             Container(
               width: 44, height: 44,
@@ -1814,9 +1832,9 @@ class _TeachersSheet extends StatelessWidget {
             Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(t.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A))),
+                      color: cs.onSurface)),
               Text(t.subject,
                   style: TextStyle(
                       fontSize: 12, color: clr, fontWeight: FontWeight.w600)),
@@ -1864,10 +1882,11 @@ class _QrSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: const EdgeInsets.fromLTRB(32, 16, 32, 40),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -1877,9 +1896,9 @@ class _QrSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2))),
         const SizedBox(height: 20),
         Text(l10n.schoolQrTitle,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A1A))),
+                color: cs.onSurface)),
         const SizedBox(height: 8),
         Text(l10n.schoolQrHint,
             textAlign: TextAlign.center,
@@ -1907,9 +1926,9 @@ class _QrSheet extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(knId,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 22, fontWeight: FontWeight.w800,
-                color: Color(0xFF1A1A1A), letterSpacing: 1.5)),
+                color: cs.onSurface, letterSpacing: 1.5)),
         const SizedBox(height: 4),
       ]),
     );
@@ -1950,13 +1969,14 @@ class _NoteSheetState extends State<_NoteSheet> {
     final notes = Provider.of<_NotesModel>(context, listen: false);
     final color = widget.slot.color;
 
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -1979,9 +1999,9 @@ class _NoteSheetState extends State<_NoteSheet> {
                       fontSize: 10, color: Color(0xFF9E9E9E),
                       fontWeight: FontWeight.w600)),
               Text(widget.slot.subject ?? '',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 15, fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A))),
+                      color: cs.onSurface)),
             ])),
           ]),
           const SizedBox(height: 14),
@@ -1994,7 +2014,7 @@ class _NoteSheetState extends State<_NoteSheet> {
               hintText: l10n.schoolNotesHint,
               hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
               filled: true,
-              fillColor: const Color(0xFFF5F6FA),
+              fillColor: cs.surfaceContainerLow,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none),
@@ -2044,11 +2064,12 @@ class _SheetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-          color: done ? const Color(0xFFF5F5F5) : Colors.white,
+          color: done ? cs.surfaceContainerLow : cs.surface,
           borderRadius: BorderRadius.circular(14)),
       child: Row(children: [
         Icon(
@@ -2065,7 +2086,7 @@ class _SheetItem extends StatelessWidget {
                   fontSize: 14, fontWeight: FontWeight.w600,
                   color: done
                       ? const Color(0xFF9E9E9E)
-                      : const Color(0xFF1A1A1A),
+                      : cs.onSurface,
                   decoration: done ? TextDecoration.lineThrough : null)),
           Text(subtitle,
               style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E))),
@@ -2109,10 +2130,6 @@ class _SectionHeader extends StatelessWidget {
 
 // ─── Parent School View ───────────────────────────────────────────────────────
 
-const Color _kPCard      = Color(0xFFFFFFFF);
-const Color _kPText      = Color(0xFF1A1A1A);
-const Color _kPSubtext   = Color(0xFF6B6B6B);
-const Color _kPBorder    = Color(0xFFE0E0E0);
 
 class _ParentSchoolView extends StatelessWidget {
   final User? user;
@@ -2120,6 +2137,7 @@ class _ParentSchoolView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
@@ -2147,12 +2165,12 @@ class _ParentSchoolView extends StatelessWidget {
                     children: [
                       Text(
                         user?.school ?? l10n.parentSchoolMySchool,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _kPText),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: cs.onSurface),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Klasse ${user?.schoolClass ?? '–'}  •  ${l10n.parentRoleBadge}',
-                        style: const TextStyle(fontSize: 13, color: _kPSubtext),
+                        style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -2171,39 +2189,42 @@ class _ParentSchoolView extends StatelessWidget {
           _PSection(icon: Icons.event_rounded, title: l10n.parentSchoolEventsTitle),
           const SizedBox(height: 8),
           _PCard(
-            child: Column(
-              children: const [
-                _PEventRow(
-                  icon: Icons.people_rounded,
-                  iconBg: Color(0xFFFFF8E1),
-                  iconColor: Color(0xFFE6B800),
-                  title: 'Elternsprechtag',
-                  subtitle: 'Di, 25.03.2025 · 16:00–19:00 Uhr',
-                  badge: 'Bald',
-                  badgeColor: Color(0xFFE6B800),
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PEventRow(
-                  icon: Icons.directions_bus_rounded,
-                  iconBg: Color(0xFFFFF8E1),
-                  iconColor: Color(0xFFE6B800),
-                  title: 'Schulausflug 7b',
-                  subtitle: 'Fr, 04.04.2025 · ganztägig',
-                  badge: null,
-                  badgeColor: null,
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PEventRow(
-                  icon: Icons.theater_comedy_rounded,
-                  iconBg: Color(0xFFFFEBEE),
-                  iconColor: Color(0xFFCC0000),
-                  title: 'Schultheater',
-                  subtitle: 'Mo, 07.04.2025 · 18:30 Uhr',
-                  badge: null,
-                  badgeColor: null,
-                ),
-              ],
-            ),
+            child: Builder(builder: (context) {
+              final dividerColor = Theme.of(context).colorScheme.outline;
+              return Column(
+                children: [
+                  const _PEventRow(
+                    icon: Icons.people_rounded,
+                    iconBg: Color(0xFFFFF8E1),
+                    iconColor: Color(0xFFE6B800),
+                    title: 'Elternsprechtag',
+                    subtitle: 'Di, 25.03.2025 · 16:00–19:00 Uhr',
+                    badge: 'Bald',
+                    badgeColor: Color(0xFFE6B800),
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PEventRow(
+                    icon: Icons.directions_bus_rounded,
+                    iconBg: Color(0xFFFFF8E1),
+                    iconColor: Color(0xFFE6B800),
+                    title: 'Schulausflug 7b',
+                    subtitle: 'Fr, 04.04.2025 · ganztägig',
+                    badge: null,
+                    badgeColor: null,
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PEventRow(
+                    icon: Icons.theater_comedy_rounded,
+                    iconBg: Color(0xFFFFEBEE),
+                    iconColor: Color(0xFFCC0000),
+                    title: 'Schultheater',
+                    subtitle: 'Mo, 07.04.2025 · 18:30 Uhr',
+                    badge: null,
+                    badgeColor: null,
+                  ),
+                ],
+              );
+            }),
           ),
           const SizedBox(height: 16),
 
@@ -2211,30 +2232,33 @@ class _ParentSchoolView extends StatelessWidget {
           _PSection(icon: Icons.contact_phone_rounded, title: l10n.parentSchoolContactsTitle),
           const SizedBox(height: 8),
           _PCard(
-            child: Column(
-              children: const [
-                _PContactRow(
-                  initials: 'AM',
-                  name: 'Anna Müller',
-                  role: 'Klassenlehrerin · Mathematik',
-                  email: 'a.mueller@schule.de',
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PContactRow(
-                  initials: 'KS',
-                  name: 'Klaus Schmidt',
-                  role: 'Deutschlehrer',
-                  email: 'k.schmidt@schule.de',
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PContactRow(
-                  initials: 'LW',
-                  name: 'Lisa Weber',
-                  role: 'Englischlehrerin',
-                  email: 'l.weber@schule.de',
-                ),
-              ],
-            ),
+            child: Builder(builder: (context) {
+              final dividerColor = Theme.of(context).colorScheme.outline;
+              return Column(
+                children: [
+                  const _PContactRow(
+                    initials: 'AM',
+                    name: 'Anna Müller',
+                    role: 'Klassenlehrerin · Mathematik',
+                    email: 'a.mueller@schule.de',
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PContactRow(
+                    initials: 'KS',
+                    name: 'Klaus Schmidt',
+                    role: 'Deutschlehrer',
+                    email: 'k.schmidt@schule.de',
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PContactRow(
+                    initials: 'LW',
+                    name: 'Lisa Weber',
+                    role: 'Englischlehrerin',
+                    email: 'l.weber@schule.de',
+                  ),
+                ],
+              );
+            }),
           ),
           const SizedBox(height: 16),
 
@@ -2242,27 +2266,30 @@ class _ParentSchoolView extends StatelessWidget {
           _PSection(icon: Icons.campaign_rounded, title: l10n.parentSchoolLettersTitle),
           const SizedBox(height: 8),
           _PCard(
-            child: Column(
-              children: const [
-                _PAnnouncementRow(
-                  title: 'Digitale Geräte an der Schule',
-                  date: '12.03.2025',
-                  isNew: true,
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PAnnouncementRow(
-                  title: 'Änderungen im Mensaplan April',
-                  date: '05.03.2025',
-                  isNew: false,
-                ),
-                Divider(height: 1, color: _kPBorder),
-                _PAnnouncementRow(
-                  title: 'Elternabend Protokoll Feb.',
-                  date: '28.02.2025',
-                  isNew: false,
-                ),
-              ],
-            ),
+            child: Builder(builder: (context) {
+              final dividerColor = Theme.of(context).colorScheme.outline;
+              return Column(
+                children: [
+                  const _PAnnouncementRow(
+                    title: 'Digitale Geräte an der Schule',
+                    date: '12.03.2025',
+                    isNew: true,
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PAnnouncementRow(
+                    title: 'Änderungen im Mensaplan April',
+                    date: '05.03.2025',
+                    isNew: false,
+                  ),
+                  Divider(height: 1, color: dividerColor),
+                  const _PAnnouncementRow(
+                    title: 'Elternabend Protokoll Feb.',
+                    date: '28.02.2025',
+                    isNew: false,
+                  ),
+                ],
+              );
+            }),
           ),
           const SizedBox(height: 16),
 
@@ -2272,21 +2299,24 @@ class _ParentSchoolView extends StatelessWidget {
           _PCard(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Column(
-                children: [
-                  _PMenuRow(
-                    icon: Icons.chat_bubble_outline_rounded,
-                    label: l10n.parentSchoolCommitteeChat,
-                    onTap: () {},
-                  ),
-                  const Divider(height: 1, color: _kPBorder),
-                  _PMenuRow(
-                    icon: Icons.how_to_vote_rounded,
-                    label: l10n.parentSchoolCommitteeVotes,
-                    onTap: () {},
-                  ),
-                ],
-              ),
+              child: Builder(builder: (context) {
+                final dividerColor = Theme.of(context).colorScheme.outline;
+                return Column(
+                  children: [
+                    _PMenuRow(
+                      icon: Icons.chat_bubble_outline_rounded,
+                      label: l10n.parentSchoolCommitteeChat,
+                      onTap: () {},
+                    ),
+                    Divider(height: 1, color: dividerColor),
+                    _PMenuRow(
+                      icon: Icons.how_to_vote_rounded,
+                      label: l10n.parentSchoolCommitteeVotes,
+                      onTap: () {},
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
@@ -2307,7 +2337,7 @@ class _PCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _kPCard,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -2368,6 +2398,7 @@ class _PEventRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -2383,9 +2414,9 @@ class _PEventRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _kPText)),
+                Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurface)),
                 const SizedBox(height: 1),
-                Text(subtitle, style: const TextStyle(fontSize: 12, color: _kPSubtext)),
+                Text(subtitle, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
               ],
             ),
           ),
@@ -2422,6 +2453,7 @@ class _PContactRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -2442,9 +2474,9 @@ class _PContactRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _kPText)),
+                Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurface)),
                 const SizedBox(height: 1),
-                Text(role, style: const TextStyle(fontSize: 12, color: _kPSubtext)),
+                Text(role, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
               ],
             ),
           ),
@@ -2473,6 +2505,7 @@ class _PAnnouncementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -2500,11 +2533,11 @@ class _PAnnouncementRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: isNew ? FontWeight.w600 : FontWeight.w500,
-                    color: _kPText,
+                    color: cs.onSurface,
                   ),
                 ),
                 const SizedBox(height: 1),
-                Text(date, style: const TextStyle(fontSize: 12, color: _kPSubtext)),
+                Text(date, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
               ],
             ),
           ),
@@ -2529,6 +2562,7 @@ class _PMenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -2546,10 +2580,10 @@ class _PMenuRow extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: _kPText),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: cs.onSurface),
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, size: 18, color: _kPBorder),
+            Icon(Icons.chevron_right_rounded, size: 18, color: cs.outline),
           ],
         ),
       ),
