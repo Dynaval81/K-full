@@ -26,7 +26,6 @@ class DashboardScreen extends StatelessWidget {
     final vis   = context.watch<TabVisibilityController>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: KnotyAppBar(title: l10n.dashboardTitle),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -141,14 +140,15 @@ class _ThemeCard extends StatelessWidget {
     final theme = context.watch<ThemeProvider>();
     final isDark = theme.isDarkMode;
 
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
+          color: cs.outline.withValues(alpha: 0.4),
           blurRadius: 10, offset: const Offset(0, 2))],
       ),
       child: Row(children: [
@@ -164,14 +164,14 @@ class _ThemeCard extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(child: Text(l10n.settingsTheme,
-          style: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87))),
+          style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w500, color: cs.onSurface))),
         // Segmented toggle
         Container(
           height: 34,
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3F5),
+            color: cs.surfaceContainerLow,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -219,23 +219,23 @@ class _ThemeSegment extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: active ? Colors.white : Colors.transparent,
+          color: active ? Theme.of(context).colorScheme.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(9),
           boxShadow: active
               ? [BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4),
                   blurRadius: 4, offset: const Offset(0, 1))]
               : null,
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon,
             size: 14,
-            color: active ? const Color(0xFFE6B800) : const Color(0xFF9E9E9E)),
+            color: active ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: 4),
           Text(label,
             style: TextStyle(
               fontSize: 12, fontWeight: FontWeight.w600,
-              color: active ? const Color(0xFF1A1A1A) : const Color(0xFF9E9E9E))),
+              color: active ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurfaceVariant)),
         ]),
       ),
     );
@@ -261,13 +261,14 @@ class _ExpandCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
+          color: cs.outline.withValues(alpha: 0.4),
           blurRadius: 10, offset: const Offset(0, 2))],
       ),
       child: ClipRRect(
@@ -288,12 +289,12 @@ class _ExpandCard extends StatelessWidget {
             child: Icon(icon, color: const Color(0xFFE6B800), size: 17),
           ),
           title: Text(title,
-            style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+            style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
           subtitle: subtitle != null
               ? Text(subtitle!,
-                  style: const TextStyle(
-                    fontSize: 12, color: Color(0xFF9E9E9E)))
+                  style: TextStyle(
+                    fontSize: 12, color: cs.onSurfaceVariant))
               : null,
           children: children,
         ),
@@ -337,7 +338,7 @@ class _TabToggle extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(child: Text(label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87))),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface))),
         Switch.adaptive(
           value: value,
           onChanged: isLast ? null : onChanged,
@@ -360,8 +361,8 @@ class _InfoRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
-        Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(label, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
       ]),
     );
   }
@@ -382,9 +383,9 @@ class _ReportButton extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.outline.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 2))],
         ),
         child: Row(children: [
           Container(
@@ -394,8 +395,8 @@ class _ReportButton extends StatelessWidget {
           ),
           const SizedBox(width: 14),
           Expanded(child: Text(l10n.dashboardReport,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87))),
-          const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.black26),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface))),
+          Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ]),
       ),
     );
@@ -409,7 +410,7 @@ class _ReportButton extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => _ReportSheet(onSend: (text) => _send(user, text)),
@@ -474,7 +475,7 @@ class _LanguageExpandCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: active
                   ? const Color(0xFFE6B800).withValues(alpha: 0.08)
-                  : const Color(0xFFF8F8F8),
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: active
@@ -488,7 +489,7 @@ class _LanguageExpandCard extends StatelessWidget {
               Expanded(child: Text(e.$3,
                 style: TextStyle(
                   fontSize: 15, fontWeight: FontWeight.w500,
-                  color: active ? const Color(0xFFE6B800) : const Color(0xFF1A1A1A)))),
+                  color: active ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.onSurface))),
               if (active)
                 const Icon(Icons.check_circle_rounded,
                     size: 18, color: Color(0xFFE6B800)),
@@ -532,15 +533,16 @@ class _ReportSheetState extends State<_ReportSheet> {
   Widget build(BuildContext context) {
     final l10n   = AppLocalizations.of(context)!;
     final bottom = MediaQuery.of(context).viewInsets.bottom;
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottom),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         Center(child: Container(width: 40, height: 4,
-          decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(2)))),
+          decoration: BoxDecoration(color: cs.outline, borderRadius: BorderRadius.circular(2)))),
         const SizedBox(height: 20),
-        Text(l10n.dashboardReport, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+        Text(l10n.dashboardReport, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: cs.onSurface)),
         const SizedBox(height: 6),
-        Text(l10n.dashboardReportHint, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(l10n.dashboardReportHint, style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
         const SizedBox(height: 16),
         if (_sent)
           Padding(
@@ -553,13 +555,13 @@ class _ReportSheetState extends State<_ReportSheet> {
           )
         else ...[
           Container(
-            decoration: BoxDecoration(color: const Color(0xFFF1F3F5), borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(color: cs.surfaceContainerLow, borderRadius: BorderRadius.circular(16)),
             child: TextField(
               controller: _ctrl, maxLines: 5, autofocus: true,
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              style: TextStyle(fontSize: 15, color: cs.onSurface),
               decoration: InputDecoration(
                 hintText: l10n.dashboardReportPlaceholder,
-                hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+                hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.all(14),
               ),

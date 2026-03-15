@@ -57,12 +57,9 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Theme(
-      data: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
+    final cs = Theme.of(context).colorScheme;
+    return Scaffold(
+        backgroundColor: cs.surface,
         body: SafeArea(
           child: FadeTransition(
             opacity: _fadeIn,
@@ -114,7 +111,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                   // ── Knoty ID card ─────────────────────────────
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cs.surface,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: const [AppShadows.md],
                     ),
@@ -139,7 +136,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                             decoration: BoxDecoration(
                               color: _copied
                                   ? Colors.green.withOpacity(0.08)
-                                  : const Color(0xFFF1F3F5),
+                                  : cs.surfaceContainerLow,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: _copied
@@ -238,7 +235,6 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
             ),
           ),
         ),
-      ),
     );
   }
 }

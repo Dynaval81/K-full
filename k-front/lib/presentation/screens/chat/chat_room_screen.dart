@@ -64,7 +64,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     final messages = controller.messagesForChat(widget.chat.id);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: _ChatAppBar(chat: widget.chat),
       body: Column(
         children: [
@@ -301,13 +300,13 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0,
       scrolledUnderElevation: 0.5,
-      shadowColor: Colors.black12,
+      shadowColor: Theme.of(context).colorScheme.outline,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF1A1A1A), size: 20),
+        icon: Icon(Icons.arrow_back_ios_new_rounded,
+            color: Theme.of(context).colorScheme.onSurface, size: 20),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Row(

@@ -171,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     context.watch<LocaleProvider>(); // rebuild on locale change
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 50;
 
     return PopScope(
@@ -188,18 +189,8 @@ class _LoginScreenState extends State<LoginScreen>
             _goBack();
           }
         },
-        child: Theme(
-        // Force light theme on login screen regardless of system theme
-        data: ThemeData.light().copyWith(
-          scaffoldBackgroundColor: Colors.white,
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: const Color(0xFFF1F3F5),
-            hintStyle: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 15),
-          ),
-        ),
         child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: cs.surface,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           bottom: false,
@@ -231,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen>
                         // ── Card ──────────────────────────────────
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cs.surface,
                             borderRadius: BorderRadius.circular(28),
                             boxShadow: const [AppShadows.md],
                           ),
@@ -287,10 +278,10 @@ class _LoginScreenState extends State<LoginScreen>
                     width: double.infinity,
                     padding: const EdgeInsets.only(top: 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F3F5),
+                      color: cs.surfaceContainerLow,
                       border: Border(
                         top: BorderSide(
-                            color: AppColors.onSurface.withOpacity(0.06),
+                            color: cs.outline,
                             width: 1),
                       ),
                     ),
@@ -328,7 +319,6 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
         ), // Scaffold
-      ), // Theme
       ), // GestureDetector
     );
   }
@@ -445,7 +435,7 @@ class _LangPickerRow extends StatelessWidget {
           context.read<LocaleProvider>().setLocale(Locale(code)),
       offset: const Offset(0, 40),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 8,
       itemBuilder: (_) => _langs
           .map((e) => PopupMenuItem<String>(

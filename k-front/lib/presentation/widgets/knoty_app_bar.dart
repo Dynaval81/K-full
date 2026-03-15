@@ -47,17 +47,18 @@ class KnotyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: cs.surface,
       elevation: 0,
       centerTitle: false,
       leading: leading,
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF1A1A1A),
+          color: cs.onSurface,
         ),
       ),
       actions: [
@@ -75,7 +76,7 @@ class KnotyAppBar extends StatelessWidget implements PreferredSizeWidget {
         preferredSize: const Size.fromHeight(1),
         child: Container(
           height: 1,
-          color: Colors.black.withOpacity(0.06),
+          color: cs.outline,
         ),
       ),
     );
@@ -123,10 +124,11 @@ class _ProfileSheet extends StatelessWidget {
     final email = user?.email ?? '';
     final schoolName = '—'; // TODO: resolve school name from user.schoolId
 
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8F8F8),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerLow,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -147,10 +149,10 @@ class _ProfileSheet extends StatelessWidget {
             margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: cs.outline.withOpacity(0.5),
                 blurRadius: 12, offset: const Offset(0, 4))],
             ),
             child: Row(
@@ -208,9 +210,9 @@ class _ProfileSheet extends StatelessWidget {
                     children: [
                       Text(
                         _displayName(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w700,
-                          color: Color(0xFF1A1A1A)),
+                          color: cs.onSurface),
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (_knDigits().isNotEmpty) ...[
@@ -243,10 +245,10 @@ class _ProfileSheet extends StatelessWidget {
           Container(
             margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: cs.outline.withOpacity(0.5),
                 blurRadius: 12, offset: const Offset(0, 4))],
             ),
             child: Column(
@@ -349,13 +351,13 @@ class _ProfileTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(label,
-                    style: const TextStyle(
-                      fontSize: 11, color: Color(0xFF9E9E9E),
+                    style: TextStyle(
+                      fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500)),
                   const SizedBox(height: 2),
                   Text(value,
-                    style: const TextStyle(
-                      fontSize: 14, color: Color(0xFF1A1A1A),
+                    style: TextStyle(
+                      fontSize: 14, color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis),
                 ],
@@ -365,26 +367,26 @@ class _ProfileTile extends StatelessWidget {
               Container(
                 width: 32, height: 32,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(actionIcon!, size: 16, color: const Color(0xFF757575)),
+                child: Icon(actionIcon!, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
               )
             else if (actionLabel != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(actionLabel!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11, fontWeight: FontWeight.w600,
-                    color: Color(0xFF757575))),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
               )
             else
               Icon(Icons.edit_outlined,
-                  size: 16, color: Colors.grey.shade400),
+                  size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ],
         ),
       ),
@@ -396,7 +398,7 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Divider(
     height: 1, indent: 70,
-    color: Colors.black.withOpacity(0.06));
+    color: Theme.of(context).colorScheme.outline);
 }
 
 
