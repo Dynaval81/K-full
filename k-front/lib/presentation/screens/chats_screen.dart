@@ -11,6 +11,7 @@ import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/presentation/screens/chat/chat_room_screen.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
 import 'package:knoty/presentation/widgets/knoty_empty_state.dart';
+import 'package:knoty/presentation/widgets/knoty_shimmer.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 
 enum _ChatFilter { all, personal, groups, school }
@@ -136,10 +137,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           // ── Список ────────────────────────────────────────────
           Expanded(
             child: controller.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFE6B800), strokeWidth: 2),
-                  )
+                ? const KnotyChatListSkeleton()
                 : _ChatList(
                     rooms: rooms,
                     onTap: (chat) => _openChat(context, chat),
