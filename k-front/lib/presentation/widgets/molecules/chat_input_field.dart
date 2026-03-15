@@ -61,7 +61,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
   void _showAttachMenu() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => const _AttachMenu(),
@@ -76,9 +76,8 @@ class _ChatInputFieldState extends State<ChatInputField> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            border:
-                Border(top: BorderSide(color: Colors.grey.withOpacity(0.10))),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline)),
           ),
           padding: EdgeInsets.fromLTRB(12, 8, 12, 8 + bottomPad),
           child: Row(
@@ -96,7 +95,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                 child: Container(
                   constraints: const BoxConstraints(maxHeight: 120),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F5),
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: TextField(
@@ -105,15 +104,14 @@ class _ChatInputFieldState extends State<ChatInputField> {
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     textCapitalization: TextCapitalization.sentences,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xFF1A1A1A),
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Nachricht...',
-                      hintStyle:
-                          TextStyle(fontSize: 16, color: Color(0xFFBDBDBD)),
+                      hintStyle: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       border: InputBorder.none,
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -206,14 +204,14 @@ class _EmojiPickerState extends State<_EmojiPicker>
   Widget build(BuildContext context) {
     return Container(
       height: 300,
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
               border: Border(
-                top:    BorderSide(color: Colors.grey.withOpacity(0.12)),
-                bottom: BorderSide(color: Colors.grey.withOpacity(0.08)),
+                top:    BorderSide(color: Theme.of(context).colorScheme.outline),
+                bottom: BorderSide(color: Theme.of(context).colorScheme.outline),
               ),
             ),
             child: TabBar(
@@ -260,7 +258,7 @@ class _EmojiPickerState extends State<_EmojiPicker>
                     onTap: () => widget.onEmoji(_svgEmojis[i]),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
+                        color: Theme.of(context).colorScheme.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.all(6),
@@ -282,7 +280,7 @@ class _EmojiPickerState extends State<_EmojiPicker>
                     onTap: () => widget.onEmoji(_gifEmojis[i]),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
+                        color: Theme.of(context).colorScheme.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.all(5),
@@ -321,10 +319,10 @@ class _InputBtn extends StatelessWidget {
           shape: BoxShape.circle,
           color: active
               ? const Color(0xFFE6B800).withOpacity(0.15)
-              : const Color(0xFFF5F5F5),
+              : Theme.of(context).colorScheme.surfaceContainerLow,
         ),
         child: Icon(icon,
-            color: active ? const Color(0xFFE6B800) : const Color(0xFF9E9E9E),
+            color: active ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.onSurfaceVariant,
             size: 20),
       ),
     );
@@ -354,7 +352,7 @@ class _AttachMenu extends StatelessWidget {
         Center(child: Container(
           width: 40, height: 4,
           decoration: BoxDecoration(
-              color: Colors.black12, borderRadius: BorderRadius.circular(2)),
+              color: Theme.of(context).colorScheme.outline, borderRadius: BorderRadius.circular(2)),
         )),
         const SizedBox(height: 20),
         const Row(
@@ -385,7 +383,7 @@ class _AttachItem extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(label,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF1A1A1A))),
+            style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
       ]),
     );
   }

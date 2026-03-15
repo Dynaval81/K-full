@@ -12,12 +12,7 @@ import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
 
 // ── HAI3 Palette ─────────────────────────────────────────────────────────────
 
-const Color _kBg        = Color(0xFFFFFFFF);
-const Color _kSurface   = Color(0xFFF5F5F5);
-const Color _kGold      = Color(0xFFE6B800);
-const Color _kPrimary   = Color(0xFF1A1A1A);
-const Color _kSecondary = Color(0xFF6B6B6B);
-const Color _kBorder    = Color(0xFFE0E0E0);
+const Color _kGold = Color(0xFFE6B800);
 
 // ── Enums & Models ───────────────────────────────────────────────────────────
 
@@ -317,26 +312,29 @@ class AiAssistantScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onHorizontalDragEnd: (d) {
-          if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
-        },
-        child: Padding(
-          padding: EdgeInsets.only(top: topPad + 40),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: _kBg,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: _AiChatView(
-              onBack: () => Navigator.of(ctx).pop(),
-              prefill: prefill,
-              title: title,
+      builder: (ctx) {
+        final cs = Theme.of(ctx).colorScheme;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onHorizontalDragEnd: (d) {
+            if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: topPad + 40),
+            child: Container(
+              decoration: BoxDecoration(
+                color: cs.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: _AiChatView(
+                onBack: () => Navigator.of(ctx).pop(),
+                prefill: prefill,
+                title: title,
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -346,32 +344,36 @@ class AiAssistantScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onHorizontalDragEnd: (d) {
-          if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
-        },
-        child: Padding(
-          padding: EdgeInsets.only(top: topPad + 40),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: _kBg,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: _StickerLabView(
-              onBack: () => Navigator.of(ctx).pop(),
+      builder: (ctx) {
+        final cs = Theme.of(ctx).colorScheme;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onHorizontalDragEnd: (d) {
+            if ((d.primaryVelocity ?? 0) > 250) Navigator.of(ctx).pop();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: topPad + 40),
+            child: Container(
+              decoration: BoxDecoration(
+                color: cs.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: _StickerLabView(
+                onBack: () => Navigator.of(ctx).pop(),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: cs.surface,
       appBar: KnotyAppBar(title: l10n.tabAi),
       body: _AiHub(
         onNavigate: (view, {prefill, title}) {
@@ -487,6 +489,7 @@ class _SmartHeaderState extends State<_SmartHeader>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final theme = _theme();
     const accent = _kGold;
     return AnimatedBuilder(
@@ -555,10 +558,10 @@ class _SmartHeaderState extends State<_SmartHeader>
                     children: [
                       Text(
                         _greeting(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
-                          color: _kPrimary,
+                          color: cs.onSurface,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -567,9 +570,9 @@ class _SmartHeaderState extends State<_SmartHeader>
                       const SizedBox(height: 4),
                       Text(
                         widget.l10n.aiHubSubtitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: _kSecondary,
+                          color: cs.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -609,6 +612,7 @@ class _AiHub extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final auth = context.watch<AuthController>();
     final name = auth.currentUser?.firstName?.trim() ??
         auth.currentUser?.username ??
@@ -653,7 +657,7 @@ class _AiHub extends StatelessWidget {
                       title: l10n.aiTeacherTile1Title,
                       subtitle: l10n.aiTeacherTile1Subtitle,
                       badge: 'KI',
-                      bgColor: _kBg,
+                      bgColor: cs.surface,
                       accentColor: _kGold,
                       onTap: () => onNavigate(_AiView.chat, prefill: l10n.aiTeacherChipTest),
                     ),
@@ -693,11 +697,11 @@ class _AiHub extends StatelessWidget {
                 ].map((chip) => ActionChip(
                   label: Text(chip),
                   onPressed: () => onNavigate(_AiView.chat, prefill: chip),
-                  backgroundColor: _kSurface,
-                  side: const BorderSide(color: _kBorder),
-                  labelStyle: const TextStyle(
+                  backgroundColor: cs.surfaceContainerLow,
+                  side: BorderSide(color: cs.outline),
+                  labelStyle: TextStyle(
                     fontSize: 13,
-                    color: _kPrimary,
+                    color: cs.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 )).toList(),
@@ -717,7 +721,7 @@ class _AiHub extends StatelessWidget {
                       title: l10n.aiParentTile1Title,
                       subtitle: l10n.aiParentTile1Subtitle,
                       badge: 'KI',
-                      bgColor: _kBg,
+                      bgColor: cs.surface,
                       accentColor: _kGold,
                       onTap: () => onNavigate(_AiView.chat, prefill: l10n.aiParentChipTip),
                     ),
@@ -765,7 +769,7 @@ class _AiHub extends StatelessWidget {
                       title: l10n.aiChatTitle,
                       subtitle: l10n.aiChatSubtitle,
                       badge: 'GPT',
-                      bgColor: _kBg,
+                      bgColor: cs.surface,
                       accentColor: _kGold,
                       onTap: () => onNavigate(_AiView.chat),
                     ),
@@ -825,7 +829,7 @@ class _FeatureTile extends StatefulWidget {
     required this.onTap,
     this.badge,
     this.horizontal = false,
-    this.bgColor = _kSurface,
+    this.bgColor = Colors.transparent,
     this.accentColor = _kGold,
   });
 
@@ -857,6 +861,7 @@ class _FeatureTileState extends State<_FeatureTile>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
@@ -875,30 +880,30 @@ class _FeatureTileState extends State<_FeatureTile>
               color: widget.accentColor.withValues(alpha: 0.25),
             ),
           ),
-          child: widget.horizontal ? _horizontal() : _vertical(),
+          child: widget.horizontal ? _horizontal(cs) : _vertical(cs),
         ),
       ),
     );
   }
 
-  Widget _vertical() => Column(
+  Widget _vertical(ColorScheme cs) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           _iconChip(),
           const SizedBox(height: 16),
-          _titleRow(),
+          _titleRow(cs),
           const SizedBox(height: 4),
           Text(
             widget.subtitle,
-            style: const TextStyle(fontSize: 13, color: _kSecondary),
+            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],
       );
 
-  Widget _horizontal() => Row(
+  Widget _horizontal(ColorScheme cs) => Row(
         children: [
           _iconChip(),
           const SizedBox(width: 16),
@@ -907,11 +912,11 @@ class _FeatureTileState extends State<_FeatureTile>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _titleRow(),
+                _titleRow(cs),
                 const SizedBox(height: 4),
                 Text(
                   widget.subtitle,
-                  style: const TextStyle(fontSize: 13, color: _kSecondary),
+                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -919,7 +924,7 @@ class _FeatureTileState extends State<_FeatureTile>
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.chevron_right_rounded, color: _kSecondary, size: 20),
+          Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant, size: 20),
         ],
       );
 
@@ -933,15 +938,15 @@ class _FeatureTileState extends State<_FeatureTile>
         child: Icon(widget.icon, color: widget.accentColor, size: 22),
       );
 
-  Widget _titleRow() => Row(
+  Widget _titleRow(ColorScheme cs) => Row(
         children: [
           Flexible(
             child: Text(
               widget.title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: _kPrimary,
+                color: cs.onSurface,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -1182,21 +1187,22 @@ class _ChatHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       height: 56,
-      color: _kBg,
+      color: cs.surface,
       child: Row(children: [
         IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: _kPrimary),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: cs.onSurface),
           onPressed: onBack,
         ),
         Expanded(
           child: Text(title,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: _kPrimary)),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: cs.onSurface)),
         ),
         if (onNew != null)
           IconButton(
-            icon: const Icon(Icons.add_rounded, color: _kPrimary),
+            icon: Icon(Icons.add_rounded, color: cs.onSurface),
             tooltip: newTooltip,
             onPressed: onNew,
           ),
@@ -1212,6 +1218,7 @@ class _EmptyChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final isParent = context.read<AuthController>().currentUser?.role == UserRole.parent;
     final chips = isParent
         ? [
@@ -1249,10 +1256,10 @@ class _EmptyChat extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               isParent ? l10n.aiParentEmptyTitle : l10n.aiEmptyTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: _kPrimary,
+                color: cs.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -1260,7 +1267,7 @@ class _EmptyChat extends StatelessWidget {
               isParent
                   ? l10n.aiParentEmptySubtitle
                   : l10n.aiEmptySubtitle,
-              style: const TextStyle(fontSize: 15, color: _kSecondary),
+              style: TextStyle(fontSize: 15, color: cs.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -1271,11 +1278,11 @@ class _EmptyChat extends StatelessWidget {
               children: chips.map((c) => ActionChip(
                     label: Text(c.label),
                     onPressed: () => onChip(c.q),
-                    backgroundColor: _kSurface,
-                    side: const BorderSide(color: _kBorder),
-                    labelStyle: const TextStyle(
+                    backgroundColor: cs.surfaceContainerLow,
+                    side: BorderSide(color: cs.outline),
+                    labelStyle: TextStyle(
                       fontSize: 13,
-                      color: _kPrimary,
+                      color: cs.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   )).toList(),
@@ -1293,14 +1300,15 @@ class _UserBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12, left: 48),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: _kGold,
-          borderRadius: const BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
             bottomLeft: Radius.circular(20),
@@ -1309,9 +1317,9 @@ class _UserBubble extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
-            color: _kPrimary,
+            color: cs.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1327,19 +1335,20 @@ class _AiBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12, right: 48),
         decoration: BoxDecoration(
-          color: _kSurface,
+          color: cs.surfaceContainerLow,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(4),
             topRight: Radius.circular(20),
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),
           ),
-          border: Border.all(color: _kBorder),
+          border: Border.all(color: cs.outline),
         ),
         child: streaming && text.isEmpty
             ? const Padding(
@@ -1351,20 +1360,20 @@ class _AiBubble extends StatelessWidget {
                 child: MarkdownBody(
                   data: text,
                   styleSheet: MarkdownStyleSheet(
-                    p: const TextStyle(
-                        fontSize: 15, color: _kPrimary, height: 1.5),
-                    strong: const TextStyle(
-                        fontWeight: FontWeight.w700, color: _kPrimary),
+                    p: TextStyle(
+                        fontSize: 15, color: cs.onSurface, height: 1.5),
+                    strong: TextStyle(
+                        fontWeight: FontWeight.w700, color: cs.onSurface),
                     code: TextStyle(
                       fontFamily: 'monospace',
                       backgroundColor: _kGold.withValues(alpha: 0.10),
-                      color: _kPrimary,
+                      color: cs.onSurface,
                       fontSize: 13,
                     ),
                     codeblockDecoration: BoxDecoration(
                       color: _kGold.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _kBorder),
+                      border: Border.all(color: cs.outline),
                     ),
                     blockquoteDecoration: BoxDecoration(
                       border: Border(
@@ -1372,25 +1381,25 @@ class _AiBubble extends StatelessWidget {
                               color: _kGold.withValues(alpha: 0.6), width: 3)),
                     ),
                     blockquotePadding: const EdgeInsets.only(left: 12),
-                    h1: const TextStyle(
+                    h1: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: _kPrimary),
-                    h2: const TextStyle(
+                        color: cs.onSurface),
+                    h2: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: _kPrimary),
-                    h3: const TextStyle(
+                        color: cs.onSurface),
+                    h3: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: _kPrimary),
+                        color: cs.onSurface),
                     listBullet: const TextStyle(color: _kGold, fontSize: 15),
-                    tableBody: const TextStyle(fontSize: 13, color: _kPrimary),
-                    tableHead: const TextStyle(
+                    tableBody: TextStyle(fontSize: 13, color: cs.onSurface),
+                    tableHead: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
-                        color: _kPrimary),
-                    tableBorder: TableBorder.all(color: _kBorder),
+                        color: cs.onSurface),
+                    tableBorder: TableBorder.all(color: cs.outline),
                   ),
                 ),
               ),
@@ -1472,11 +1481,12 @@ class _ChatInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      decoration: const BoxDecoration(
-        color: _kBg,
-        border: Border(top: BorderSide(color: _kBorder)),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        border: Border(top: BorderSide(color: cs.outline)),
       ),
       child: SafeArea(
         top: false,
@@ -1492,9 +1502,9 @@ class _ChatInput extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     decoration: BoxDecoration(
-                      color: _kSurface,
+                      color: cs.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _kBorder),
+                      border: Border.all(color: cs.outline),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1503,17 +1513,17 @@ class _ChatInput extends StatelessWidget {
                           width: 14,
                           height: 14,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A1A1A),
+                            color: cs.onSurface,
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           stopLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: _kPrimary,
+                            color: cs.onSurface,
                           ),
                         ),
                       ],
@@ -1532,18 +1542,18 @@ class _ChatInput extends StatelessWidget {
                     textInputAction: TextInputAction.newline,
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: const TextStyle(color: _kSecondary, fontSize: 15),
+                      hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
                       filled: true,
-                      fillColor: _kSurface,
+                      fillColor: cs.surfaceContainerLow,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: _kBorder),
+                        borderSide: BorderSide(color: cs.outline),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: _kBorder),
+                        borderSide: BorderSide(color: cs.outline),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -1559,13 +1569,13 @@ class _ChatInput extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: enabled ? _kGold : _kSurface,
+                      color: enabled ? _kGold : cs.surfaceContainerLow,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.send_rounded,
                       size: 20,
-                      color: enabled ? _kPrimary : _kSecondary,
+                      color: enabled ? cs.onSurface : cs.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -1669,6 +1679,7 @@ class _StickerLabBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
         _ChatHeader(title: l10n.aiStickerTitle, onBack: onBack),
@@ -1693,10 +1704,10 @@ class _StickerLabBody extends StatelessWidget {
                       width: 80,
                       margin: EdgeInsets.only(right: i < _kStyles.length - 1 ? 10 : 0),
                       decoration: BoxDecoration(
-                        color: selected ? _kGold.withValues(alpha: 0.12) : _kSurface,
+                        color: selected ? _kGold.withValues(alpha: 0.12) : cs.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: selected ? _kGold : _kBorder,
+                          color: selected ? _kGold : cs.outline,
                           width: selected ? 1.5 : 1,
                         ),
                       ),
@@ -1706,7 +1717,7 @@ class _StickerLabBody extends StatelessWidget {
                           Icon(
                             s.icon,
                             size: 26,
-                            color: selected ? _kGold : _kSecondary,
+                            color: selected ? _kGold : cs.onSurfaceVariant,
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -1714,7 +1725,7 @@ class _StickerLabBody extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: selected ? _kGold : _kSecondary,
+                              color: selected ? _kGold : cs.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
@@ -1736,17 +1747,17 @@ class _StickerLabBody extends StatelessWidget {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: l10n.aiStickerInputHint,
-                hintStyle: const TextStyle(color: _kSecondary, fontSize: 15),
+                hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
                 filled: true,
-                fillColor: _kSurface,
+                fillColor: cs.surfaceContainerLow,
                 contentPadding: const EdgeInsets.all(16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: _kBorder),
+                  borderSide: BorderSide(color: cs.outline),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: _kBorder),
+                  borderSide: BorderSide(color: cs.outline),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -1783,11 +1794,11 @@ class _StickerLabBody extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: generating ? null : onGenerate,
                     icon: generating
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: _kPrimary))
+                                strokeWidth: 2, color: cs.onSurface))
                         : const Icon(Icons.auto_awesome_rounded, size: 16),
                     label: Flexible(
                       child: Text(
@@ -1797,7 +1808,7 @@ class _StickerLabBody extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _kGold,
-                      foregroundColor: _kPrimary,
+                      foregroundColor: cs.onSurface,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -1866,6 +1877,7 @@ class _GeneratedCardState extends State<_GeneratedCard>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1890,7 +1902,7 @@ class _GeneratedCardState extends State<_GeneratedCard>
                     Color(0xFFF5F5F5),
                   ],
                 ),
-                border: Border.all(color: _kBorder),
+                border: Border.all(color: cs.outline),
               ),
               child: const Center(
                 child: Icon(
@@ -1942,6 +1954,7 @@ class _TeacherScanTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -1955,7 +1968,7 @@ class _TeacherScanTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _kBg,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: _kGold.withValues(alpha: 0.40)),
           boxShadow: [
@@ -1987,10 +2000,10 @@ class _TeacherScanTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         l10n.aiTeacherToolsTitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: _kPrimary,
+                          color: cs.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -2016,7 +2029,7 @@ class _TeacherScanTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     l10n.aiTeacherToolsSubtitle,
-                    style: const TextStyle(fontSize: 13, color: _kSecondary),
+                    style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -2024,7 +2037,7 @@ class _TeacherScanTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.chevron_right_rounded, color: _kSecondary, size: 20),
+            Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant, size: 20),
           ],
         ),
       ),
@@ -2041,6 +2054,7 @@ class _TeacherAiSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     final actions = [
       (
@@ -2068,9 +2082,9 @@ class _TeacherAiSheet extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        decoration: const BoxDecoration(
-          color: _kBg,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
@@ -2083,7 +2097,7 @@ class _TeacherAiSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: _kBorder,
+                  color: cs.outline,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -2103,15 +2117,15 @@ class _TeacherAiSheet extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
                   l10n.aiTeacherToolsTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: _kPrimary,
+                    color: cs.onSurface,
                   ),
                 ),
                 Text(
                   l10n.aiTeacherToolsSheetSubtitle,
-                  style: const TextStyle(fontSize: 13, color: _kSecondary),
+                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                 ),
               ]),
             ]),
@@ -2127,9 +2141,9 @@ class _TeacherAiSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                     decoration: BoxDecoration(
-                      color: _kSurface,
+                      color: cs.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _kBorder),
+                      border: Border.all(color: cs.outline),
                     ),
                     child: Row(
                       children: [
@@ -2149,10 +2163,10 @@ class _TeacherAiSheet extends StatelessWidget {
                             children: [
                               Text(
                                 action.label,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
-                                  color: _kPrimary,
+                                  color: cs.onSurface,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -2160,9 +2174,9 @@ class _TeacherAiSheet extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 action.sub,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: _kSecondary,
+                                  color: cs.onSurfaceVariant,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

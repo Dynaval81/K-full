@@ -203,9 +203,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     context.watch<LocaleProvider>(); // rebuild on locale change
     final l10n = AppLocalizations.of(context);
-    return Theme(
-      data: ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.white),
-      child: GestureDetector(
+    final cs = Theme.of(context).colorScheme;
+    return GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity == null) return;
           if (details.primaryVelocity! > 80) {
@@ -217,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: cs.surface,
           body: SafeArea(
             bottom: false,
             child: Column(
@@ -239,11 +238,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: 36, height: 36,
                                 margin: const EdgeInsets.only(right: 12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F5F5),
+                                  color: cs.surfaceContainerLow,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(Icons.arrow_back_ios_new_rounded,
-                                    size: 16, color: Color(0xFF1A1A1A)),
+                                child: Icon(Icons.arrow_back_ios_new_rounded,
+                                    size: 16, color: cs.onSurface),
                               ),
                             ),
                           Image.asset('assets/images/knoty_logo_nt.png',
@@ -251,9 +250,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(width: 12),
                           Expanded(child: Text(
                             _step == 0 ? l10n.registerWhoAreYou : l10n.registerTitle,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.w700,
-                                color: Color(0xFF1A1A1A)),
+                                color: cs.onSurface),
                           )),
                           _LangPickerRow(),
                         ]),
@@ -262,8 +261,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _step == 0
                               ? l10n.registerChooseRole
                               : _roleSubtitle(_selectedRole, l10n),
-                          style: const TextStyle(
-                              fontSize: 14, color: Color(0xFF9E9E9E)),
+                          style: TextStyle(
+                              fontSize: 14, color: cs.onSurfaceVariant),
                         ),
                         const SizedBox(height: 24),
 
@@ -306,10 +305,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (_step == 1) ...[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: cs.surfaceContainerLow,
                               borderRadius: BorderRadius.circular(28),
                               boxShadow: [BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
+                                color: cs.outline.withValues(alpha: 0.4),
                                 blurRadius: 20, offset: const Offset(0, 4),
                               )],
                             ),
@@ -396,9 +395,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F3F5),
-                    border: Border(top: BorderSide(
-                        color: Colors.black.withValues(alpha: 0.06))),
+                    color: cs.surfaceContainerLow,
+                    border: Border(top: BorderSide(color: cs.outline)),
                   ),
                   child: SafeArea(
                     top: false,
@@ -431,7 +429,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -593,10 +590,10 @@ class _RoleTile extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFFFF8E1) : Colors.white,
+          color: selected ? const Color(0xFFFFF8E1) : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: selected ? const Color(0xFFE6B800) : Colors.black.withValues(alpha: 0.08),
+            color: selected ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.outline,
             width: selected ? 2 : 1,
           ),
           boxShadow: selected ? [
@@ -617,7 +614,7 @@ class _RoleTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: selected
                   ? const Color(0xFFE6B800).withValues(alpha: 0.15)
-                  : const Color(0xFFF5F5F5),
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon,
@@ -628,12 +625,12 @@ class _RoleTile extends StatelessWidget {
           Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(
+              Text(title, style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A1A))),
+                  color: Theme.of(context).colorScheme.onSurface)),
               const SizedBox(height: 2),
-              Text(subtitle, style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF9E9E9E))),
+              Text(subtitle, style: TextStyle(
+                  fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           )),
           if (selected)
@@ -650,7 +647,7 @@ class _RoleTile extends StatelessWidget {
               width: 22, height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.black.withValues(alpha: 0.15), width: 2),
+                border: Border.all(color: Theme.of(context).colorScheme.outline, width: 2),
               ),
             ),
         ]),
@@ -709,7 +706,7 @@ class _InfoBox extends StatelessWidget {
         const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFFE6B800)),
         const SizedBox(width: 8),
         Flexible(child: Text(text,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B6B6B)))),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant))),
       ]),
     );
   }
@@ -750,10 +747,10 @@ class _SchoolSearchField extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(top: 4),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
               blurRadius: 12, offset: const Offset(0, 4),
             )],
           ),
@@ -765,7 +762,7 @@ class _SchoolSearchField extends StatelessWidget {
                 child: Row(children: [
                   const Icon(Icons.school_outlined, size: 16, color: Color(0xFFE6B800)),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(s, style: const TextStyle(fontSize: 14))),
+                  Expanded(child: Text(s, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface))),
                 ]),
               ),
             )).toList(),
