@@ -10,6 +10,7 @@ import 'package:knoty/core/enums/verification_level.dart';
 import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/presentation/screens/chat/chat_room_screen.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
+import 'package:knoty/presentation/widgets/knoty_empty_state.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 
 enum _ChatFilter { all, personal, groups, school }
@@ -74,7 +75,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final all = controller.chatRooms;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       appBar: KnotyAppBar(title: l10n.tabChats),
       body: Column(
         children: [
@@ -83,9 +84,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
             height: 50,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: Colors.grey.withOpacity(0.10)),
+                bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.15)),
               ),
             ),
             child: Row(
@@ -252,26 +254,9 @@ class _ChatList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (rooms.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72, height: 72,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(Icons.chat_bubble_outline_rounded,
-                  size: 36, color: Color(0xFFBDBDBD)),
-            ),
-            const SizedBox(height: 16),
-            Text(emptyText,
-              style: const TextStyle(
-                  fontSize: 15, color: Color(0xFF9E9E9E),
-                  fontWeight: FontWeight.w400)),
-          ],
-        ),
+      return KnotyEmptyState(
+        icon: Icons.chat_bubble_outline_rounded,
+        title: emptyText,
       );
     }
     return ListView.builder(
@@ -338,7 +323,8 @@ class _ChatListItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: const Color(0xFF4CAF50),
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(
+                        color: Theme.of(context).colorScheme.surface, width: 2),
                       ),
                     ),
                   ),
@@ -357,7 +343,7 @@ class _ChatListItem extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w500,
-                            color: const Color(0xFF1A1A1A),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -455,7 +441,9 @@ class _PreviewText extends StatelessWidget {
   Widget build(BuildContext context) {
     final base = TextStyle(
       fontSize: 13,
-      color: hasUnread ? const Color(0xFF1A1A1A) : const Color(0xFF9E9E9E),
+      color: hasUnread
+          ? Theme.of(context).colorScheme.onSurface
+          : Theme.of(context).colorScheme.onSurfaceVariant,
       fontWeight: hasUnread ? FontWeight.w500 : FontWeight.w400,
     );
     return Text.rich(
