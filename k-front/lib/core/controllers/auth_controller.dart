@@ -66,12 +66,25 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final hasToken = await _api.hasToken();
-      if (!hasToken) {
+      final token = await _storage.read(key: 'auth_token');
+      if (token == null) {
         _setUnauthenticated();
         return;
       }
 
+      // Demo session — restore without hitting the server
+      if (token.startsWith('demo-')) {
+        final id = token.substring(5);
+        final demoUser = _demoUsers[id];
+        if (demoUser != null) {
+          _setAuthenticated(demoUser);
+        } else {
+          _setUnauthenticated();
+        }
+        return;
+      }
+
+      // Real session — verify with server
       final result = await _api.getUserData();
       if (result['success'] == true && result['user'] != null) {
         final user = User.fromJson(result['user'] as Map<String, dynamic>);
@@ -174,6 +187,7 @@ class AuthController extends ChangeNotifier {
   }) async {
     // Demo shortcut: логин 1-4, пароль 123456
     if (password == '123456' && _demoUsers.containsKey(identifier.trim())) {
+      await _storage.write(key: 'auth_token', value: 'demo-${identifier.trim()}');
       _setAuthenticated(_demoUsers[identifier.trim()]!);
       return AuthResult.ok();
     }

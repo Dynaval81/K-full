@@ -35,6 +35,7 @@ class AiryInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,7 +43,7 @@ class AiryInputField extends StatelessWidget {
           label,
           style: AppTextStyles.body.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onSurface,
+            color: cs.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -54,9 +55,11 @@ class AiryInputField extends StatelessWidget {
           onChanged: onChanged,
           onSubmitted: onSubmitted,
           inputFormatters: inputFormatters,
+          style: TextStyle(color: cs.onSurface, fontSize: 15),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppColors.onSurfaceVariant) : null,
+            hintStyle: TextStyle(color: cs.onSurfaceVariant),
+            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: cs.onSurfaceVariant) : null,
             suffixIcon: suffixIcon,
             errorText: errorText,
             border: OutlineInputBorder(
@@ -69,10 +72,10 @@ class AiryInputField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppBorderRadius.input),
-              borderSide: const BorderSide(color: Color(0xFFBBDEFB), width: 1.5),
+              borderSide: BorderSide(color: cs.primary.withOpacity(0.4), width: 1.5),
             ),
             filled: true,
-            fillColor: AppColors.surface,
+            fillColor: cs.surfaceContainerLow,
           ),
         ),
       ],

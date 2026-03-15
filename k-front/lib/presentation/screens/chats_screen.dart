@@ -183,7 +183,7 @@ class _Chip extends StatelessWidget {
           curve: Curves.easeInOut,
           height: 34,
           decoration: BoxDecoration(
-            color: active ? const Color(0xFFE6B800) : const Color(0xFFF5F5F5),
+            color: active ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Center(
@@ -193,7 +193,7 @@ class _Chip extends StatelessWidget {
                   if (isLocked) ...[
                     Icon(Icons.lock_outline_rounded,
                         size: 11,
-                        color: active ? Colors.white : const Color(0xFF9E9E9E)),
+                        color: active ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(width: 3),
                   ],
                   Flexible(
@@ -202,7 +202,7 @@ class _Chip extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: active ? Colors.white : const Color(0xFF757575),
+                        color: active ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -223,7 +223,7 @@ class _Chip extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: active ? Colors.white : const Color(0xFF757575),
+                          color: active ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
