@@ -27,6 +27,8 @@ import 'package:knoty/locale_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'package:knoty/core/utils/app_logger.dart';
 import 'package:knoty/core/connectivity_provider.dart';
+import 'package:knoty/presentation/screens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,9 +46,11 @@ void main() async {
 
   await authController.tryRestoreSession();
 
-  final initialLocation = authController.isAuthenticated
-      ? AppRoutes.home
-      : AppRoutes.splash;
+  final prefs = await SharedPreferences.getInstance();
+  final onboardingDone = prefs.getBool('onboarding_done') ?? false;
+  final initialLocation = !onboardingDone
+      ? '/onboarding'
+      : (authController.isAuthenticated ? AppRoutes.home : AppRoutes.splash);
 
   final themeProvider = ThemeProvider();
   await themeProvider.initializeTheme();
@@ -94,12 +98,16 @@ class _KnotyAppState extends State<KnotyApp> {
         final auth = widget.authController;
         if (auth.isRestoringSession) return null;
         final isAuth = auth.isAuthenticated;
-        const publicPaths = {'/splash', '/auth', '/register', '/verify-email', '/register-success'};
+        const publicPaths = {'/onboarding', '/splash', '/auth', '/register', '/verify-email', '/register-success'};
         final isPublic = publicPaths.contains(state.matchedLocation);
         if (!isAuth && !isPublic) return AppRoutes.auth;
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/onboarding',
+          pageBuilder: (context, state) => const CupertinoPage<void>(child: OnboardingScreen()),
+        ),
         GoRoute(
           path: AppRoutes.splash,
           pageBuilder: (context, state) => const CupertinoPage<void>(child: SplashScreen()),
