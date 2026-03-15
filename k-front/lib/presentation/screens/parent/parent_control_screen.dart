@@ -3,18 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:knoty/constants/palette.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/presentation/widgets/knoty_app_bar.dart';
-
-// ── Palette ───────────────────────────────────────────────────────────────────
-const Color _kBg         = Color(0xFFF5F6FA);
-const Color _kCard       = Color(0xFFFFFFFF);
-const Color _kText       = Color(0xFF1A1A1A);
-const Color _kSubtext    = Color(0xFF6B6B6B);
-const Color _kBorder     = Color(0xFFE0E0E0);
-const Color _kDanger     = Color(0xFFCC0000);
-const Color _kDangerSurf = Color(0xFFFFEBEE);
+import 'package:knoty/presentation/widgets/knoty_empty_state.dart';
 
 // ── Mock data models ──────────────────────────────────────────────────────────
 enum _Attendance { atSchool, absent, unknown }
@@ -78,11 +71,12 @@ class ParentControlScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final user = context.watch<AuthController>().currentUser;
 
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: cs.surfaceContainerLow,
       appBar: KnotyAppBar(title: l10n.parentTitle),
       body: _ParentDashboard(
         confirmedKns: [
@@ -151,10 +145,31 @@ class _ParentDashboardState extends State<_ParentDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final children = _allChildren;
 
     if (children.isEmpty) {
-      return _EmptyState(onAdd: () => _showAddSheet(context));
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          KnotyEmptyState(
+            icon: Icons.family_restroom_rounded,
+            title: l10n.lockedNoChildTitle,
+            subtitle: l10n.lockedNoChildSubtitle,
+            action: FilledButton.icon(
+              onPressed: () => _showAddSheet(context),
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: Text(l10n.parentAddChild),
+              style: FilledButton.styleFrom(
+                backgroundColor: KPalette.gold,
+                foregroundColor: KPalette.ink,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
+        ],
+      );
     }
 
     final idx = _selectedIndex.clamp(0, children.length - 1);
@@ -205,9 +220,9 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           child: TextButton.icon(
             onPressed: () => _showAddSheet(context),
             icon: const Icon(Icons.add_rounded, size: 16),
-            label: const Text('Kind hinzufügen'),
+            label: Text(l10n.parentAddChild),
             style: TextButton.styleFrom(
-              foregroundColor: _kSubtext,
+              foregroundColor: cs.onSurfaceVariant,
               textStyle: const TextStyle(fontSize: 13),
             ),
           ),
@@ -251,64 +266,10 @@ class _ParentDashboardState extends State<_ParentDashboard> {
               HapticFeedback.heavyImpact();
               Navigator.of(ctx).pop();
             },
-            style: TextButton.styleFrom(foregroundColor: _kDanger),
+            style: TextButton.styleFrom(foregroundColor: const Color(0xFFCC0000)),
             child: Text(_emergencyLocked ? l10n.parentEmergencyDeactivateBtn : l10n.parentEmergencyActivateBtn),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Empty state ───────────────────────────────────────────────────────────────
-class _EmptyState extends StatelessWidget {
-  final VoidCallback onAdd;
-  const _EmptyState({required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: const BoxDecoration(color: Color(0xFFFFF8E1), shape: BoxShape.circle),
-              child: const Icon(Icons.child_care_rounded, size: 40, color: Color(0xFFE6B800)),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.lockedNoChildTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _kText),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.lockedNoChildSubtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: _kSubtext),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: onAdd,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE6B800),
-                foregroundColor: const Color(0xFF1A1A1A),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                elevation: 0,
-              ),
-              icon: const Icon(Icons.add_rounded, size: 20),
-              label: Text(
-                l10n.parentAddChild,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -328,6 +289,7 @@ class _ChildSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return SizedBox(
       height: 80,
       child: ListView.separated(
@@ -367,7 +329,7 @@ class _ChildSelector extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    color: selected ? const Color(0xFFE6B800) : _kSubtext,
+                    color: selected ? const Color(0xFFE6B800) : cs.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -386,6 +348,7 @@ class _ChildHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return _Card(
       child: Row(
         children: [
@@ -407,12 +370,12 @@ class _ChildHeaderCard extends StatelessWidget {
               children: [
                 Text(
                   child.name,
-                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: _kText),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: cs.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   child.kn,
-                  style: const TextStyle(fontSize: 13, color: _kSubtext, fontFamily: 'monospace'),
+                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant, fontFamily: 'monospace'),
                 ),
               ],
             ),
@@ -437,10 +400,11 @@ class _AttendanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final atSchool = child.attendance == _Attendance.atSchool;
-    final color = atSchool ? const Color(0xFFE6B800) : _kSubtext;
-    final bg = atSchool ? const Color(0xFFFFF8E1) : const Color(0xFFF5F5F5);
+    final color = atSchool ? const Color(0xFFE6B800) : cs.onSurfaceVariant;
+    final bg = atSchool ? const Color(0xFFFFF8E1) : cs.surfaceContainerLow;
     final label = atSchool
         ? l10n.parentAttendanceAtSchool
         : child.attendance == _Attendance.absent
@@ -469,7 +433,7 @@ class _AttendanceCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   atSchool ? 'Seit 08:00 Uhr' : 'Stand: heute',
-                  style: const TextStyle(fontSize: 13, color: _kSubtext),
+                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                 ),
               ],
             ),
@@ -495,12 +459,13 @@ class _ScreenTimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final ratio = (child.screenUsedMin / child.screenLimitMin).clamp(0.0, 1.0);
     final usedH = child.screenUsedMin ~/ 60;
     final usedM = child.screenUsedMin % 60;
     final limitH = child.screenLimitMin ~/ 60;
     final barColor = ratio > 0.85
-        ? _kDanger
+        ? const Color(0xFFCC0000)
         : ratio > 0.6
             ? const Color(0xFFF57C00)
             : const Color(0xFFE6B800);
@@ -519,16 +484,16 @@ class _ScreenTimeCard extends StatelessWidget {
             children: [
               Text(
                 usedH > 0 ? '${usedH}h ${usedM}m' : '${usedM}m',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: _kText,
+                  color: cs.onSurface,
                 ),
               ),
               const SizedBox(width: 6),
               Text(
                 '/ ${limitH}h Limit',
-                style: const TextStyle(fontSize: 14, color: _kSubtext),
+                style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
               ),
             ],
           ),
@@ -537,7 +502,7 @@ class _ScreenTimeCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: ratio,
-              backgroundColor: _kBorder,
+              backgroundColor: cs.outline,
               valueColor: AlwaysStoppedAnimation<Color>(barColor),
               minHeight: 8,
             ),
@@ -555,6 +520,7 @@ class _GradesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return _DashCard(
       icon: Icons.grade_rounded,
       iconColor: const Color(0xFFE6B800),
@@ -584,7 +550,7 @@ class _GradesCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   g.subject,
-                  style: const TextStyle(fontSize: 11, color: _kSubtext),
+                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
                 ),
               ],
             ),
@@ -611,6 +577,7 @@ class _ControlsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return _Card(
       child: Column(
@@ -631,7 +598,7 @@ class _ControlsCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 l10n.parentSectionControls,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: _kText),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: cs.onSurface),
               ),
             ],
           ),
@@ -640,12 +607,12 @@ class _ControlsCard extends StatelessWidget {
           // Time limit
           Row(
             children: [
-              const Icon(Icons.timer_outlined, size: 18, color: _kSubtext),
+              Icon(Icons.timer_outlined, size: 18, color: cs.onSurfaceVariant),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l10n.parentDailyLimitLabel,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: _kText),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: cs.onSurface),
                 ),
               ),
               Text(
@@ -666,17 +633,17 @@ class _ControlsCard extends StatelessWidget {
               max: 6.0,
               divisions: 11,
               activeColor: const Color(0xFFE6B800),
-              inactiveColor: _kBorder,
+              inactiveColor: cs.outline,
               onChanged: onTimeLimitChanged,
             ),
           ),
-          const Divider(height: 8, color: _kBorder),
+          Divider(height: 8, color: cs.outline),
           const SizedBox(height: 8),
 
           // Evening lock
           Row(
             children: [
-              const Icon(Icons.nightlight_round, size: 18, color: _kSubtext),
+              Icon(Icons.nightlight_round, size: 18, color: cs.onSurfaceVariant),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -684,11 +651,11 @@ class _ControlsCard extends StatelessWidget {
                   children: [
                     Text(
                       l10n.parentEveningBlockLabel,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: _kText),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: cs.onSurface),
                     ),
                     Text(
                       l10n.parentEveningBlockDesc,
-                      style: const TextStyle(fontSize: 12, color: _kSubtext),
+                      style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -722,8 +689,8 @@ class _EmergencyLockButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onToggle,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isLocked ? _kDangerSurf : _kDanger,
-          foregroundColor: isLocked ? _kDanger : Colors.white,
+          backgroundColor: isLocked ? const Color(0xFFFFEBEE) : const Color(0xFFCC0000),
+          foregroundColor: isLocked ? const Color(0xFFCC0000) : Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
@@ -745,6 +712,7 @@ class _PendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
@@ -759,13 +727,13 @@ class _PendingCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             l10n.parentPendingTitle,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _kText),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: cs.onSurface),
           ),
           const SizedBox(height: 6),
           Text(
             l10n.parentPendingSubtitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, color: _kSubtext),
+            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           TextButton.icon(
@@ -815,14 +783,15 @@ class _AddChildSheetState extends State<_AddChildSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final bottom = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottom),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -833,7 +802,7 @@ class _AddChildSheetState extends State<_AddChildSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: _kBorder,
+                color: cs.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -841,12 +810,12 @@ class _AddChildSheetState extends State<_AddChildSheet> {
           const SizedBox(height: 20),
           Text(
             l10n.parentLinkChildTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _kText),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface),
           ),
           const SizedBox(height: 6),
           Text(
             l10n.registerInfoParent,
-            style: const TextStyle(fontSize: 13, color: _kSubtext),
+            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           Container(
@@ -907,11 +876,12 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _kCard,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -943,6 +913,7 @@ class _DashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -961,10 +932,10 @@ class _DashCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: _kText,
+                  color: cs.onSurface,
                 ),
               ),
             ],
