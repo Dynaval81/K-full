@@ -245,7 +245,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     size: 16, color: cs.onSurface),
                               ),
                             ),
-                          Image.asset('assets/images/knoty_logo_nt.png',
+                          Image.asset(
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? 'assets/images/knoty_logo_nt_bt.png'
+                                  : 'assets/images/knoty_logo_nt.png',
                               width: 36, height: 36, fit: BoxFit.contain),
                           const SizedBox(width: 12),
                           Expanded(child: Text(

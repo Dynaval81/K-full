@@ -94,7 +94,9 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'assets/images/knoty_logo.png',
+                      Theme.of(context).brightness == Brightness.dark
+                          ? 'assets/images/knoty_logo_br.png'
+                          : 'assets/images/knoty_logo.png',
                       width: 200,
                       fit: BoxFit.contain,
                     ),
