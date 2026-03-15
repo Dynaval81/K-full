@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen>
                         // ── Logo ──────────────────────────────────
                         Image.asset(
                           Theme.of(context).brightness == Brightness.dark
-                              ? 'assets/images/knoty_logo_br.png'
+                              ? 'assets/images/knoty_logo_bt.png'
                               : 'assets/images/knoty_logo.png',
                           width: 180,
                           fit: BoxFit.contain,
