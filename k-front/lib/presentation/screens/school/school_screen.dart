@@ -1018,7 +1018,11 @@ class _WeekDayRow extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 6),
         decoration: BoxDecoration(
-          color: isToday ? const Color(0xFFFFF8E1) : cs.surface,
+          color: isToday
+              ? (cs.brightness == Brightness.dark
+                  ? const Color(0xFF2A2200)
+                  : const Color(0xFFFFF8E1))
+              : cs.surface,
           borderRadius: BorderRadius.circular(14),
           border: isToday
               ? Border.all(color: const Color(0xFFE6B800), width: 1.5)

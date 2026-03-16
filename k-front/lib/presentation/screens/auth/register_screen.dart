@@ -593,7 +593,11 @@ class _RoleTile extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFFFF8E1) : Theme.of(context).colorScheme.surface,
+          color: selected
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF2A2200)
+                  : const Color(0xFFFFF8E1))
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: selected ? const Color(0xFFE6B800) : Theme.of(context).colorScheme.outline,
