@@ -1033,7 +1033,7 @@ class _WeekDayRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(children: [
               Container(
-                width: 36, height: 36,
+                width: 42, height: 42,
                 decoration: BoxDecoration(
                   color: isToday
                       ? const Color(0xFFE6B800)
@@ -1043,11 +1043,12 @@ class _WeekDayRow extends StatelessWidget {
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(dayName.toUpperCase(),
                       style: TextStyle(
-                          fontSize: 9, fontWeight: FontWeight.w700,
-                          color: isToday ? Colors.white : const Color(0xFF9E9E9E))),
+                          fontSize: 8, fontWeight: FontWeight.w700,
+                          color: isToday ? Colors.white : const Color(0xFF9E9E9E)),
+                      overflow: TextOverflow.clip),
                   Text(dateStr,
                       style: TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.w800,
+                          fontSize: 14, fontWeight: FontWeight.w800,
                           color: isToday ? Colors.white : cs.onSurface)),
                 ]),
               ),
