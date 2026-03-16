@@ -2,120 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = true;
+class ThemeProvider extends ChangeNotifier with WidgetsBindingObserver {
+  bool _isDarkMode = false;
+  bool _userHasSetTheme = false;
   bool _isInitialized = false;
-  bool _debugGlassMode = false; // Выключаем по умолчанию
+  bool _debugGlassMode = false;
 
   bool get isDarkMode => _isDarkMode;
   bool get isInitialized => _isInitialized;
   bool get debugGlassMode => _debugGlassMode;
 
-  ThemeData get currentTheme {
-    return _isDarkMode ? _darkTheme : _lightTheme;
+  /// Always returns an explicit mode — never ThemeMode.system,
+  /// because some devices/builds ignore it on first frame.
+  ThemeMode get themeMode =>
+      _isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+  // Legacy getter kept for any callers that still reference currentTheme
+  ThemeData get currentTheme => throw UnimplementedError(
+      'Use AppTheme.lightTheme / AppTheme.darkTheme via MaterialApp instead');
+
+  // ── WidgetsBindingObserver ────────────────────────────────────────────────
+
+  @override
+  void didChangePlatformBrightness() {
+    if (_userHasSetTheme) return;
+    final systemDark =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark;
+    if (_isDarkMode != systemDark) {
+      _isDarkMode = systemDark;
+      notifyListeners();
+    }
   }
 
-  static final ThemeData _darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: const Color(0xFF1A1A2E),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.white),
-      bodyMedium: TextStyle(color: Colors.white70),
-    ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF252541),
-      selectedItemColor: Colors.blueAccent,
-      unselectedItemColor: Colors.white54,
-      type: BottomNavigationBarType.fixed,
-    ),
-  );
-
-  static final ThemeData _lightTheme = ThemeData(
-    brightness: Brightness.light,
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.black87),
-      titleTextStyle: TextStyle(
-        color: Colors.black87, // Улучшенный контраст для светлой темы
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.black87),
-      bodyMedium: TextStyle(color: Colors.black54),
-    ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFFF5F5F5), // Светлый фон для светлой темы
-      selectedItemColor: Colors.blueAccent,
-      unselectedItemColor: Colors.black54, // Темные иконки для светлой темы
-      type: BottomNavigationBarType.fixed,
-    ),
-  );
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   Future<void> initializeTheme() async {
     if (_isInitialized) return;
 
-    // System brightness as fallback when no preference is saved
-    final systemIsDark =
+    WidgetsBinding.instance.addObserver(this);
+
+    final systemDark =
         WidgetsBinding.instance.platformDispatcher.platformBrightness ==
             Brightness.dark;
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      _isDarkMode = prefs.getBool('is_dark_mode') ?? systemIsDark;
-      _isInitialized = true;
-      notifyListeners();
-    } catch (e) {
-      _isDarkMode = systemIsDark;
-      _isInitialized = true;
-      notifyListeners();
+      // One-time migration: drop legacy saved value so app follows system theme.
+      if (!(prefs.getBool('theme_init_v3') ?? false)) {
+        await prefs.remove('is_dark_mode');
+        await prefs.setBool('theme_init_v3', true);
+      }
+      final saved = prefs.getBool('is_dark_mode');
+      if (saved != null) {
+        _isDarkMode = saved;
+        _userHasSetTheme = true;
+      } else {
+        _isDarkMode = systemDark;
+        _userHasSetTheme = false;
+      }
+    } catch (_) {
+      _isDarkMode = systemDark;
     }
+
+    _isInitialized = true;
+    notifyListeners();
   }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // ── Public API ────────────────────────────────────────────────────────────
 
   Future<void> toggleTheme() async {
     _isDarkMode = !_isDarkMode;
-    
+    _userHasSetTheme = true;
+    notifyListeners();
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_dark_mode', _isDarkMode);
-    } catch (e) {
-      // Продолжаем работу даже если не удалось сохранить
-    }
-    
-    notifyListeners();
-  }
-
-  void toggleDebugGlassMode() {
-    HapticFeedback.selectionClick(); // Специальный мягкий клик для свитчей/селекторов
-    _debugGlassMode = !_debugGlassMode;
-    notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> setTheme(bool isDark) async {
     _isDarkMode = isDark;
-    
+    _userHasSetTheme = true;
+    notifyListeners();
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_dark_mode', _isDarkMode);
-    } catch (e) {
-      // Продолжаем работу даже если не удалось сохранить
-    }
-    
+    } catch (_) {}
+  }
+
+  void toggleDebugGlassMode() {
+    HapticFeedback.selectionClick();
+    _debugGlassMode = !_debugGlassMode;
     notifyListeners();
   }
 }

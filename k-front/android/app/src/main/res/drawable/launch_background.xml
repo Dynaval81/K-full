@@ -9,4 +9,10 @@
             android:src="@drawable/knoty_splash"
             android:tileMode="disabled"/>
     </item>
+    <item android:bottom="80dp">
+        <bitmap
+            android:gravity="bottom|center_horizontal"
+            android:src="@drawable/canons_splash"
+            android:tileMode="disabled"/>
+    </item>
 </layer-list>

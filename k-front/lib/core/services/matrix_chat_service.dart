@@ -1,20 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:knoty/core/network/dio_client.dart';
 import 'package:knoty/data/models/chat_room.dart';
 import 'package:knoty/data/models/message_model.dart';
 
 /// Matrix Synapse client service.
 class MatrixChatService {
-  static const String _matrixBase =
-      'https://hypermax.duckdns.org/_matrix/client/v3';
+  static final String _matrixBase = const String.fromEnvironment(
+    'MATRIX_URL',
+    defaultValue: 'https://hypermax.duckdns.org/_matrix/client/v3',
+  );
   static const String _matrixTokenKey = 'matrix_token';
-  static const Duration _timeout = Duration(seconds: 35);
 
   final _storage = const FlutterSecureStorage();
+  late final Dio _dio;
 
   String? _syncToken;
   Timer? _syncTimer;
@@ -25,6 +26,10 @@ class MatrixChatService {
   String? userSchool;
   String? userSchoolClass;
   String? matrixUserId;
+
+  MatrixChatService() {
+    _dio = DioClient.forBaseUrl(_matrixBase);
+  }
 
   void setUserContext({String? school, String? schoolClass, String? userId}) {
     userSchool = school;
@@ -66,47 +71,39 @@ class MatrixChatService {
   }
 
   Future<void> _doSync() async {
-    if (_isSyncing) return; // уже идёт sync — пропускаем
+    if (_isSyncing) return;
     _isSyncing = true;
 
     try {
       final token = await _token;
-      if (token == null) {
-        _isSyncing = false;
-        return;
-      }
+      if (token == null) { _isSyncing = false; return; }
 
-      final uri =
-          Uri.parse('$_matrixBase/sync').replace(queryParameters: {
-        'timeout': '30000',
-        if (_syncToken != null) 'since': _syncToken!,
-      });
+      final response = await _dio.get(
+        '/sync',
+        queryParameters: {
+          'timeout': '30000',
+          if (_syncToken != null) 'since': _syncToken!,
+        },
+        options: Options(
+          headers: _headers(token),
+          receiveTimeout: const Duration(seconds: 35),
+        ),
+      );
 
-      final response = await http
-          .get(uri, headers: _headers(token))
-          .timeout(_timeout);
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        // FIX #7: обрабатываем сначала, обновляем токен только после успеха
-        final nextBatch = data['next_batch']?.toString();
-        _processSyncResponse(data);
-        _syncToken = nextBatch; // обновляем только если processing прошёл без ошибок
-        _failCount = 0;
-      } else {
-        _failCount++;
-      }
+      final data = response.data as Map<String, dynamic>;
+      final nextBatch = data['next_batch']?.toString();
+      _processSyncResponse(data);
+      _syncToken = nextBatch;
+      _failCount = 0;
+    } on DioException catch (_) {
+      _failCount++;
     } catch (_) {
       _failCount++;
     } finally {
       _isSyncing = false;
     }
 
-    // Exponential backoff: 500ms → 1s → 2s → 4s → max 30s
-    if (_syncTimer != null) {
-      // stopSync был вызван пока шёл sync — не планируем следующий
-      return;
-    }
+    if (_syncTimer != null) return;
     final backoff = Duration(
       milliseconds: min(500 * pow(2, _failCount).toInt(), 30000),
     );
@@ -240,21 +237,13 @@ class MatrixChatService {
       final token = await _token;
       if (token == null) return [];
 
-      final uri = Uri.parse(
-              '$_matrixBase/rooms/${Uri.encodeComponent(roomId)}/messages')
-          .replace(queryParameters: {
-        'dir': 'b',
-        'limit': '$limit',
-      });
+      final response = await _dio.get(
+        '/rooms/${Uri.encodeComponent(roomId)}/messages',
+        queryParameters: {'dir': 'b', 'limit': '$limit'},
+        options: Options(headers: _headers(token)),
+      );
 
-      final response =
-          await http.get(uri, headers: _headers(token)).timeout(_timeout);
-
-      if (response.statusCode != 200) return [];
-
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      final chunk = data['chunk'] as List? ?? [];
-
+      final chunk = response.data['chunk'] as List? ?? [];
       return chunk
           .where((e) => e['type'] == 'm.room.message')
           .map((e) => MessageModel(
@@ -262,8 +251,7 @@ class MatrixChatService {
                 text: e['content']?['body']?.toString() ?? '',
                 chatId: roomId,
                 senderId: e['sender']?.toString() ?? '',
-                isMe: currentUserId != null &&
-                    e['sender'] == currentUserId,
+                isMe: currentUserId != null && e['sender'] == currentUserId,
                 timestamp: DateTime.fromMillisecondsSinceEpoch(
                     (e['origin_server_ts'] as int?) ?? 0),
                 status: MessageStatus.sent,
@@ -282,18 +270,12 @@ class MatrixChatService {
       if (token == null) return false;
 
       final txnId = DateTime.now().millisecondsSinceEpoch.toString();
-      final uri = Uri.parse(
-          '$_matrixBase/rooms/${Uri.encodeComponent(roomId)}/send/m.room.message/$txnId');
-
-      final response = await http
-          .put(
-            uri,
-            headers: _headers(token),
-            body: jsonEncode({'msgtype': 'm.text', 'body': text}),
-          )
-          .timeout(_timeout);
-
-      return response.statusCode == 200;
+      await _dio.put(
+        '/rooms/${Uri.encodeComponent(roomId)}/send/m.room.message/$txnId',
+        data: {'msgtype': 'm.text', 'body': text},
+        options: Options(headers: _headers(token)),
+      );
+      return true;
     } catch (_) {
       return false;
     }
@@ -307,12 +289,5 @@ class MatrixChatService {
     // FIX #2: закрываем контроллеры только если открыты
     if (!_roomsController.isClosed) _roomsController.close();
     if (!_messagesController.isClosed) _messagesController.close();
-  }
-
-  /// Пользовательское сообщение об ошибке без внутренних деталей
-  static String _sanitizeError(Object e) {
-    if (e is SocketException) return 'Keine Internetverbindung';
-    if (e is TimeoutException) return 'Zeitüberschreitung';
-    return 'Verbindungsfehler';
   }
 }

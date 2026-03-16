@@ -110,7 +110,7 @@ const _kSchedule = <_Slot>[
         icon: Icons.restaurant_rounded, color: Color(0xFF9E9E9E)),
   _Slot(startH: 11, startM: 45, endH: 12, endM: 30,
         subject: 'Biologie',    teacher: 'Fr. Keller',  room: '118',
-        color: Color(0xFF66BB6A), icon: Icons.science_rounded),
+        color: Color(0xFFFFB300), icon: Icons.science_rounded),
   _Slot(startH: 12, startM: 30, endH: 13, endM: 15,
         subject: 'Physik',      teacher: 'Hr. Richter', room: '220',
         color: Color(0xFF7C4DFF), icon: Icons.bolt_rounded),
@@ -1377,7 +1377,7 @@ class _TeachersCard extends StatelessWidget {
                         color: const Color(0xFFE8F5E9),
                         borderRadius: BorderRadius.circular(12)),
                     child: const Icon(Icons.people_rounded,
-                        color: Color(0xFF43A047), size: 22)),
+                        color: Color(0xFFE6B800), size: 22)),
                 const SizedBox(width: 12),
                 Text(l10n.schoolTeachersTitle,
                     style: TextStyle(
@@ -1415,7 +1415,7 @@ class _TeachersCard extends StatelessWidget {
                   color: const Color(0xFFE8F5E9),
                   borderRadius: BorderRadius.circular(12)),
               child: const Icon(Icons.people_rounded,
-                  color: Color(0xFF43A047), size: 22)),
+                  color: Color(0xFFE6B800), size: 22)),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l10n.schoolTeachersTitle,
@@ -1526,12 +1526,12 @@ class _GradesSheetState extends State<_GradesSheet> {
   ];
 
   static const _gradeColors = {
-    1: Color(0xFF43A047),
-    2: Color(0xFF7CB342),
-    3: Color(0xFFFFB300),
-    4: Color(0xFFFF7043),
-    5: Color(0xFFE53935),
-    6: Color(0xFF8E24AA),
+    1: Color(0xFFE6B800), // gold — sehr gut
+    2: Color(0xFFFFD84D), // goldMid — gut
+    3: Color(0xFFFFB300), // amber — befriedigend
+    4: Color(0xFFFF7043), // warning — ausreichend
+    5: Color(0xFFCC0000), // error — mangelhaft
+    6: Color(0xFF8B0000), // dark red — ungenügend
   };
 
   @override
@@ -1800,8 +1800,8 @@ class _TeachersSheet extends StatelessWidget {
 
   static const _colors = [
     Color(0xFF5B8DEF), Color(0xFF26A69A), Color(0xFFFF7043),
-    Color(0xFF7C4DFF), Color(0xFF66BB6A), Color(0xFFE6B800),
-    Color(0xFFEC407A),
+    Color(0xFF7C4DFF), Color(0xFFFFB300), Color(0xFFE6B800),
+    Color(0xFFFF7043),
   ];
 
   @override

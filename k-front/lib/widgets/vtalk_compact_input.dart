@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:knoty/constants/palette.dart';
 import '../utils/glass_kit.dart';
 import '../theme_provider.dart';
 
@@ -186,12 +187,12 @@ class VTalkCompactInput extends StatelessWidget {
                     runSpacing: 20,
                     alignment: WrapAlignment.center,
                     children: [
-                      _buildUltraAttachOption(context, Icons.photo_library_rounded, "Gallery", Colors.blueAccent, isDark),
-                      _buildUltraAttachOption(context, Icons.camera_alt_rounded, "Camera", Colors.pinkAccent, isDark),
-                      _buildUltraAttachOption(context, Icons.insert_drive_file_rounded, "File", Colors.amberAccent, isDark),
-                      _buildUltraAttachOption(context, Icons.location_on_rounded, "Place", Colors.greenAccent, isDark),
-                      _buildUltraAttachOption(context, Icons.headset_rounded, "Music", Colors.purpleAccent, isDark),
-                      _buildUltraAttachOption(context, Icons.contact_page_rounded, "Contact", Colors.cyanAccent, isDark),
+                      _buildUltraAttachOption(context, Icons.photo_library_rounded, "Gallery", KPalette.info, isDark),
+                      _buildUltraAttachOption(context, Icons.camera_alt_rounded, "Camera", KPalette.gold, isDark),
+                      _buildUltraAttachOption(context, Icons.insert_drive_file_rounded, "File", KPalette.warning, isDark),
+                      _buildUltraAttachOption(context, Icons.location_on_rounded, "Place", KPalette.success, isDark),
+                      _buildUltraAttachOption(context, Icons.headset_rounded, "Music", KPalette.subtext, isDark),
+                      _buildUltraAttachOption(context, Icons.contact_page_rounded, "Contact", KPalette.goldMid, isDark),
                     ],
                   ),
                   const SizedBox(height: 20),

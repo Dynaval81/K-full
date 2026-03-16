@@ -131,19 +131,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Skip button
-            Positioned(
-              top: 8,
-              right: 16,
-              child: TextButton(
-                onPressed: _finishOnboarding,
-                child: Text(
-                  _skipLabel(lang),
-                  style: TextStyle(color: cs.onSurfaceVariant),
-                ),
-              ),
-            ),
-
             Column(
               children: [
                 Expanded(
@@ -164,6 +151,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   lang: lang,
                 ),
               ],
+            ),
+
+            // Skip button — поверх Column
+            Positioned(
+              top: 8,
+              right: 16,
+              child: TextButton(
+                onPressed: _finishOnboarding,
+                child: Text(
+                  _skipLabel(lang),
+                  style: TextStyle(color: cs.onSurfaceVariant),
+                ),
+              ),
             ),
           ],
         ),

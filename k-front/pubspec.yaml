@@ -15,7 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.6
   go_router: ^13.2.0
   provider: ^6.1.1
-  http: ^1.2.0
+  dio: ^5.7.0
+  pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.2.2
   intl: ^0.20.2
   flutter_secure_storage: ^9.0.0
@@ -36,12 +37,17 @@ flutter_native_splash:
   color: "#FFFFFF"
   color_dark: "#0F0F0F"
   image: assets/images/knoty_logo.png
-  image_dark: assets/images/knoty_logo.png
+  image_dark: assets/images/knoty_logo_bt.png
+  branding: assets/images/Canons.png
+  branding_dark: assets/images/Canons.png
+  branding_mode: bottom
   android_12:
     image: assets/images/knoty_logo.png
     color: "#FFFFFF"
-    image_dark: assets/images/knoty_logo.png
+    image_dark: assets/images/knoty_logo_bt.png
     color_dark: "#0F0F0F"
+    branding: assets/images/Canons.png
+    branding_dark: assets/images/Canons.png
   fullscreen: true
 
 flutter_launcher_icons:

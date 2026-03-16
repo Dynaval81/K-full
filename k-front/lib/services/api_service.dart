@@ -1,92 +1,92 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:knoty/core/network/dio_client.dart';
 
+/// Central HTTP client for the Knoty backend.
+/// Uses [DioClient] (singleton) which auto-injects the Bearer token.
+/// Offline fallback: [getUserData] and [getSchools] return cached data
+/// from SharedPreferences when the server is unreachable.
 class ApiService {
-  static const String _baseUrl = String.fromEnvironment(
-    'BASE_URL',
-    defaultValue: 'https://hypermax.duckdns.org/api/v1',
-  );
   static const String _tokenKey = 'auth_token';
-  static const Duration _timeout = Duration(seconds: 30);
+  static const String _cacheUserKey = 'cache_user_data';
+  static const String _cacheSchoolsKey = 'cache_schools';
 
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final Dio _dio = DioClient().dio;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  // Регистрация пользователя
+  // ─── Cache helpers ────────────────────────────────────────────────────────
+
+  Future<void> _cacheJson(String key, Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, jsonEncode(data));
+  }
+
+  Future<Map<String, dynamic>?> _readCache(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(key);
+    if (raw == null) return null;
+    try {
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ─── Auth ─────────────────────────────────────────────────────────────────
+
   Future<Map<String, dynamic>> register({
     required String email,
     required String password,
     String? firstName,
     String? lastName,
-    String? role,            // 'student' | 'parent' | 'teacher'
-    String? activationCode,  // KNOTY-XXXX-XXXX
+    String? role,
+    String? activationCode,
     String? schoolId,
     String? classId,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-          if (firstName != null)      'firstName': firstName,
-          if (lastName != null)       'lastName': lastName,
-          if (role != null)           'role': role,
-          if (activationCode != null) 'activationCode': activationCode,
-          if (schoolId != null)       'schoolId': schoolId,
-          if (classId != null)        'classId': classId,
-        }),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 201) {
-        final token = data['token'] ?? data['data']?['token'];
-        final userData = data['user'] ?? data['data']?['user'];
-        if (token != null) {
-          await _secureStorage.write(key: _tokenKey, value: token);
-        }
-        return {'success': true, 'user': userData, 'token': token};
-      } else {
-        return {'success': false, 'error': data['error'] ?? data['message'] ?? 'Registration failed'};
+      final res = await _dio.post('/auth/register', data: {
+        'email': email,
+        'password': password,
+        if (firstName != null) 'firstName': firstName,
+        if (lastName != null) 'lastName': lastName,
+        if (role != null) 'role': role,
+        if (activationCode != null) 'activationCode': activationCode,
+        if (schoolId != null) 'schoolId': schoolId,
+        if (classId != null) 'classId': classId,
+      });
+      final token = res.data['token'] ?? res.data['data']?['token'];
+      final userData = res.data['user'] ?? res.data['data']?['user'];
+      if (token != null) {
+        await _secureStorage.write(key: _tokenKey, value: token);
       }
+      return {'success': true, 'user': userData, 'token': token};
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Registration failed');
     }
   }
 
-  // Вход пользователя
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        final token = data['token'] ?? data['data']?['token'];
-        final userData = data['user'] ?? data['data']?['user'];
-        if (token != null) {
-          await _secureStorage.write(key: _tokenKey, value: token);
-        }
-        return {
-          'success': true,
-          'user': userData,
-          'token': token,
-        };
-      } else if (response.statusCode == 403) {
-        final errorCode = data['code'];
-        if (errorCode == 'ACCOUNT_BANNED') {
+      final res = await _dio.post('/auth/login', data: {
+        'email': email,
+        'password': password,
+      });
+      final token = res.data['token'] ?? res.data['data']?['token'];
+      final userData = res.data['user'] ?? res.data['data']?['user'];
+      if (token != null) {
+        await _secureStorage.write(key: _tokenKey, value: token);
+      }
+      return {'success': true, 'user': userData, 'token': token};
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        final data = e.response?.data as Map? ?? {};
+        if (data['code'] == 'ACCOUNT_BANNED') {
           return {
             'success': false,
             'error': data['error'] ?? 'Account banned',
@@ -98,298 +98,200 @@ class ApiService {
           'success': false,
           'error': data['error'] ?? data['message'] ?? 'Access denied',
         };
-      } else {
-        return {'success': false, 'error': data['message'] ?? data['error'] ?? 'Login failed'};
       }
+      return DioClient.handleError(e, fallback: 'Login failed');
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Login failed');
     }
   }
 
-  // Проверка наличия токена
   Future<bool> hasToken() async {
     final token = await _secureStorage.read(key: _tokenKey);
     return token != null;
   }
 
-  // Получение данных текущего пользователя
+  /// Fetches current user. Falls back to cached data when offline.
   Future<Map<String, dynamic>> getUserData() async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token found'};
-
-      final response = await http.get(
-        Uri.parse('$_baseUrl/auth/me'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        final userJson = data['data']?['user'] ?? data['user'];
-        return {'success': true, 'user': userJson};
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Failed to get user data'};
-      }
+      final res = await _dio.get('/auth/me');
+      final userJson = res.data['data']?['user'] ?? res.data['user'];
+      final result = {'success': true, 'user': userJson};
+      await _cacheJson(_cacheUserKey, result);
+      return result;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      final err = DioClient.handleError(e, fallback: 'Failed to get user data');
+      if (err['isOffline'] == true) {
+        final cached = await _readCache(_cacheUserKey);
+        if (cached != null) return {...cached, 'fromCache': true};
+      }
+      return err;
     }
   }
 
-  // Глобальный поиск пользователей
   Future<Map<String, dynamic>> searchUsers(String query) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token found'};
-
-      final uri = Uri.parse('$_baseUrl/users/search').replace(
-        queryParameters: {'query': query},
-      );
-
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        final usersList = data['data']?['users'] ?? data['users'] ?? [];
-        return {'success': true, 'users': usersList};
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Failed to search users'};
-      }
+      final res = await _dio.get('/users/search',
+          queryParameters: {'query': query});
+      final usersList =
+          res.data['data']?['users'] ?? res.data['users'] ?? [];
+      return {'success': true, 'users': usersList};
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Failed to search users');
     }
   }
 
-  // Восстановление доступа
   Future<void> recoverAccess(String email) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/auth/recovery'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
-    );
-    if (response.statusCode != 200) throw Exception('Recovery failed');
+    await _dio.post('/auth/recovery', data: {'email': email});
   }
 
-  // Проверка активационного кода (до регистрации)
   Future<Map<String, dynamic>> verifyCode({
     required String code,
     required String firstName,
     required String lastName,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/verify-code'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'code': code,
-          'firstName': firstName,
-          'lastName': lastName,
-        }),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return {
-          'success': true,
-          'valid': data['valid'] ?? false,
-          'schoolName': data['schoolName'],
-          'className': data['className'],
-          'role': data['role'],
-          'reason': data['reason'],
-        };
-      } else {
-        return {'success': false, 'error': data['error'] ?? 'Verification failed'};
-      }
+      final res = await _dio.post('/auth/verify-code', data: {
+        'code': code,
+        'firstName': firstName,
+        'lastName': lastName,
+      });
+      return {
+        'success': true,
+        'valid': res.data['valid'] ?? false,
+        'schoolName': res.data['schoolName'],
+        'className': res.data['className'],
+        'role': res.data['role'],
+        'reason': res.data['reason'],
+      };
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Verification failed');
     }
   }
 
-  // Публичный список школ (для регистрации)
+  /// Fetches schools list. Falls back to cached data when offline.
   Future<Map<String, dynamic>> getSchools() async {
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/schools'),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return {'success': true, 'schools': data['schools'] ?? []};
-      } else {
-        return {'success': false, 'error': data['error'] ?? 'Failed to load schools'};
-      }
+      final res = await _dio.get('/schools');
+      final result = {
+        'success': true,
+        'schools': res.data['schools'] ?? [],
+      };
+      await _cacheJson(_cacheSchoolsKey, result);
+      return result;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      final err = DioClient.handleError(e, fallback: 'Failed to load schools');
+      if (err['isOffline'] == true) {
+        final cached = await _readCache(_cacheSchoolsKey);
+        if (cached != null) return {...cached, 'fromCache': true};
+      }
+      return err;
     }
   }
 
-  // Создание чата
   Future<Map<String, dynamic>> createChat(String userId) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/chats/create'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({'userId': userId}),
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return {'success': true, 'roomId': data['roomId'] ?? data['data']?['roomId']};
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Failed to create chat'};
-      }
+      final res = await _dio.post('/chats/create', data: {'userId': userId});
+      return {
+        'success': true,
+        'roomId': res.data['roomId'] ?? res.data['data']?['roomId'],
+      };
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Failed to create chat');
     }
   }
 
-  // Получение списка чатов
   Future<Map<String, dynamic>> listChats() async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-
-      final response = await http.get(
-        Uri.parse('$_baseUrl/chats/list'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(_timeout);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return {'success': true, 'rooms': data['rooms'] ?? data['data']?['rooms'] ?? []};
-      } else {
-        return {'success': false, 'error': data['message'] ?? 'Failed to load chats'};
-      }
+      final res = await _dio.get('/chats/list');
+      return {
+        'success': true,
+        'rooms': res.data['rooms'] ?? res.data['data']?['rooms'] ?? [],
+      };
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Failed to load chats');
     }
   }
 
-  // ─── Admin API ────────────────────────────────────────────────────────────
+  // ─── Admin API ─────────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> _adminGet(String path, {Map<String, String>? query}) async {
+  Future<Map<String, dynamic>> _adminGet(String path,
+      {Map<String, String>? query}) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-      final uri = Uri.parse('$_baseUrl/admin/$path').replace(queryParameters: query);
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      }).timeout(_timeout);
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) return data;
-      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+      final res =
+          await _dio.get('/admin/$path', queryParameters: query);
+      return res.data as Map<String, dynamic>;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Request failed');
     }
   }
 
-  Future<Map<String, dynamic>> _adminPost(String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> _adminPost(
+      String path, Map<String, dynamic> body) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-      final response = await http.post(
-        Uri.parse('$_baseUrl/admin/$path'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-        body: jsonEncode(body),
-      ).timeout(_timeout);
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) return data;
-      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+      final res = await _dio.post('/admin/$path', data: body);
+      return res.data as Map<String, dynamic>;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Request failed');
     }
   }
 
-  Future<Map<String, dynamic>> _adminPut(String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> _adminPut(
+      String path, Map<String, dynamic> body) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-      final response = await http.put(
-        Uri.parse('$_baseUrl/admin/$path'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-        body: jsonEncode(body),
-      ).timeout(_timeout);
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) return data;
-      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+      final res = await _dio.put('/admin/$path', data: body);
+      return res.data as Map<String, dynamic>;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Request failed');
     }
   }
 
   Future<Map<String, dynamic>> _adminDelete(String path) async {
     try {
-      final token = await _secureStorage.read(key: _tokenKey);
-      if (token == null) return {'success': false, 'error': 'No token'};
-      final response = await http.delete(
-        Uri.parse('$_baseUrl/admin/$path'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-      ).timeout(_timeout);
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) return data;
-      return {'success': false, 'error': data['error'] ?? 'Request failed'};
+      final res = await _dio.delete('/admin/$path');
+      return res.data as Map<String, dynamic>;
     } catch (e) {
-      return {'success': false, 'error': 'Network error: ${e.toString()}'};
+      return DioClient.handleError(e, fallback: 'Request failed');
     }
   }
 
-  // Статистика
   Future<Map<String, dynamic>> adminGetStats() => _adminGet('stats');
-
-  // Школы
   Future<Map<String, dynamic>> adminListSchools() => _adminGet('schools');
 
   Future<Map<String, dynamic>> adminCreateSchool({
     required String name,
     required String city,
     String? address,
-  }) => _adminPost('schools', {'name': name, 'city': city, if (address != null) 'address': address});
+  }) =>
+      _adminPost('schools', {
+        'name': name,
+        'city': city,
+        if (address != null) 'address': address,
+      });
 
-  Future<Map<String, dynamic>> adminUpdateSchool(
-    String id, {
-    String? name,
-    String? city,
-    String? address,
-  }) => _adminPut('schools/$id', {
+  Future<Map<String, dynamic>> adminUpdateSchool(String id,
+          {String? name, String? city, String? address}) =>
+      _adminPut('schools/$id', {
         if (name != null) 'name': name,
         if (city != null) 'city': city,
         if (address != null) 'address': address,
       });
 
-  // Коды активации
-  Future<Map<String, dynamic>> adminListCodes({String? schoolId, String? status, String? classId}) =>
+  Future<Map<String, dynamic>> adminListCodes(
+          {String? schoolId, String? status, String? classId}) =>
       _adminGet('codes', query: {
-        if (schoolId != null) 'schoolId': schoolId,
-        if (status != null) 'status': status,
-        if (classId != null) 'classId': classId,
+        if (schoolId != null) 'schoolId': schoolId!,
+        if (status != null) 'status': status!,
+        if (classId != null) 'classId': classId!,
       });
 
   Future<Map<String, dynamic>> adminGenerateCodes({
     required String schoolId,
     required String classId,
-    required List<Map<String, String>> entries, // [{firstName, lastName}]
+    required List<Map<String, String>> entries,
     String role = 'student',
     int expiresInDays = 30,
-  }) => _adminPost('codes/generate', {
+  }) =>
+      _adminPost('codes/generate', {
         'schoolId': schoolId,
         'classId': classId,
         'role': role,
@@ -397,9 +299,9 @@ class ApiService {
         'expiresInDays': expiresInDays,
       });
 
-  Future<Map<String, dynamic>> adminDeleteCode(String code) => _adminDelete('codes/$code');
+  Future<Map<String, dynamic>> adminDeleteCode(String code) =>
+      _adminDelete('codes/$code');
 
-  // Пользователи
   Future<Map<String, dynamic>> adminListUsers({
     String? schoolId,
     String? status,
@@ -408,24 +310,26 @@ class ApiService {
     String? search,
     int page = 1,
     int limit = 50,
-  }) => _adminGet('users', query: {
-        if (schoolId != null) 'schoolId': schoolId,
-        if (status != null) 'status': status,
-        if (role != null) 'role': role,
+  }) =>
+      _adminGet('users', query: {
+        if (schoolId != null) 'schoolId': schoolId!,
+        if (status != null) 'status': status!,
+        if (role != null) 'role': role!,
         if (pending != null) 'pending': pending.toString(),
-        if (search != null) 'search': search,
+        if (search != null) 'search': search!,
         'page': page.toString(),
         'limit': limit.toString(),
       });
 
-  Future<Map<String, dynamic>> adminApproveUser(String id) => _adminPost('users/$id/approve', {});
+  Future<Map<String, dynamic>> adminApproveUser(String id) =>
+      _adminPost('users/$id/approve', {});
 
   Future<Map<String, dynamic>> adminBanUser(String id, {String? reason}) =>
-      _adminPost('users/$id/ban', {if (reason != null) 'reason': reason});
+      _adminPost('users/$id/ban', {if (reason != null) 'reason': reason!});
 
-  Future<Map<String, dynamic>> adminUnbanUser(String id) => _adminPost('users/$id/unban', {});
+  Future<Map<String, dynamic>> adminUnbanUser(String id) =>
+      _adminPost('users/$id/unban', {});
 
-  // Выход
   Future<void> logout() async {
     await _secureStorage.delete(key: _tokenKey);
   }

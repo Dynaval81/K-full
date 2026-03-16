@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Logo center
@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
 
-          // HAI3 badge + label at bottom
+          // Canons by + HAI3 badge at bottom
           Positioned(
             bottom: 48,
             left: 0,
@@ -124,20 +124,24 @@ class _SplashScreenState extends State<SplashScreen>
               opacity: _fadeIn,
               child: Column(
                 children: [
+                  Text(
+                    'Canons by',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF9E9E9E)
+                          : const Color(0xFFAAAAAA),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Image.asset(
-                    'assets/images/hai_3_dark.png',
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/images/hai_3_light.png'
+                        : 'assets/images/hai_3_dark.png',
                     height: 28,
                     fit: BoxFit.contain,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    l10n.splashHai3Label,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      letterSpacing: 0.4,
-                      color: Color(0xFFAAAAAA),
-                    ),
                   ),
                 ],
               ),
