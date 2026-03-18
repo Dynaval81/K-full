@@ -9,7 +9,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class DioClient {
   static const String _baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://hypermax.duckdns.org/api/v1',
+    defaultValue: 'https://knoty.duckdns.org/api/v1',
   );
   static const String _tokenKey = 'auth_token';
 

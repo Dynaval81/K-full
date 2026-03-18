@@ -1,0 +1,53 @@
+/* ── Knoty Admin — minimal safe overrides ───────────────────────────────────
+   AdminJS v7 uses styled-components (hashed class names).
+   This file only targets stable selectors that won't break the layout.
+   Color theming is done via availableThemes overrides in admin.js.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Logo sizing — prevent oversized logo in sidebar */
+img[src='/public/knoty_logo.png'] {
+  max-height: 36px !important;
+  max-width: 160px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* Login page branding footer */
+[data-css='default-dashboard'] + * {
+  /* keep default */
+}
+
+/* Round all buttons */
+button {
+  border-radius: 24px !important;
+}
+
+/* Round inputs */
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  border-radius: 12px !important;
+}
+
+/* Round cards / panels */
+section > section,
+article {
+  border-radius: 16px !important;
+}
+
+/* Canons by HAI3 branding — bottom of login page */
+#app::after {
+  content: '';
+  display: none;
+}
+
+/* Fix table header text transform */
+th {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* Active nav item highlight using primary color from theme */
+a[aria-current='page'] {
+  font-weight: 700 !important;
+}

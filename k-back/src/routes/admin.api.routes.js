@@ -11,6 +11,7 @@ router.use(requireRole('appAdmin'));
 
 // Stats
 router.get('/stats', ctrl.getStats);
+router.get('/role-counts', ctrl.getRoleCounts);
 
 // Schools
 router.get('/schools', ctrl.listSchools);

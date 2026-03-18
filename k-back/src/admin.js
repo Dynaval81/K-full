@@ -1,180 +1,328 @@
-const AdminJS = require('adminjs');
-const AdminJSExpress = require('@adminjs/express');
-const { Database, Resource } = require('@adminjs/prisma');
-const { PrismaClient } = require('@prisma/client');
-const session = require('express-session');
+const AdminJS = require('adminjs').default;
+const { ComponentLoader } = require('adminjs');
+const { Database, Resource, getModelByName } = require('@adminjs/prisma');
 const bcrypt = require('bcryptjs');
+const path = require('path');
+const prisma = require('./lib/prisma');
 
-const prisma = new PrismaClient();
+const componentLoader = new ComponentLoader();
+const Components = {
+  Dashboard: componentLoader.add('Dashboard', path.join(__dirname, 'admin-components/Dashboard')),
+};
 
-// Регистрируем Prisma адаптер
 AdminJS.registerAdapter({ Database, Resource });
 
-// Конфигурация AdminJS
-const adminOptions = {
-  resources: [
-    {
-      resource: { model: prisma.user, client: prisma },
-      options: {
-        properties: {
-          password: { isVisible: false }, // Скрываем пароль
-          matrixAccessToken: { isVisible: { list: false, filter: false, show: true, edit: false } },
-          emailVerificationToken: { isVisible: false }
-        },
-        actions: {
-          // Кастомное действие: Ban User
-          banUser: {
-            actionType: 'record',
-            component: false,
-            handler: async (request, response, context) => {
-              const { record } = context;
-              await prisma.user.update({
-                where: { id: record.params.id },
-                data: {
-                  isPremium: false,
-                  emailVerified: false
-                }
-              });
-              return {
-                record: record.toJSON(context.currentAdmin),
-                notice: {
-                  message: 'User banned successfully!',
-                  type: 'success',
-                },
-              };
-            },
-          },
-          // Кастомное действие: Grant Premium
-          grantPremium: {
-            actionType: 'record',
-            component: false,
-            handler: async (request, response, context) => {
-              const { record } = context;
-              const expiresAt = new Date();
-              expiresAt.setDate(expiresAt.getDate() + 30);
+// ─── Custom action handlers ───────────────────────────────────────────────────
 
-              await prisma.user.update({
-                where: { id: record.params.id },
-                data: {
-                  isPremium: true,
-                  premiumPlan: 'admin_granted',
-                  premiumExpiresAt: expiresAt
-                }
-              });
-              return {
-                record: record.toJSON(context.currentAdmin),
-                notice: {
-                  message: 'Premium granted for 30 days!',
-                  type: 'success',
-                },
-              };
-            },
+const approveUser = {
+  actionType: 'record',
+  icon: 'Checkmark',
+  label: 'Approve',
+  component: false,
+  guard: 'Approve this user?',
+  handler: async (request, response, context) => {
+    const { record } = context;
+    await prisma.user.update({
+      where: { id: record.params.id },
+      data: { isApproved: true, status: 'active' },
+    });
+    return {
+      record: record.toJSON(context.currentAdmin),
+      notice: { message: 'User approved.', type: 'success' },
+    };
+  },
+};
+
+const banUser = {
+  actionType: 'record',
+  icon: 'Ban',
+  label: 'Ban',
+  component: false,
+  guard: 'Ban this user? Their email will be blacklisted.',
+  handler: async (request, response, context) => {
+    const { record } = context;
+    const userId = record.params.id;
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return { record: record.toJSON(context.currentAdmin), notice: { message: 'User not found.', type: 'error' } };
+    }
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: userId },
+        data: {
+          status: 'banned',
+          isBanned: true,
+          banReason: 'Banned via admin panel',
+          bannedAt: new Date(),
+          bannedBy: context.currentAdmin?.email ?? 'admin',
+        },
+      }),
+      prisma.bannedEmail.upsert({
+        where: { email: user.email },
+        create: { email: user.email, reason: 'Banned via admin panel', bannedBy: context.currentAdmin?.email ?? 'admin' },
+        update: {},
+      }),
+    ]);
+    return {
+      record: record.toJSON(context.currentAdmin),
+      notice: { message: `User banned and email ${user.email} blacklisted.`, type: 'success' },
+    };
+  },
+};
+
+const unbanUser = {
+  actionType: 'record',
+  icon: 'Restart',
+  label: 'Unban',
+  component: false,
+  guard: 'Unban this user?',
+  handler: async (request, response, context) => {
+    const { record } = context;
+    const userId = record.params.id;
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return { record: record.toJSON(context.currentAdmin), notice: { message: 'User not found.', type: 'error' } };
+    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: { status: 'active', isBanned: false, banReason: null, bannedAt: null, bannedBy: null },
+    });
+    await prisma.bannedEmail.deleteMany({ where: { email: user.email } });
+    return {
+      record: record.toJSON(context.currentAdmin),
+      notice: { message: 'User unbanned.', type: 'success' },
+    };
+  },
+};
+
+const resetPassword = {
+  actionType: 'record',
+  icon: 'Password',
+  label: 'Reset Password',
+  component: false,
+  guard: 'Reset this user\'s password? A temporary password will be shown once.',
+  handler: async (request, response, context) => {
+    const { record } = context;
+    const tempPassword = Math.random().toString(36).slice(-10).toUpperCase();
+    const hashed = await bcrypt.hash(tempPassword, 12);
+    await prisma.user.update({
+      where: { id: record.params.id },
+      data: { password: hashed },
+    });
+    return {
+      record: record.toJSON(context.currentAdmin),
+      notice: {
+        message: `Password reset. Temp password: ${tempPassword} — copy now, shown only once.`,
+        type: 'info',
+      },
+    };
+  },
+};
+
+// ─── Admin factory ────────────────────────────────────────────────────────────
+
+async function buildAdminRouter() {
+  // @adminjs/express is ESM-only — must use dynamic import
+  const { buildAuthenticatedRouter } = await import('@adminjs/express');
+
+  const admin = new AdminJS({
+    rootPath: '/admin',
+    componentLoader,
+    dashboard: {
+      component: Components.Dashboard,
+    },
+    branding: {
+      companyName: 'Knoty Admin',
+      logo: '/public/knoty_logo.png',
+      favicon: '/public/knoty_logo.png',
+      softwareBrothers: false,
+      withMadeWithLove: false,
+    },
+    availableThemes: [
+      {
+        id: 'light',
+        name: 'Knoty',
+        bundlePath: path.join(__dirname, 'public/knoty-theme.bundle.js'),
+        overrides: {
+          colors: {
+            primary100: '#E6B800',
+            primary80:  '#C9A200',
+            primary60:  '#DAAE00',
+            primary40:  '#EDD860',
+            primary20:  '#FFF8CC',
+            accent:     '#E6B800',
+            // Keep sidebar and bg white
+            sidebar:    '#FFFFFF',
+            bg:         '#F5F5F5',
+            container:  '#FFFFFF',
+            border:     '#E0E0E0',
+            text:       '#1A1A1A',
+            grey100:    '#1A1A1A',
+            grey80:     '#3D3D3D',
+            grey60:     '#6B6B6B',
+            grey40:     '#AAAAAA',
+            grey20:     '#F5F5F5',
           },
-          // Кастомное действие: Reset Password
-          resetPassword: {
-            actionType: 'record',
-            component: false,
-            handler: async (request, response, context) => {
-              const { record } = context;
-              
-              // Генерируем временный пароль (8 символов)
-              const tempPassword = Math.random().toString(36).slice(-8).toUpperCase();
-              const hashedPassword = await bcrypt.hash(tempPassword, 10);
-              
-              await prisma.user.update({
-                where: { id: record.params.id },
-                data: { password: hashedPassword }
-              });
-              
-              return {
-                record: record.toJSON(context.currentAdmin),
-                notice: {
-                  message: `✅ Password reset! New password: ${tempPassword} (Copy and save this!)`,
-                  type: 'success',
-                },
-              };
-            },
+          shadows: {
+            login:    '0 8px 32px rgba(0,0,0,0.08)',
+            cardHover:'0 4px 12px rgba(0,0,0,0.08)',
+            drawer:   '-2px 0 8px rgba(0,0,0,0.06)',
+            card:     '0 1px 6px rgba(0,0,0,0.05)',
           },
         },
       },
+    ],
+    defaultTheme: 'light',
+    assets: {
+      styles: ['/public/admin-theme.css'],
     },
-    {
-      resource: { model: prisma.vpnNode, client: prisma },
-      options: {
-        properties: {
-          vlessUri: { isVisible: { list: false, filter: false, show: true, edit: true } },
-          singboxConfig: { isVisible: { list: false, filter: false, show: true, edit: true } }
-        }
-      }
-    },
-    {
-      resource: { model: prisma.activationPassword, client: prisma },
-      options: {}
-    },
-    {
-      resource: { model: prisma.loginHistory, client: prisma },
-      options: {
-        actions: {
-          new: { isAccessible: false },
-          edit: { isAccessible: false },
-          delete: { isAccessible: false }
-        }
-      }
-    },
-    {
-      resource: { model: prisma.session, client: prisma },
-      options: {
-        actions: {
-          new: { isAccessible: false },
-          edit: { isAccessible: false }
-        }
-      }
-    },
-    {
-      resource: { model: prisma.vpnConnection, client: prisma },
-      options: {
-        actions: {
-          new: { isAccessible: false },
-          edit: { isAccessible: false },
-          delete: { isAccessible: false }
-        }
-      }
-    }
-  ],
-  rootPath: '/admin',
-  branding: {
-    companyName: 'Vtalk Admin Panel',
-    logo: false,
-    softwareBrothers: false
-  }
-};
+    resources: [
+      // ── Users ───────────────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('User'), client: prisma },
+        options: {
+          navigation: { name: 'Users', icon: 'User' },
+          listProperties: ['knNumber', 'firstName', 'lastName', 'email', 'role', 'status', 'isApproved', 'schoolId', 'createdAt'],
+          filterProperties: ['role', 'status', 'isApproved', 'schoolId', 'email'],
+          showProperties: [
+            'id', 'knNumber', 'email', 'firstName', 'lastName', 'role',
+            'status', 'isApproved', 'verificationLevel', 'schoolId', 'classId',
+            'banReason', 'bannedAt', 'bannedBy', 'lastLoginAt', 'lastLoginIp',
+            'createdAt', 'updatedAt',
+          ],
+          editProperties: ['email', 'firstName', 'lastName', 'role', 'schoolId', 'classId', 'isApproved', 'verificationLevel'],
+          properties: {
+            password:               { isVisible: false },
+            emailVerificationToken: { isVisible: false },
+            matrixAccessToken:      { isVisible: false },
+          },
+          actions: {
+            approveUser,
+            banUser,
+            unbanUser,
+            resetPassword,
+          },
+        },
+      },
 
-const admin = new AdminJS(adminOptions);
+      // ── Schools ─────────────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('School'), client: prisma },
+        options: {
+          navigation: { name: 'Schools', icon: 'Building' },
+          listProperties: ['name', 'city', 'address', 'createdAt'],
+        },
+      },
 
-// Настройка сессий и аутентификации
-const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
-  admin,
-  {
-    authenticate: async (email, password) => {
-      // Аутентификация админа
-      if (email === 'noreply.vtalk@gmail.com' && password === 'Vtalk2026AdminSecure!') {
-        return { email: 'noreply.vtalk@gmail.com', role: 'admin' };
-      }
-      return null;
+      // ── Classes ─────────────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('SchoolClass'), client: prisma },
+        options: {
+          navigation: { name: 'Schools', icon: 'List' },
+          listProperties: ['name', 'schoolId', 'teacherId', 'createdAt'],
+        },
+      },
+
+      // ── Activation codes ────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('ActivationCode'), client: prisma },
+        options: {
+          navigation: { name: 'Codes', icon: 'Key' },
+          listProperties: ['code', 'firstName', 'lastName', 'role', 'status', 'schoolId', 'classId', 'expiresAt'],
+          filterProperties: ['status', 'role', 'schoolId', 'classId'],
+          actions: {
+            new:  { isAccessible: false },
+            edit: { isAccessible: false },
+          },
+        },
+      },
+
+      // ── Banned emails ────────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('BannedEmail'), client: prisma },
+        options: {
+          navigation: { name: 'Users', icon: 'Subtract' },
+          listProperties: ['email', 'reason', 'bannedBy', 'bannedAt'],
+          actions: {
+            new:  { isAccessible: false },
+            edit: { isAccessible: false },
+          },
+        },
+      },
+
+      // ── Login history ────────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('LoginHistory'), client: prisma },
+        options: {
+          navigation: { name: 'Logs', icon: 'Calendar' },
+          listProperties: ['userId', 'ip', 'platform', 'success', 'timestamp'],
+          filterProperties: ['userId', 'success', 'timestamp'],
+          actions: {
+            new:    { isAccessible: false },
+            edit:   { isAccessible: false },
+            delete: { isAccessible: false },
+          },
+        },
+      },
+
+      // ── Parent-Child links ───────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('ParentChild'), client: prisma },
+        options: {
+          navigation: { name: 'Users', icon: 'Link' },
+          listProperties: ['parentId', 'childId', 'status', 'createdAt'],
+          filterProperties: ['status', 'parentId', 'childId'],
+          actions: {
+            new:  { isAccessible: false },
+            edit: { isAccessible: false },
+          },
+        },
+      },
+
+      // ── Global settings ──────────────────────────────────────────────────────
+      {
+        resource: { model: getModelByName('GlobalSettings'), client: prisma },
+        options: {
+          navigation: { name: 'Settings', icon: 'Settings' },
+          listProperties: ['key', 'value', 'updatedAt'],
+          actions: {
+            new:    { isAccessible: false },
+            delete: { isAccessible: false },
+          },
+        },
+      },
+    ],
+  });
+
+  const router = buildAuthenticatedRouter(
+    admin,
+    {
+      authenticate: async (email, password) => {
+        const adminEmail    = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        if (!adminEmail || !adminPassword) return null;
+        if (email === adminEmail && password === adminPassword) {
+          return { email, role: 'appAdmin' };
+        }
+        return null;
+      },
+      cookieName: 'knoty_admin',
+      cookiePassword: process.env.ADMIN_COOKIE_SECRET,
     },
-    cookieName: 'adminjs',
-    cookiePassword: 'vtalk-admin-secret-key-change-in-production-2026',
-  },
-  null,
-  {
-    secret: 'vtalk-session-secret-key-change-in-production-2026',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: false, // В продакшене поставить true
-    }
-  }
-);
+    null,
+    {
+      resave: false,
+      saveUninitialized: false,
+      secret: process.env.ADMIN_COOKIE_SECRET,
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 8 * 60 * 60 * 1000, // 8 hours
+      },
+    },
+  );
 
-module.exports = { admin, adminRouter };
+  return { admin, router };
+}
+
+module.exports = { buildAdminRouter };

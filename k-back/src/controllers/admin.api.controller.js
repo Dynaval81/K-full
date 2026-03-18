@@ -26,6 +26,19 @@ async function generateUniqueCode() {
 
 // ─── stats ───────────────────────────────────────────────────────────────────
 
+exports.getRoleCounts = async (req, res) => {
+  try {
+    const roles = ['student', 'teacher', 'parent', 'schoolAdmin', 'appAdmin'];
+    const counts = await Promise.all(
+      roles.map(role => prisma.user.count({ where: { role } }).then(count => ({ role, _count: count })))
+    );
+    return res.json({ success: true, data: counts });
+  } catch (error) {
+    log.error(error, 'getRoleCounts error:');
+    return res.status(500).json({ success: false, error: 'Failed to get role counts' });
+  }
+};
+
 exports.getStats = async (req, res) => {
   try {
     const [totalUsers, pendingUsers, totalSchools, unusedCodes, usedCodes] = await Promise.all([

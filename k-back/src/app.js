@@ -5,6 +5,9 @@ const maintenanceMiddleware = require('./middleware/maintenance.middleware');
 
 const app = express();
 
+// Trust Nginx reverse proxy — needed for req.secure, req.ip, and secure session cookies
+app.set('trust proxy', 1);
+
 // CORS — configurable via ALLOWED_ORIGINS env var (comma-separated).
 // In production NODE_ENV the variable must be set explicitly; '*' is never used.
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -27,8 +30,13 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Apply body parsers only to API routes — AdminJS uses formidable internally
+// and throws OldBodyParserUsedError if req._body is already set.
+app.use(/^\/api\//, express.json());
+app.use(/^\/api\//, express.urlencoded({ extended: true }));
+
+// Static assets (admin panel branding, logos)
+app.use('/public', express.static(require('path').join(__dirname, 'public')));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -51,21 +59,7 @@ app.use('/api/v1/family',  require('./routes/family.routes'));
 app.use('/api/v1/users',   require('./routes/users.routes'));
 app.use('/api/v1/chats',   require('./routes/chat.routes'));
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Route not found'
-  });
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-  log.error('Error:', err);
-  res.status(err.status || 500).json({
-    success: false,
-    error: err.message || 'Internal server error'
-  });
-});
+// 404 and error handlers are registered in server.js after AdminJS is mounted,
+// so that /adminjs routes are matched before the 404 catch-all.
 
 module.exports = app;
