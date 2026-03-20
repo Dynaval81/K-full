@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF00A3FF);
-  static const Color onPrimary = Colors.white;
+  static const Color primary = Color(0xFFE6B800);        // Knoty gold
+  static const Color onPrimary = Color(0xFF1A1A1A);      // dark text on gold
   static const Color surface = Color(0xFFF8F9FA);
   static const Color onSurface = Color(0xFF121212);
   static const Color onSurfaceVariant = Color(0xFF757575);
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF00A3FF), Color(0xFF0066FF)],
+    colors: [Color(0xFFE6B800), Color(0xFFFFD84D)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

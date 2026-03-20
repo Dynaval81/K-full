@@ -27,7 +27,7 @@
   "registerEmailLabel": "Email",
   "registerEmailHint": "Введи email",
   "registerPasswordLabel": "Пароль",
-  "registerPasswordHint": "Минимум 6 символов",
+  "registerPasswordHint": "Минимум 8 символов",
   "registerNicknameLabel": "Никнейм (необязательно)",
   "registerNicknameHint": "Введи никнейм",
   "registerButton": "Создать аккаунт",
@@ -207,7 +207,6 @@
   "msgActionDelete": "Удалить",
   "msgActionRemove": "Убрать",
   "msgActionReport": "Пожаловаться",
-
   "registerWhoAreYou": "Кто ты?",
   "registerChooseRole": "Выбери роль, чтобы продолжить",
   "registerContinue": "Продолжить",
@@ -234,7 +233,7 @@
   "registerActivationCodeLabel": "Код активации",
   "registerActivationCodeHint": "KNOTY-XXXX-XXXX",
   "registerKnChildLabel": "KN-номер ребёнка",
-  "registerKnChildHint": "KN-123456",
+  "registerKnChildHint": "KN-12345",
   "registerInfoStudent": "Твой аккаунт будет проверен администратором школы.",
   "registerInfoTeacher": "Твой аккаунт будет верифицирован администратором школы.",
   "registerInfoParent": "Введи KN-номер ребёнка. Его можно найти в приложении Knoty ребёнка.",
@@ -245,12 +244,25 @@
   "registerErrorKnChild": "Введи KN-номер ребёнка",
   "registerErrorNoInternet": "Нет подключения к интернету",
   "registerErrorNameDigitsOnly": "Имя и фамилия не могут состоять только из цифр",
-  "registerKnChildHint": "KN-12345",
+  "verifyEmailTitle": "Подтвердите email",
+  "verifyEmailSentTo": "Мы отправили ссылку для подтверждения на",
+  "verifyEmailSpamHint": "Проверьте папку «Спам», если письмо не пришло",
+  "verifyEmailButton": "Я подтвердил email",
+  "verifyEmailBackToLogin": "Вернуться к входу",
+  "verifyEmailNotVerified": "Email ещё не подтверждён. Сначала нажмите ссылку в письме.",
+  "verifyEmailResend": "Отправить письмо снова",
+  "verifyEmailResendDone": "Письмо отправлено! Проверьте почту.",
+  "registerUsernameLabel": "Никнейм (необязательно)",
+  "registerUsernameHint": "твой_ник",
+  "registerUsernameSuggest": "Придумать никнейм",
+  "registerUsernameMinLength": "Минимум 3 символа",
+  "registerUsernameInvalidChars": "Только буквы, цифры и подчёркивание",
+  "registerUsernameNoDigitsOnly": "Никнейм не может состоять только из цифр",
   "registerSuccessWelcome": "Добро пожаловать!",
+  "registerSuccessSubtitle": "Аккаунт успешно создан",
   "registerSuccessKnotyIdLabel": "Твой Knoty-ID",
   "registerSuccessRememberHint": "Запомни этот номер — он нужен для входа",
   "registerSuccessButton": "Начать",
-
   "chatsFilterAll": "Все",
   "chatsFilterPrivate": "Личные",
   "chatsFilterGroups": "Группы",
@@ -281,7 +293,6 @@
   "profileRequestChange": "Запросить изменение",
   "profileEdit": "Редактировать профиль",
   "profileSchoolChange": "Запросить смену школы",
-
   "schoolNow": "Сейчас",
   "schoolNextLesson": "Следующий урок",
   "schoolBreak": "Перемена",
@@ -293,7 +304,6 @@
   "schoolAfterHours": "Уроки закончились",
   "schoolNoSchedule": "Нет занятий",
   "schoolTeacherLabel": "Учитель",
-
   "schoolWeekView": "Неделя",
   "schoolTeachersTitle": "Учителя",
   "schoolQrTitle": "Мой QR-код",
@@ -310,27 +320,60 @@
   "schoolTeacherContact": "Контакт",
   "schoolHomeworkOpen": "{count} заданий",
   "@schoolHomeworkOpen": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolAnnouncementsNew": "{count} новых",
   "@schoolAnnouncementsNew": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolDocumentsCount": "{count} файлов",
   "@schoolDocumentsCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolClubsActive": "{count} активных",
   "@schoolClubsActive": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "aiGreeting": "Готов к школе, {name}?",
-  "@aiGreeting": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingMorning": "Доброе утро, {name}!",
-  "@aiGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingEvening": "Домашка готова, {name}?",
-  "@aiGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiSurpriseMe": "Удиви меня школьным вопросом!",
   "aiHubSubtitle": "Твоя ИИ-студия",
   "aiChatTitle": "Спросить ассистента",
@@ -362,7 +405,6 @@
   "aiNewChat": "Новый чат",
   "aiAiLabel": "ИИ",
   "aiAuraActive": "ИИ активен",
-
   "navTabAi": "ИИ",
   "navTabSchool": "Школа",
   "aiStop": "Стоп",
@@ -416,13 +458,30 @@
   "parentSchoolCommitteeVotes": "Голосования и решения",
   "parentRoleBadge": "Родитель",
   "parentSchoolMySchool": "Моя школа",
-
   "aiTeacherGreetingMorning": "Доброе утро, {name}!",
-  "@aiTeacherGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingDay": "Привет, {name}! Что подготовить?",
-  "@aiTeacherGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingDay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingEvening": "Добрый вечер, {name}! Ещё что-то планируем?",
-  "@aiTeacherGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherTile1Title": "Создать тест",
   "aiTeacherTile1Subtitle": "ИИ генерирует вопросы и ответы",
   "aiTeacherTile2Title": "План урока",
@@ -433,7 +492,6 @@
   "aiTeacherChipPlan": "Составить план урока",
   "aiTeacherChipCheck": "Оценить работу ученика",
   "aiTeacherChipIdea": "Предложить идею урока",
-
   "teacherJournalSubjectMath": "Математика",
   "teacherJournalSubjectGerman": "Немецкий",
   "teacherJournalSubjectEnglish": "Английский",
@@ -448,7 +506,6 @@
   "teacherGradeAdded": "Оценка сохранена",
   "teacherNoStudents": "Нет учеников в этом классе",
   "teacherSelectClass": "Выбрать класс",
-
   "teacherGradeTypeOral": "Устно",
   "teacherGradeTypeWritten": "Письменно",
   "teacherGradeTypeTest": "Контрольная",
@@ -459,8 +516,13 @@
   "teacherGradeToday": "Сегодня",
   "teacherGradeYesterday": "Вчера",
   "teacherGradeFor": "Оценка для {name}",
-  "@teacherGradeFor": { "placeholders": { "name": { "type": "String" } } },
-
+  "@teacherGradeFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "teacherSchoolMySchedule": "Моё расписание",
   "teacherSchoolMyClasses": "Мои классы",
   "teacherSchoolColleagues": "Коллеги",
@@ -469,5 +531,16 @@
   "teacherSchoolFreeNow": "Окно",
   "teacherSchoolRoleBadge": "Учитель",
   "teacherSchoolStudents": "{count} учеников",
-  "@teacherSchoolStudents": { "placeholders": { "count": { "type": "int" } } }
+  "@teacherSchoolStudents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifiedLabel": "Верифицирован",
+  "pendingLabel": "На проверке",
+  "notVerifiedLabel": "Не верифицирован",
+  "schoolLockedTitle": "Школа не подтверждена",
+  "schoolLockedBody": "Этот раздел станет доступен после того, как школа подтвердит вашу учётную запись."
 }

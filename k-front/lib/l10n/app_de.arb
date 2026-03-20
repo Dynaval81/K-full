@@ -27,7 +27,7 @@
   "registerEmailLabel": "E-Mail",
   "registerEmailHint": "E-Mail eingeben",
   "registerPasswordLabel": "Passwort",
-  "registerPasswordHint": "Mindestens 6 Zeichen",
+  "registerPasswordHint": "Mindestens 8 Zeichen",
   "registerNicknameLabel": "Spitzname (optional)",
   "registerNicknameHint": "Spitznamen eingeben",
   "registerButton": "Konto erstellen",
@@ -207,7 +207,6 @@
   "msgActionDelete": "Löschen",
   "msgActionRemove": "Entfernen",
   "msgActionReport": "Melden",
-
   "registerWhoAreYou": "Wer bist du?",
   "registerChooseRole": "Wähle deine Rolle, um fortzufahren",
   "registerContinue": "Weiter",
@@ -234,7 +233,7 @@
   "registerActivationCodeLabel": "Aktivierungscode",
   "registerActivationCodeHint": "KNOTY-XXXX-XXXX",
   "registerKnChildLabel": "KN-Nummer des Kindes",
-  "registerKnChildHint": "KN-123456",
+  "registerKnChildHint": "KN-12345",
   "registerInfoStudent": "Dein Konto wird vom Schuladministrator geprüft.",
   "registerInfoTeacher": "Dein Konto wird vom Schuladministrator verifiziert.",
   "registerInfoParent": "Gib die KN-Nummer deines Kindes ein. Du findest sie in der Knoty-App deines Kindes.",
@@ -245,12 +244,25 @@
   "registerErrorKnChild": "Bitte KN-Nummer des Kindes eingeben",
   "registerErrorNoInternet": "Keine Internetverbindung",
   "registerErrorNameDigitsOnly": "Vor- und Nachname dürfen nicht nur aus Ziffern bestehen",
-  "registerKnChildHint": "KN-12345",
+  "verifyEmailTitle": "E-Mail bestätigen",
+  "verifyEmailSentTo": "Wir haben einen Bestätigungslink gesendet an",
+  "verifyEmailSpamHint": "Überprüfe deinen Spam-Ordner, wenn die E-Mail nicht angekommen ist",
+  "verifyEmailButton": "E-Mail bestätigt",
+  "verifyEmailBackToLogin": "Zurück zum Login",
+  "verifyEmailNotVerified": "E-Mail noch nicht bestätigt. Klicke zuerst den Link in der E-Mail.",
+  "verifyEmailResend": "E-Mail erneut senden",
+  "verifyEmailResendDone": "E-Mail gesendet! Überprüfe deinen Posteingang.",
+  "registerUsernameLabel": "Spitzname (optional)",
+  "registerUsernameHint": "dein_nickname",
+  "registerUsernameSuggest": "Nickname vorschlagen",
+  "registerUsernameMinLength": "Mindestens 3 Zeichen",
+  "registerUsernameInvalidChars": "Nur Buchstaben, Ziffern und Unterstriche erlaubt",
+  "registerUsernameNoDigitsOnly": "Nickname darf nicht nur aus Ziffern bestehen",
   "registerSuccessWelcome": "Willkommen!",
+  "registerSuccessSubtitle": "Dein Konto wurde erstellt",
   "registerSuccessKnotyIdLabel": "Deine Knoty-ID",
   "registerSuccessRememberHint": "Merke dir diese Nummer — du brauchst sie zum Anmelden",
   "registerSuccessButton": "Los geht's",
-
   "chatsFilterAll": "Alle",
   "chatsFilterPrivate": "Privat",
   "chatsFilterGroups": "Gruppen",
@@ -281,7 +293,6 @@
   "profileRequestChange": "Änderung anfragen",
   "profileEdit": "Profil bearbeiten",
   "profileSchoolChange": "Schulwechsel anfragen",
-
   "schoolNow": "Jetzt",
   "schoolNextLesson": "Nächste Stunde",
   "schoolBreak": "Pause",
@@ -293,7 +304,6 @@
   "schoolAfterHours": "Schule beendet",
   "schoolNoSchedule": "Kein Unterricht",
   "schoolTeacherLabel": "Lehrer",
-
   "schoolWeekView": "Woche",
   "schoolTeachersTitle": "Lehrer",
   "schoolQrTitle": "Mein QR-Code",
@@ -310,27 +320,60 @@
   "schoolTeacherContact": "Kontakt",
   "schoolHomeworkOpen": "{count} offen",
   "@schoolHomeworkOpen": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolAnnouncementsNew": "{count} neu",
   "@schoolAnnouncementsNew": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolDocumentsCount": "{count} Dateien",
   "@schoolDocumentsCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolClubsActive": "{count} aktiv",
   "@schoolClubsActive": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "aiGreeting": "Bereit für die Schule, {name}?",
-  "@aiGreeting": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingMorning": "Guten Morgen, {name}!",
-  "@aiGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingEvening": "Hausaufgaben fertig, {name}?",
-  "@aiGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiSurpriseMe": "Überrasch mich mit einer Schulfrage!",
   "aiHubSubtitle": "Dein KI-Studio",
   "aiChatTitle": "Assistent fragen",
@@ -362,7 +405,6 @@
   "aiNewChat": "Neuer Chat",
   "aiAiLabel": "KI",
   "aiAuraActive": "KI aktiv",
-
   "navTabAi": "KI",
   "navTabSchool": "Schule",
   "aiStop": "Stopp",
@@ -416,13 +458,30 @@
   "parentSchoolCommitteeVotes": "Abstimmungen & Beschlüsse",
   "parentRoleBadge": "Elternteil",
   "parentSchoolMySchool": "Meine Schule",
-
   "aiTeacherGreetingMorning": "Guten Morgen, {name}!",
-  "@aiTeacherGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingDay": "Hallo, {name}! Was darf ich vorbereiten?",
-  "@aiTeacherGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingDay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingEvening": "Schönen Abend, {name}! Noch etwas zu planen?",
-  "@aiTeacherGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherTile1Title": "Test erstellen",
   "aiTeacherTile1Subtitle": "KI generiert Fragen & Antworten",
   "aiTeacherTile2Title": "Planung",
@@ -445,7 +504,6 @@
   "aiTeacherParentEmailLabel": "Eltern-E-Mail",
   "aiTeacherParentEmailSub": "Anlass → fertige E-Mail",
   "aiTeacherParentEmailPrefill": "Schreibe eine professionelle E-Mail an die Eltern über:",
-
   "teacherJournalSubjectMath": "Mathe",
   "teacherJournalSubjectGerman": "Deutsch",
   "teacherJournalSubjectEnglish": "Englisch",
@@ -460,7 +518,6 @@
   "teacherGradeAdded": "Note gespeichert",
   "teacherNoStudents": "Keine Schüler in dieser Klasse",
   "teacherSelectClass": "Klasse auswählen",
-
   "teacherGradeTypeOral": "Mündlich",
   "teacherGradeTypeWritten": "Schriftlich",
   "teacherGradeTypeTest": "Klassenarbeit",
@@ -471,8 +528,13 @@
   "teacherGradeToday": "Heute",
   "teacherGradeYesterday": "Gestern",
   "teacherGradeFor": "Note für {name}",
-  "@teacherGradeFor": { "placeholders": { "name": { "type": "String" } } },
-
+  "@teacherGradeFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "teacherSchoolMySchedule": "Mein Stundenplan",
   "teacherSchoolMyClasses": "Meine Klassen",
   "teacherSchoolColleagues": "Kollegium",
@@ -481,5 +543,16 @@
   "teacherSchoolFreeNow": "Freistunde",
   "teacherSchoolRoleBadge": "Lehrkraft",
   "teacherSchoolStudents": "{count} Schüler",
-  "@teacherSchoolStudents": { "placeholders": { "count": { "type": "int" } } }
+  "@teacherSchoolStudents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifiedLabel": "Verifiziert",
+  "pendingLabel": "Ausstehend",
+  "notVerifiedLabel": "Nicht verifiziert",
+  "schoolLockedTitle": "Schule nicht verifiziert",
+  "schoolLockedBody": "Dieser Bereich ist verfügbar, sobald deine Schule dein Konto bestätigt hat."
 }

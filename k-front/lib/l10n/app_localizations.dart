@@ -265,7 +265,7 @@ abstract class AppLocalizations {
   /// No description provided for @registerPasswordHint.
   ///
   /// In de, this message translates to:
-  /// **'Mindestens 6 Zeichen'**
+  /// **'Mindestens 8 Zeichen'**
   String get registerPasswordHint;
 
   /// No description provided for @registerNicknameLabel.
@@ -1480,11 +1480,101 @@ abstract class AppLocalizations {
   /// **'Vor- und Nachname dürfen nicht nur aus Ziffern bestehen'**
   String get registerErrorNameDigitsOnly;
 
+  /// No description provided for @verifyEmailTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail bestätigen'**
+  String get verifyEmailTitle;
+
+  /// No description provided for @verifyEmailSentTo.
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben einen Bestätigungslink gesendet an'**
+  String get verifyEmailSentTo;
+
+  /// No description provided for @verifyEmailSpamHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Überprüfe deinen Spam-Ordner, wenn die E-Mail nicht angekommen ist'**
+  String get verifyEmailSpamHint;
+
+  /// No description provided for @verifyEmailButton.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail bestätigt'**
+  String get verifyEmailButton;
+
+  /// No description provided for @verifyEmailBackToLogin.
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück zum Login'**
+  String get verifyEmailBackToLogin;
+
+  /// No description provided for @verifyEmailNotVerified.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail noch nicht bestätigt. Klicke zuerst den Link in der E-Mail.'**
+  String get verifyEmailNotVerified;
+
+  /// No description provided for @verifyEmailResend.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail erneut senden'**
+  String get verifyEmailResend;
+
+  /// No description provided for @verifyEmailResendDone.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail gesendet! Überprüfe deinen Posteingang.'**
+  String get verifyEmailResendDone;
+
+  /// No description provided for @registerUsernameLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Spitzname (optional)'**
+  String get registerUsernameLabel;
+
+  /// No description provided for @registerUsernameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'dein_nickname'**
+  String get registerUsernameHint;
+
+  /// No description provided for @registerUsernameSuggest.
+  ///
+  /// In de, this message translates to:
+  /// **'Nickname vorschlagen'**
+  String get registerUsernameSuggest;
+
+  /// No description provided for @registerUsernameMinLength.
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens 3 Zeichen'**
+  String get registerUsernameMinLength;
+
+  /// No description provided for @registerUsernameInvalidChars.
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Buchstaben, Ziffern und Unterstriche erlaubt'**
+  String get registerUsernameInvalidChars;
+
+  /// No description provided for @registerUsernameNoDigitsOnly.
+  ///
+  /// In de, this message translates to:
+  /// **'Nickname darf nicht nur aus Ziffern bestehen'**
+  String get registerUsernameNoDigitsOnly;
+
   /// No description provided for @registerSuccessWelcome.
   ///
   /// In de, this message translates to:
   /// **'Willkommen!'**
   String get registerSuccessWelcome;
+
+  /// No description provided for @registerSuccessSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wurde erstellt'**
+  String get registerSuccessSubtitle;
 
   /// No description provided for @registerSuccessKnotyIdLabel.
   ///
@@ -2721,6 +2811,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count} Schüler'**
   String teacherSchoolStudents(int count);
+
+  /// No description provided for @verifiedLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Verifiziert'**
+  String get verifiedLabel;
+
+  /// No description provided for @pendingLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausstehend'**
+  String get pendingLabel;
+
+  /// No description provided for @notVerifiedLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht verifiziert'**
+  String get notVerifiedLabel;
+
+  /// No description provided for @schoolLockedTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Schule nicht verifiziert'**
+  String get schoolLockedTitle;
+
+  /// No description provided for @schoolLockedBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Bereich ist verfügbar, sobald deine Schule dein Konto bestätigt hat.'**
+  String get schoolLockedBody;
 }
 
 class _AppLocalizationsDelegate

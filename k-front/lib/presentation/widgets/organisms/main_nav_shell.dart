@@ -6,6 +6,7 @@ import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
 import 'package:knoty/core/controllers/swipe_lock_controller.dart';
 import 'package:knoty/core/enums/user_role.dart';
+import 'package:knoty/data/models/user_model.dart';
 import 'package:knoty/presentation/screens/ai/ai_assistant_screen.dart';
 import 'package:knoty/presentation/screens/chats_screen.dart';
 import 'package:knoty/presentation/screens/school/school_screen.dart';
@@ -35,6 +36,7 @@ List<_TabDef> _buildActiveTabs(
   UserRole role,
   TabVisibilityController visibility,
   AppLocalizations l10n,
+  User? user,
 ) {
   final tabs = <_TabDef>[];
 
@@ -59,7 +61,11 @@ List<_TabDef> _buildActiveTabs(
       id: 'school',
       icon: Icons.school_rounded,
       label: l10n.navTabSchool,
-      screen: const SchoolScreen(key: PageStorageKey('school')),
+      screen: _SchoolGate(
+        key: const PageStorageKey('school'),
+        isVerified: user?.isSchoolVerified ?? false,
+        child: const SchoolScreen(key: ValueKey('school_inner')),
+      ),
     ));
 
   if (role.hasChildTab && visibility.showKindTab)
@@ -183,7 +189,7 @@ class _MainNavShellState extends State<MainNavShell> {
     final swipeLocked = context.watch<SwipeLockController>().locked;
 
     final l10n = AppLocalizations.of(context)!;
-    final newTabs = _buildActiveTabs(role, visibility, l10n);
+    final newTabs = _buildActiveTabs(role, visibility, l10n, user);
     _syncTabs(newTabs);
 
     final safeIndex = _activeIndex.clamp(0, _tabs.length - 1);
@@ -251,6 +257,65 @@ class _MainNavShellState extends State<MainNavShell> {
 Iterable<(A, B)> _zip<A, B>(List<A> a, List<B> b) sync* {
   final len = a.length < b.length ? a.length : b.length;
   for (var i = 0; i < len; i++) yield (a[i], b[i]);
+}
+
+// ── School gate ────────────────────────────────────────────────────────────────
+// Shows a frosted lock overlay for unverified users instead of hiding the tab.
+
+class _SchoolGate extends StatelessWidget {
+  final bool isVerified;
+  final Widget child;
+
+  const _SchoolGate({super.key, required this.isVerified, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    if (isVerified) return child;
+
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
+      children: [
+        child,
+        Positioned.fill(
+          child: Container(
+            color: cs.surface.withValues(alpha: 0.85),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 72, height: 72,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE6B800).withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.lock_rounded,
+                      size: 32, color: Color(0xFFE6B800)),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.schoolLockedTitle,
+                  style: TextStyle(
+                    fontSize: 17, fontWeight: FontWeight.w700,
+                    color: cs.onSurface),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    l10n.schoolLockedBody,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14, color: cs.onSurfaceVariant),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 // ── Swipe detector ─────────────────────────────────────────────────────────────

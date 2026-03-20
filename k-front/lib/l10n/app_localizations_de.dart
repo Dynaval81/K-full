@@ -91,7 +91,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerPasswordLabel => 'Passwort';
 
   @override
-  String get registerPasswordHint => 'Mindestens 6 Zeichen';
+  String get registerPasswordHint => 'Mindestens 8 Zeichen';
 
   @override
   String get registerNicknameLabel => 'Spitzname (optional)';
@@ -722,7 +722,58 @@ class AppLocalizationsDe extends AppLocalizations {
       'Vor- und Nachname dürfen nicht nur aus Ziffern bestehen';
 
   @override
+  String get verifyEmailTitle => 'E-Mail bestätigen';
+
+  @override
+  String get verifyEmailSentTo =>
+      'Wir haben einen Bestätigungslink gesendet an';
+
+  @override
+  String get verifyEmailSpamHint =>
+      'Überprüfe deinen Spam-Ordner, wenn die E-Mail nicht angekommen ist';
+
+  @override
+  String get verifyEmailButton => 'E-Mail bestätigt';
+
+  @override
+  String get verifyEmailBackToLogin => 'Zurück zum Login';
+
+  @override
+  String get verifyEmailNotVerified =>
+      'E-Mail noch nicht bestätigt. Klicke zuerst den Link in der E-Mail.';
+
+  @override
+  String get verifyEmailResend => 'E-Mail erneut senden';
+
+  @override
+  String get verifyEmailResendDone =>
+      'E-Mail gesendet! Überprüfe deinen Posteingang.';
+
+  @override
+  String get registerUsernameLabel => 'Spitzname (optional)';
+
+  @override
+  String get registerUsernameHint => 'dein_nickname';
+
+  @override
+  String get registerUsernameSuggest => 'Nickname vorschlagen';
+
+  @override
+  String get registerUsernameMinLength => 'Mindestens 3 Zeichen';
+
+  @override
+  String get registerUsernameInvalidChars =>
+      'Nur Buchstaben, Ziffern und Unterstriche erlaubt';
+
+  @override
+  String get registerUsernameNoDigitsOnly =>
+      'Nickname darf nicht nur aus Ziffern bestehen';
+
+  @override
   String get registerSuccessWelcome => 'Willkommen!';
+
+  @override
+  String get registerSuccessSubtitle => 'Dein Konto wurde erstellt';
 
   @override
   String get registerSuccessKnotyIdLabel => 'Deine Knoty-ID';
@@ -1376,4 +1427,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String teacherSchoolStudents(int count) {
     return '$count Schüler';
   }
+
+  @override
+  String get verifiedLabel => 'Verifiziert';
+
+  @override
+  String get pendingLabel => 'Ausstehend';
+
+  @override
+  String get notVerifiedLabel => 'Nicht verifiziert';
+
+  @override
+  String get schoolLockedTitle => 'Schule nicht verifiziert';
+
+  @override
+  String get schoolLockedBody =>
+      'Dieser Bereich ist verfügbar, sobald deine Schule dein Konto bestätigt hat.';
 }

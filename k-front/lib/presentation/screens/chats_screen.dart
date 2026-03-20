@@ -31,6 +31,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<ChatController>();
+      final auth = context.read<AuthController>();
+      final isDemoUser = auth.currentUser?.id.startsWith('demo-') ?? false;
+      controller.setDemoMode(isDemoUser);
       if (controller.chatRooms.isEmpty) controller.loadChatRooms();
     });
   }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ApiClient, useTranslation } from 'adminjs';
-import { Box, H2, H5, Text, Loader, Badge } from '@adminjs/design-system';
+import { ApiClient } from 'adminjs';
+import { Box, H2, H5, Text, Loader } from '@adminjs/design-system';
 
 const api = new ApiClient();
 
-const StatCard = ({ label, value, color = 'primary100', sub }) => (
+const StatCard = ({ label, value, sub }) => (
   <Box
     style={{
       background: '#fff',
@@ -49,32 +49,48 @@ const RoleBadge = ({ role, count }) => {
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
-  const [roleCounts, setRoleCounts] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      api.getPage({ pageName: 'knoty-stats' }).catch(() => null),
-      fetch('/api/v1/admin/stats', { headers: { Authorization: `Bearer ${document.cookie}` } })
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null),
-      fetch('/api/v1/admin/users?limit=5', { headers: { Authorization: `Bearer ${document.cookie}` } })
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null),
-      fetch('/api/v1/admin/role-counts', { headers: { Authorization: `Bearer ${document.cookie}` } })
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null),
-    ]).then(([, statsRes, usersRes, roleRes]) => {
-      if (statsRes?.success) setStats(statsRes.data);
-      if (usersRes?.success) setRecentUsers(usersRes.data?.slice(0, 5) || []);
-      if (roleRes?.success) setRoleCounts(roleRes.data || []);
-      setLoading(false);
-    }).catch(e => {
-      setError(e.message);
-      setLoading(false);
-    });
+    const fetchAll = async () => {
+      try {
+        const roles = ['appAdmin', 'schoolAdmin', 'teacher', 'parent', 'student'];
+        const [usersRes, pendingRes, schoolsRes, codesUnusedRes, codesUsedRes, recentRes, ...roleRes] = await Promise.all([
+          api.resourceAction({ resourceId: 'User',   actionName: 'list', params: { perPage: 1, page: 1 } }),
+          api.resourceAction({ resourceId: 'User',   actionName: 'list', params: { perPage: 1, page: 1, 'filters.isApproved': 'false' } }),
+          api.resourceAction({ resourceId: 'School', actionName: 'list', params: { perPage: 1, page: 1 } }),
+          api.resourceAction({ resourceId: 'ActivationCode', actionName: 'list', params: { perPage: 1, page: 1, 'filters.status': 'unused' } }),
+          api.resourceAction({ resourceId: 'ActivationCode', actionName: 'list', params: { perPage: 1, page: 1, 'filters.status': 'used' } }),
+          api.resourceAction({ resourceId: 'User',   actionName: 'list', params: { perPage: 5, page: 1 } }),
+          ...roles.map(role =>
+            api.resourceAction({ resourceId: 'User', actionName: 'list', params: { perPage: 1, page: 1, 'filters.role': role } })
+          ),
+        ]);
+
+        const roleCounts = {};
+        roles.forEach((role, i) => {
+          roleCounts[role] = roleRes[i].data.meta?.total ?? 0;
+        });
+
+        setStats({
+          totalUsers:   usersRes.data.meta?.total ?? 0,
+          pendingUsers: pendingRes.data.meta?.total ?? 0,
+          totalSchools: schoolsRes.data.meta?.total ?? 0,
+          unusedCodes:  codesUnusedRes.data.meta?.total ?? 0,
+          usedCodes:    codesUsedRes.data.meta?.total ?? 0,
+          roleCounts,
+        });
+
+        const records = recentRes.data.records || [];
+        setRecentUsers(records.map(r => r.params));
+      } catch (e) {
+        console.error('Dashboard fetch error:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
   }, []);
 
   if (loading) {
@@ -85,22 +101,27 @@ const Dashboard = () => {
     );
   }
 
+  const roles = ['appAdmin', 'schoolAdmin', 'teacher', 'parent', 'student'];
+  const roleCounts = stats?.roleCounts ?? {};
+
   return (
     <Box style={{ padding: '32px 40px', background: '#F5F5F5', minHeight: '100vh' }}>
 
       {/* Header */}
       <Box style={{ marginBottom: 32 }}>
         <H2 style={{ color: '#1A1A1A', fontWeight: 700, marginBottom: 4 }}>Knoty Admin</H2>
-        <Text style={{ color: '#6B6B6B' }}>Übersicht · {new Date().toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+        <Text style={{ color: '#6B6B6B' }}>
+          {new Date().toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        </Text>
       </Box>
 
       {/* Stat cards */}
       <Box style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 32 }}>
-        <StatCard label="Nutzer gesamt"       value={stats?.totalUsers}    sub="alle Rollen" />
-        <StatCard label="Ausstehend"          value={stats?.pendingUsers}  sub="warten auf Freischaltung" />
-        <StatCard label="Schulen"             value={stats?.totalSchools}  sub="registriert" />
-        <StatCard label="Codes verfügbar"     value={stats?.unusedCodes}   sub="unbenutzt" />
-        <StatCard label="Codes verwendet"     value={stats?.usedCodes}     sub="aktiviert" />
+        <StatCard label="Nutzer gesamt"   value={stats?.totalUsers}    sub="alle Rollen" />
+        <StatCard label="Ausstehend"      value={stats?.pendingUsers}  sub="warten auf Freischaltung" />
+        <StatCard label="Schulen"         value={stats?.totalSchools}  sub="registriert" />
+        <StatCard label="Codes verfügbar" value={stats?.unusedCodes}   sub="unbenutzt" />
+        <StatCard label="Codes verwendet" value={stats?.usedCodes}     sub="aktiviert" />
       </Box>
 
       <Box style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
@@ -108,14 +129,9 @@ const Dashboard = () => {
         {/* Role breakdown */}
         <Box style={{ flex: '1 1 260px', background: '#fff', borderRadius: 16, padding: 24, border: '1px solid #E0E0E0', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <H5 style={{ marginBottom: 16, color: '#1A1A1A' }}>Nutzer nach Rolle</H5>
-          {roleCounts.length > 0
-            ? roleCounts.map(r => <RoleBadge key={r.role} role={r.role} count={r._count} />)
-            : (
-              <Text style={{ color: '#6B6B6B', fontSize: 13 }}>
-                Rollenzählung über <a href="/admin/resources/User" style={{ color: '#E6B800' }}>Nutzerliste</a> einsehen.
-              </Text>
-            )
-          }
+          {roles.map(role => (
+            <RoleBadge key={role} role={role} count={roleCounts[role] ?? '—'} />
+          ))}
         </Box>
 
         {/* Recent users */}
@@ -126,8 +142,8 @@ const Dashboard = () => {
           </Box>
           {recentUsers.length === 0
             ? <Text style={{ color: '#6B6B6B' }}>Keine Nutzer gefunden.</Text>
-            : recentUsers.map(u => (
-              <Box key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F0F0F0' }}>
+            : recentUsers.map((u, i) => (
+              <Box key={u.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F0F0F0' }}>
                 <Box>
                   <Text style={{ fontWeight: 600, color: '#1A1A1A', fontSize: 14 }}>{u.firstName} {u.lastName}</Text>
                   <Text style={{ color: '#6B6B6B', fontSize: 12 }}>{u.email}</Text>
@@ -150,18 +166,17 @@ const Dashboard = () => {
       {/* Quick links */}
       <Box style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
         {[
-          { label: '+ Schule erstellen',    href: '/admin/resources/School/actions/new' },
-          { label: '+ Klasse erstellen',    href: '/admin/resources/SchoolClass/actions/new' },
-          { label: 'Ausstehende Nutzer',    href: '/admin/resources/User?filters.isApproved=false' },
-          { label: 'Aktivierungscodes',     href: '/admin/resources/ActivationCode' },
-          { label: 'Gesperrte E-Mails',     href: '/admin/resources/BannedEmail' },
-          { label: 'Login-Protokoll',       href: '/admin/resources/LoginHistory' },
+          { label: '+ Schule erstellen',  href: '/admin/resources/School/actions/new' },
+          { label: '+ Klasse erstellen',  href: '/admin/resources/SchoolClass/actions/new' },
+          { label: 'Ausstehende Nutzer',  href: '/admin/resources/User?filters.isApproved=false' },
+          { label: 'Aktivierungscodes',   href: '/admin/resources/ActivationCode' },
+          { label: 'Gesperrte E-Mails',   href: '/admin/resources/BannedEmail' },
+          { label: 'Login-Protokoll',     href: '/admin/resources/LoginHistory' },
         ].map(l => (
           <a key={l.href} href={l.href} style={{
             background: '#fff', border: '1px solid #E0E0E0', borderRadius: 24,
             padding: '8px 18px', fontSize: 13, fontWeight: 600, color: '#1A1A1A',
             textDecoration: 'none', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-            transition: 'background 0.15s',
           }}>
             {l.label}
           </a>

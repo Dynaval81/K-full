@@ -91,7 +91,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerPasswordLabel => 'Password';
 
   @override
-  String get registerPasswordHint => 'At least 6 characters';
+  String get registerPasswordHint => 'At least 8 characters';
 
   @override
   String get registerNicknameLabel => 'Nickname (optional)';
@@ -720,7 +720,56 @@ class AppLocalizationsEn extends AppLocalizations {
       'Name cannot consist of digits only';
 
   @override
+  String get verifyEmailTitle => 'Confirm your email';
+
+  @override
+  String get verifyEmailSentTo => 'We sent a verification link to';
+
+  @override
+  String get verifyEmailSpamHint =>
+      'Check your spam folder if you didn\'t receive it';
+
+  @override
+  String get verifyEmailButton => 'I confirmed my email';
+
+  @override
+  String get verifyEmailBackToLogin => 'Back to login';
+
+  @override
+  String get verifyEmailNotVerified =>
+      'Email not yet confirmed. Please click the link in the email first.';
+
+  @override
+  String get verifyEmailResend => 'Resend email';
+
+  @override
+  String get verifyEmailResendDone => 'Email sent! Check your inbox.';
+
+  @override
+  String get registerUsernameLabel => 'Nickname (optional)';
+
+  @override
+  String get registerUsernameHint => 'your_nickname';
+
+  @override
+  String get registerUsernameSuggest => 'Suggest a nickname';
+
+  @override
+  String get registerUsernameMinLength => 'Minimum 3 characters';
+
+  @override
+  String get registerUsernameInvalidChars =>
+      'Only letters, digits and underscores allowed';
+
+  @override
+  String get registerUsernameNoDigitsOnly =>
+      'Nickname cannot consist of digits only';
+
+  @override
   String get registerSuccessWelcome => 'Welcome!';
+
+  @override
+  String get registerSuccessSubtitle => 'Your account has been created';
 
   @override
   String get registerSuccessKnotyIdLabel => 'Your Knoty-ID';
@@ -1370,4 +1419,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String teacherSchoolStudents(int count) {
     return '$count students';
   }
+
+  @override
+  String get verifiedLabel => 'Verified';
+
+  @override
+  String get pendingLabel => 'Pending';
+
+  @override
+  String get notVerifiedLabel => 'Not verified';
+
+  @override
+  String get schoolLockedTitle => 'School not verified';
+
+  @override
+  String get schoolLockedBody =>
+      'This section is available after your school verifies your account.';
 }

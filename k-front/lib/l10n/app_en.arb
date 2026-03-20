@@ -27,7 +27,7 @@
   "registerEmailLabel": "Email",
   "registerEmailHint": "Enter email",
   "registerPasswordLabel": "Password",
-  "registerPasswordHint": "At least 6 characters",
+  "registerPasswordHint": "At least 8 characters",
   "registerNicknameLabel": "Nickname (optional)",
   "registerNicknameHint": "Enter nickname",
   "registerButton": "Create account",
@@ -252,7 +252,6 @@
   "@msgActionReport": {
     "description": "Message bubble: msgActionReport"
   },
-
   "registerWhoAreYou": "Who are you?",
   "registerChooseRole": "Choose your role to continue",
   "registerContinue": "Continue",
@@ -279,7 +278,7 @@
   "registerActivationCodeLabel": "Activation code",
   "registerActivationCodeHint": "KNOTY-XXXX-XXXX",
   "registerKnChildLabel": "Child's KN number",
-  "registerKnChildHint": "KN-123456",
+  "registerKnChildHint": "KN-12345",
   "registerInfoStudent": "Your account will be reviewed by the school administrator.",
   "registerInfoTeacher": "Your account will be verified by the school administrator.",
   "registerInfoParent": "Enter your child's KN number. You can find it in your child's Knoty app.",
@@ -290,12 +289,25 @@
   "registerErrorKnChild": "Please enter child's KN number",
   "registerErrorNoInternet": "No internet connection",
   "registerErrorNameDigitsOnly": "Name cannot consist of digits only",
-  "registerKnChildHint": "KN-12345",
+  "verifyEmailTitle": "Confirm your email",
+  "verifyEmailSentTo": "We sent a verification link to",
+  "verifyEmailSpamHint": "Check your spam folder if you didn't receive it",
+  "verifyEmailButton": "I confirmed my email",
+  "verifyEmailBackToLogin": "Back to login",
+  "verifyEmailNotVerified": "Email not yet confirmed. Please click the link in the email first.",
+  "verifyEmailResend": "Resend email",
+  "verifyEmailResendDone": "Email sent! Check your inbox.",
+  "registerUsernameLabel": "Nickname (optional)",
+  "registerUsernameHint": "your_nickname",
+  "registerUsernameSuggest": "Suggest a nickname",
+  "registerUsernameMinLength": "Minimum 3 characters",
+  "registerUsernameInvalidChars": "Only letters, digits and underscores allowed",
+  "registerUsernameNoDigitsOnly": "Nickname cannot consist of digits only",
   "registerSuccessWelcome": "Welcome!",
+  "registerSuccessSubtitle": "Your account has been created",
   "registerSuccessKnotyIdLabel": "Your Knoty-ID",
   "registerSuccessRememberHint": "Remember this number — you need it to log in",
   "registerSuccessButton": "Get started",
-
   "chatsFilterAll": "All",
   "chatsFilterPrivate": "Private",
   "chatsFilterGroups": "Groups",
@@ -326,7 +338,6 @@
   "profileRequestChange": "Request change",
   "profileEdit": "Edit profile",
   "profileSchoolChange": "Request school change",
-
   "schoolNow": "Now",
   "schoolNextLesson": "Next lesson",
   "schoolBreak": "Break",
@@ -338,7 +349,6 @@
   "schoolAfterHours": "School ended",
   "schoolNoSchedule": "No classes",
   "schoolTeacherLabel": "Teacher",
-
   "schoolWeekView": "Week",
   "schoolTeachersTitle": "Teachers",
   "schoolQrTitle": "My QR Code",
@@ -355,27 +365,60 @@
   "schoolTeacherContact": "Contact",
   "schoolHomeworkOpen": "{count} open",
   "@schoolHomeworkOpen": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolAnnouncementsNew": "{count} new",
   "@schoolAnnouncementsNew": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolDocumentsCount": "{count} files",
   "@schoolDocumentsCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "schoolClubsActive": "{count} active",
   "@schoolClubsActive": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "aiGreeting": "Ready for school, {name}?",
-  "@aiGreeting": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingMorning": "Good morning, {name}!",
-  "@aiGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiGreetingEvening": "Homework done, {name}?",
-  "@aiGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiSurpriseMe": "Surprise me with a school question!",
   "aiHubSubtitle": "Your AI Studio",
   "aiChatTitle": "Ask Assistant",
@@ -407,7 +450,6 @@
   "aiNewChat": "New chat",
   "aiAiLabel": "AI",
   "aiAuraActive": "AI active",
-
   "navTabAi": "AI",
   "navTabSchool": "School",
   "aiStop": "Stop",
@@ -461,13 +503,30 @@
   "parentSchoolCommitteeVotes": "Votes & Decisions",
   "parentRoleBadge": "Parent",
   "parentSchoolMySchool": "My school",
-
   "aiTeacherGreetingMorning": "Good morning, {name}!",
-  "@aiTeacherGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingDay": "Hello, {name}! What shall I prepare?",
-  "@aiTeacherGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingDay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherGreetingEvening": "Good evening, {name}! Anything left to plan?",
-  "@aiTeacherGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@aiTeacherGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiTeacherTile1Title": "Create Test",
   "aiTeacherTile1Subtitle": "AI generates questions & answers",
   "aiTeacherTile2Title": "Planner",
@@ -490,7 +549,6 @@
   "aiTeacherParentEmailLabel": "Parent Email",
   "aiTeacherParentEmailSub": "Occasion → ready-to-send email",
   "aiTeacherParentEmailPrefill": "Write a professional email to parents about:",
-
   "teacherJournalSubjectMath": "Math",
   "teacherJournalSubjectGerman": "German",
   "teacherJournalSubjectEnglish": "English",
@@ -505,7 +563,6 @@
   "teacherGradeAdded": "Grade saved",
   "teacherNoStudents": "No students in this class",
   "teacherSelectClass": "Select class",
-
   "teacherGradeTypeOral": "Oral",
   "teacherGradeTypeWritten": "Written",
   "teacherGradeTypeTest": "Class test",
@@ -516,8 +573,13 @@
   "teacherGradeToday": "Today",
   "teacherGradeYesterday": "Yesterday",
   "teacherGradeFor": "Grade for {name}",
-  "@teacherGradeFor": { "placeholders": { "name": { "type": "String" } } },
-
+  "@teacherGradeFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "teacherSchoolMySchedule": "My schedule",
   "teacherSchoolMyClasses": "My classes",
   "teacherSchoolColleagues": "Faculty",
@@ -526,5 +588,16 @@
   "teacherSchoolFreeNow": "Free period",
   "teacherSchoolRoleBadge": "Teacher",
   "teacherSchoolStudents": "{count} students",
-  "@teacherSchoolStudents": { "placeholders": { "count": { "type": "int" } } }
+  "@teacherSchoolStudents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifiedLabel": "Verified",
+  "pendingLabel": "Pending",
+  "notVerifiedLabel": "Not verified",
+  "schoolLockedTitle": "School not verified",
+  "schoolLockedBody": "This section is available after your school verifies your account."
 }

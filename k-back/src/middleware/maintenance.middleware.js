@@ -6,7 +6,7 @@ const CACHE_TTL = 30_000; // ms
 
 module.exports = async (req, res, next) => {
   // Admin routes, health check, and token refresh always pass through
-  const bypass = ['/api/v1/admin', '/health', '/api/v1/auth/refresh', '/api/v1/auth/login'];
+  const bypass = ['/api/v1/admin', '/admin', '/health', '/api/v1/auth/refresh', '/api/v1/auth/login'];
   if (bypass.some(p => req.path.startsWith(p))) return next();
 
   const app = req.app;

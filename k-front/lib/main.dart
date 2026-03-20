@@ -126,7 +126,6 @@ class _KnotyAppState extends State<KnotyApp> {
             final extra = state.extra as Map<String, dynamic>? ?? {};
             return CupertinoPage<void>(child: EmailVerificationScreen(
               email: extra['email']?.toString() ?? '',
-              nickname: extra['nickname']?.toString() ?? '',
               knotyNumber: extra['knotyNumber']?.toString() ?? '',
             ));
           },
@@ -136,7 +135,6 @@ class _KnotyAppState extends State<KnotyApp> {
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>? ?? {};
             return CupertinoPage<void>(child: RegistrationSuccessScreen(
-              nickname: extra['nickname']?.toString() ?? '',
               knotyNumber: extra['knotyNumber']?.toString() ?? '',
             ));
           },

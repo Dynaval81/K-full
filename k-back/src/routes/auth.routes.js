@@ -28,12 +28,15 @@ const generalLimiter = rateLimit({
 });
 
 // Public
-router.post('/register',     registerLimiter, v.register,     validate, auth.register);
-router.post('/login',        loginLimiter,    v.login,        validate, auth.login);
-router.post('/verify-code',  generalLimiter,  v.verifyCode,   validate, auth.verifyCode);
-router.get( '/verify-email', generalLimiter,  auth.verifyEmail);
-router.post('/recovery',     generalLimiter,  v.recovery,     validate, auth.recovery);
-router.post('/refresh',      generalLimiter,  v.refresh,      validate, auth.refresh);
+router.post('/register',        registerLimiter, v.register,     validate, auth.register);
+router.post('/login',           loginLimiter,    v.login,        validate, auth.login);
+router.post('/verify-code',     generalLimiter,  v.verifyCode,   validate, auth.verifyCode);
+router.get( '/verify-email',    generalLimiter,  auth.verifyEmail);
+router.post('/recovery',        generalLimiter,  v.recovery,     validate, auth.recovery);
+router.post('/refresh',         generalLimiter,  v.refresh,      validate, auth.refresh);
+router.get( '/check-username',       generalLimiter,  auth.checkUsername);
+router.get( '/suggest-username',     generalLimiter,  auth.suggestUsername);
+router.post('/resend-verification',  generalLimiter,  auth.resendVerification);
 
 // Protected
 router.get( '/me',          authMiddleware, auth.getCurrentUser);

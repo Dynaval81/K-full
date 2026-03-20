@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart'; // kDebugMode
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:knoty/services/api_service.dart';
+import 'package:knoty/core/network/dio_client.dart';
 import 'package:knoty/data/models/user_model.dart';
 import 'package:knoty/core/enums/user_role.dart';
 import 'package:knoty/core/enums/verification_level.dart';
@@ -62,6 +63,9 @@ class AuthController extends ChangeNotifier {
 
   /// Вызвать один раз при старте приложения в main().
   Future<void> tryRestoreSession() async {
+    // Wire up 401 → auto-logout. Demo tokens are skipped by the interceptor.
+    DioClient.onUnauthorized = () => logout();
+
     _isRestoringSession = true;
     notifyListeners();
 

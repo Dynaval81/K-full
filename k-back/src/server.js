@@ -20,6 +20,22 @@ async function start() {
   // @adminjs/express is ESM-only so setup is async
   const { buildAdminRouter } = require('./admin');
   const { admin, router: adminRouter } = await buildAdminRouter();
+
+  // Serve AdminJS user components bundle (production mode doesn't serve it via router)
+  const path = require('path');
+  const fs = require('fs');
+  const bundlePath = path.join(process.cwd(), '.adminjs', 'bundle.js');
+  app.get('/admin/frontend/assets/components.bundle.js', (req, res) => {
+    try {
+      const content = fs.readFileSync(bundlePath, 'utf8');
+      res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+      res.send(content);
+    } catch {
+      res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+      res.send('');
+    }
+  });
+
   app.use(admin.options.rootPath, adminRouter);
 
   // ── Fallback handlers (must come after AdminJS mount) ─────────────────────

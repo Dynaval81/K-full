@@ -6,12 +6,10 @@ import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 
 class RegistrationSuccessScreen extends StatefulWidget {
-  final String nickname;
   final String knotyNumber;
 
   const RegistrationSuccessScreen({
     super.key,
-    required this.nickname,
     required this.knotyNumber,
   });
 
@@ -94,16 +92,16 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.onSurface,
+                      color: cs.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '@${widget.nickname}',
+                    l10n.registerSuccessSubtitle,
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: cs.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -122,7 +120,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                           l10n.registerSuccessKnotyIdLabel,
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.onSurfaceVariant,
+                            color: cs.onSurfaceVariant,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -151,7 +149,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                                   'KN-',
                                   style: TextStyle(
                                     fontSize: 22,
-                                    color: AppColors.onSurfaceVariant
+                                    color: cs.onSurfaceVariant
                                         .withOpacity(0.5),
                                     fontWeight: FontWeight.w300,
                                   ),
@@ -163,7 +161,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                                     fontWeight: FontWeight.w700,
                                     color: _copied
                                         ? Colors.green
-                                        : AppColors.onSurface,
+                                        : cs.onSurface,
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -174,7 +172,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                                       : Icons.copy_rounded,
                                   color: _copied
                                       ? Colors.green
-                                      : AppColors.onSurfaceVariant,
+                                      : cs.onSurfaceVariant,
                                   size: 20,
                                 ),
                               ],
@@ -186,7 +184,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                           l10n.registerSuccessRememberHint,
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.onSurfaceVariant.withOpacity(0.7),
+                            color: cs.onSurfaceVariant.withOpacity(0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -219,8 +217,8 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                         child: Center(
                           child: Text(
                             l10n.registerSuccessButton,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.onPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),

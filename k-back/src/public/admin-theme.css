@@ -4,10 +4,20 @@
    Color theming is done via availableThemes overrides in admin.js.
    ─────────────────────────────────────────────────────────────────────────── */
 
-/* Logo sizing — prevent oversized logo in sidebar */
+/* Logo — sidebar */
+nav img[src='/public/knoty_logo.png'],
+aside img[src='/public/knoty_logo.png'],
+header img[src='/public/knoty_logo.png'] {
+  height: 56px !important;
+  max-width: 220px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* Logo — login page (larger) */
 img[src='/public/knoty_logo.png'] {
-  max-height: 36px !important;
-  max-width: 160px !important;
+  height: 96px !important;
+  max-width: 320px !important;
   width: auto !important;
   object-fit: contain !important;
 }

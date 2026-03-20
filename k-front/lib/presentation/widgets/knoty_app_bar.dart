@@ -7,6 +7,7 @@ import 'package:knoty/core/constants/app_constants.dart';
 import 'package:knoty/l10n/app_localizations.dart';
 import 'package:knoty/providers/user_provider.dart';
 import 'package:knoty/data/models/user_model.dart';
+import 'package:knoty/core/enums/verification_level.dart';
 
 /// Единая шапка для всех экранов Knoty.
 /// Использование:
@@ -122,7 +123,13 @@ class _ProfileSheet extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom;
     final nickname = user?.username ?? '';
     final email = user?.email ?? '';
-    final schoolName = '—'; // TODO: resolve school name from user.schoolId
+    final schoolName = (user?.school?.isNotEmpty == true) ? user!.school! : '—';
+    final isVerified = user?.isSchoolVerified ?? false;
+    final isSandbox = user?.verificationLevel == VerificationLevel.sandbox;
+    final verifyColor  = isVerified ? const Color(0xFF22C55E) : isSandbox ? const Color(0xFFF59E0B) : const Color(0xFF9E9E9E);
+    final verifyBg     = isVerified ? const Color(0xFFDCFCE7) : isSandbox ? const Color(0xFFFEF3C7) : const Color(0xFFF3F4F6);
+    final verifyIcon   = isVerified ? Icons.verified_rounded : isSandbox ? Icons.schedule_rounded : Icons.info_outline_rounded;
+    final verifyLabel  = isVerified ? l10n.verifiedLabel : isSandbox ? l10n.pendingLabel : l10n.notVerifiedLabel;
 
     final cs = Theme.of(context).colorScheme;
     return Container(
@@ -234,6 +241,20 @@ class _ProfileSheet extends StatelessWidget {
                           ]),
                         ),
                       ],
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: verifyBg,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(verifyIcon, size: 12, color: verifyColor),
+                          const SizedBox(width: 4),
+                          Text(verifyLabel,
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: verifyColor)),
+                        ]),
+                      ),
                     ],
                   ),
                 ),

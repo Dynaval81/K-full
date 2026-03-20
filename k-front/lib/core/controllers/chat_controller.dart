@@ -7,10 +7,17 @@ class ChatController extends ChangeNotifier {
   List<ChatRoom> _chatRooms = [];
   List<MessageModel> _messages = [];
   bool _isLoading = false;
+  bool _isDemoMode = false;
   String? _matrixUserId;
 
   // messageId → emoji code (хранится здесь, а не в State виджета)
   final Map<String, String> _reactions = {};
+
+  bool get isDemoMode => _isDemoMode;
+
+  void setDemoMode(bool value) {
+    _isDemoMode = value;
+  }
 
   List<ChatRoom> get chatRooms => _chatRooms;
   List<MessageModel> get messages => _messages;
@@ -35,7 +42,10 @@ class ChatController extends ChangeNotifier {
   void updateUserId(String? userId) {
     _matrixUserId = userId;
     debugPrint('ChatController: User ID updated to $userId');
-    loadChatRooms();
+    // Demo mode is set separately via setDemoMode() from ChatsScreen
+    // Reset rooms when user changes so initState re-triggers load
+    _chatRooms = [];
+    _messages = [];
     notifyListeners();
   }
 
@@ -45,7 +55,16 @@ class ChatController extends ChangeNotifier {
 
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Mock chat rooms
+    if (!_isDemoMode) {
+      // Real user — empty list until real API is implemented
+      _chatRooms = [];
+      _messages = [];
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    // Mock chat rooms (demo users only)
     _chatRooms = [
       ChatRoom(
         id: 'group_10b',

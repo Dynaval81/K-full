@@ -8,6 +8,7 @@ class AiryInputField extends StatelessWidget {
   final String label;
   final String hint;
   final IconData? prefixIcon;
+  final String? prefixText;
   final Widget? suffixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
@@ -23,6 +24,7 @@ class AiryInputField extends StatelessWidget {
     required this.label,
     required this.hint,
     this.prefixIcon,
+    this.prefixText,
     this.suffixIcon,
     this.obscureText = false,
     this.keyboardType,
@@ -60,6 +62,8 @@ class AiryInputField extends StatelessWidget {
             hintText: hint,
             hintStyle: TextStyle(color: cs.onSurfaceVariant),
             prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: cs.onSurfaceVariant) : null,
+            prefixText: prefixText,
+            prefixStyle: TextStyle(color: cs.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
             suffixIcon: suffixIcon,
             errorText: errorText,
             border: OutlineInputBorder(

@@ -45,6 +45,7 @@ class ApiService {
     String? activationCode,
     String? schoolId,
     String? classId,
+    String? username,
   }) async {
     try {
       final res = await _dio.post('/auth/register', data: {
@@ -56,9 +57,11 @@ class ApiService {
         if (activationCode != null) 'activationCode': activationCode,
         if (schoolId != null) 'schoolId': schoolId,
         if (classId != null) 'classId': classId,
+        if (username != null && username.isNotEmpty) 'username': username,
       });
-      final token = res.data['token'] ?? res.data['data']?['token'];
-      final userData = res.data['user'] ?? res.data['data']?['user'];
+      // Server returns accessToken (not token) in register response
+      final token = res.data['data']?['accessToken'] ?? res.data['token'] ?? res.data['data']?['token'];
+      final userData = res.data['data']?['user'] ?? res.data['user'];
       if (token != null) {
         await _secureStorage.write(key: _tokenKey, value: token);
       }
@@ -77,7 +80,8 @@ class ApiService {
         'email': email,
         'password': password,
       });
-      final token = res.data['token'] ?? res.data['data']?['token'];
+      final token = res.data['token'] ?? res.data['data']?['token']
+          ?? res.data['data']?['accessToken'];
       final userData = res.data['user'] ?? res.data['data']?['user'];
       if (token != null) {
         await _secureStorage.write(key: _tokenKey, value: token);
@@ -185,6 +189,33 @@ class ApiService {
         if (cached != null) return {...cached, 'fromCache': true};
       }
       return err;
+    }
+  }
+
+  Future<Map<String, dynamic>> resendVerification(String email) async {
+    try {
+      final res = await _dio.post('/auth/resend-verification', data: {'email': email});
+      return res.data as Map<String, dynamic>;
+    } catch (e) {
+      return DioClient.handleError(e, fallback: 'Failed to resend verification email');
+    }
+  }
+
+  Future<Map<String, dynamic>> checkUsername(String username) async {
+    try {
+      final res = await _dio.get('/auth/check-username', queryParameters: {'username': username});
+      return res.data as Map<String, dynamic>;
+    } catch (e) {
+      return DioClient.handleError(e, fallback: 'Failed to check username');
+    }
+  }
+
+  Future<Map<String, dynamic>> suggestUsername({String? hint}) async {
+    try {
+      final res = await _dio.get('/auth/suggest-username', queryParameters: hint != null ? {'hint': hint} : null);
+      return res.data as Map<String, dynamic>;
+    } catch (e) {
+      return DioClient.handleError(e, fallback: 'Failed to suggest username');
     }
   }
 

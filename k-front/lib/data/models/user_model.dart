@@ -67,7 +67,7 @@ class User {
     }
 
     // Нормализуем knotyNumber — убираем VT- префикс если бэкенд его присылает
-    final rawVt = json['knotyNumber'] ?? json['vtNumber']?.toString() ?? '';
+    final rawVt = json['knotyNumber'] ?? json['knNumber']?.toString() ?? json['vtNumber']?.toString() ?? '';
     final vtClean = rawVt.startsWith('KN-') ? rawVt.substring(3) : rawVt.startsWith('VT-') ? rawVt.substring(3) : rawVt;
 
     // Parse verificationLevel
@@ -104,7 +104,7 @@ class User {
       matrixUserId: json['matrixUserId']?.toString(),
       createdAt: _parseDate(json['createdAt']),
       verificationLevel: _parseVerificationLevel(json['verificationLevel']),
-      school: json['school']?.toString(),
+      school: json['schoolName']?.toString() ?? json['school']?.toString(),
       schoolClass: json['class']?.toString() ?? json['schoolClass']?.toString(),
       role: UserRoleX.fromString(json['role']?.toString()),
       linkedAccounts: (json['linkedAccounts'] as List?)?.map((e) => e.toString()).toList() ?? [],

@@ -90,7 +90,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get registerPasswordLabel => 'Пароль';
 
   @override
-  String get registerPasswordHint => 'Минимум 6 символов';
+  String get registerPasswordHint => 'Минимум 8 символов';
 
   @override
   String get registerNicknameLabel => 'Никнейм (необязательно)';
@@ -719,7 +719,56 @@ class AppLocalizationsRu extends AppLocalizations {
       'Имя и фамилия не могут состоять только из цифр';
 
   @override
+  String get verifyEmailTitle => 'Подтвердите email';
+
+  @override
+  String get verifyEmailSentTo => 'Мы отправили ссылку для подтверждения на';
+
+  @override
+  String get verifyEmailSpamHint =>
+      'Проверьте папку «Спам», если письмо не пришло';
+
+  @override
+  String get verifyEmailButton => 'Я подтвердил email';
+
+  @override
+  String get verifyEmailBackToLogin => 'Вернуться к входу';
+
+  @override
+  String get verifyEmailNotVerified =>
+      'Email ещё не подтверждён. Сначала нажмите ссылку в письме.';
+
+  @override
+  String get verifyEmailResend => 'Отправить письмо снова';
+
+  @override
+  String get verifyEmailResendDone => 'Письмо отправлено! Проверьте почту.';
+
+  @override
+  String get registerUsernameLabel => 'Никнейм (необязательно)';
+
+  @override
+  String get registerUsernameHint => 'твой_ник';
+
+  @override
+  String get registerUsernameSuggest => 'Придумать никнейм';
+
+  @override
+  String get registerUsernameMinLength => 'Минимум 3 символа';
+
+  @override
+  String get registerUsernameInvalidChars =>
+      'Только буквы, цифры и подчёркивание';
+
+  @override
+  String get registerUsernameNoDigitsOnly =>
+      'Никнейм не может состоять только из цифр';
+
+  @override
   String get registerSuccessWelcome => 'Добро пожаловать!';
+
+  @override
+  String get registerSuccessSubtitle => 'Аккаунт успешно создан';
 
   @override
   String get registerSuccessKnotyIdLabel => 'Твой Knoty-ID';
@@ -1371,4 +1420,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String teacherSchoolStudents(int count) {
     return '$count учеников';
   }
+
+  @override
+  String get verifiedLabel => 'Верифицирован';
+
+  @override
+  String get pendingLabel => 'На проверке';
+
+  @override
+  String get notVerifiedLabel => 'Не верифицирован';
+
+  @override
+  String get schoolLockedTitle => 'Школа не подтверждена';
+
+  @override
+  String get schoolLockedBody =>
+      'Этот раздел станет доступен после того, как школа подтвердит вашу учётную запись.';
 }

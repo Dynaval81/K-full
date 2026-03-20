@@ -1,115 +1,109 @@
 const nodemailer = require('nodemailer');
 
-// Создаем transporter (пока используем console.log для разработки)
 let transporter = null;
 
-// Инициализация SMTP (если настроен)
-if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD) {
+if (process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET && process.env.GMAIL_REFRESH_TOKEN) {
   transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // true для 465, false для других портов
+    service: 'gmail',
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD
-    }
+      type: 'OAuth2',
+      user: process.env.GMAIL_USER,
+      clientId: process.env.GMAIL_CLIENT_ID,
+      clientSecret: process.env.GMAIL_CLIENT_SECRET,
+      refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+    },
+    family: 4, // force IPv4 — IPv6 is unreachable on this VPS
   });
-  console.log('✅ Email service configured');
+  console.log('✅ Email service configured (Gmail OAuth2)');
 } else {
-  console.log('⚠️ Email service not configured (SMTP credentials missing)');
+  console.log('⚠️  Email service not configured (GMAIL_* credentials missing)');
 }
 
-// Отправка email верификации
+const FROM = `Knoty <${process.env.GMAIL_USER || 'noreply.knoty@gmail.com'}>`;
+
 exports.sendVerificationEmail = async (email, token) => {
   const verificationUrl = `${process.env.API_BASE_URL}/api/v1/auth/verify-email?token=${token}`;
 
-  const mailOptions = {
-    from: process.env.EMAIL_FROM || 'noreply@vtalk.io',
-    to: email,
-    subject: 'Verify your Vtalk account',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Welcome to Vtalk! 🚀</h2>
-        <p>Please verify your email address by clicking the button below:</p>
-        <a href="${verificationUrl}" 
-           style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0;">
-          Verify Email
-        </a>
-        <p>Or copy and paste this link in your browser:</p>
-        <p style="color: #666; word-break: break-all;">${verificationUrl}</p>
-        <p style="color: #999; font-size: 12px; margin-top: 40px;">
-          If you didn't create a Vtalk account, you can safely ignore this email.
-        </p>
-      </div>
-    `
-  };
-
-  // Если transporter настроен - отправляем реальное письмо
-  if (transporter) {
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('✅ Verification email sent:', info.messageId);
+  if (!transporter) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('📧 Verification URL (dev, email not configured):', verificationUrl);
       return { success: true };
-    } catch (error) {
-      console.error('❌ Failed to send email:', error);
-      // Не падаем если email не отправился (для разработки)
-      console.log('📧 Verification URL (for testing):', verificationUrl);
-      return { success: false, error: error.message };
     }
-  } else {
-    // Для разработки - просто логируем ссылку
-    console.log('📧 Verification URL (SMTP not configured):', verificationUrl);
-    return { success: true }; // Возвращаем success чтобы регистрация не падала
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: FROM,
+      to: email,
+      subject: 'Подтвердите ваш Knoty аккаунт',
+      html: `
+        <div style="font-family: system-ui, Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #F0F0F0;">
+          <div style="padding: 32px 40px 20px; text-align: center; border-bottom: 1px solid #F5F5F5;">
+            <img src="${process.env.API_BASE_URL}/public/knoty_logo.png" alt="Knoty" width="120" style="display: block; margin: 0 auto;" />
+          </div>
+          <div style="padding: 40px;">
+            <h2 style="margin: 0 0 12px; color: #1A1A1A; font-size: 22px;">Подтвердите email</h2>
+            <p style="color: #555; line-height: 1.6; margin: 0 0 28px;">
+              Для завершения регистрации нажмите кнопку ниже. Ссылка действительна 24 часа.
+            </p>
+            <a href="${verificationUrl}"
+               style="display: inline-block; padding: 14px 32px; background: #E6B800; color: #1A1A1A; font-weight: 700; text-decoration: none; border-radius: 12px; font-size: 15px;">
+              Подтвердить email
+            </a>
+            <p style="margin: 28px 0 0; color: #999; font-size: 12px; word-break: break-all;">
+              Или скопируйте ссылку: ${verificationUrl}
+            </p>
+            <p style="margin: 20px 0 0; color: #bbb; font-size: 12px;">
+              Если вы не регистрировались в Knoty — просто проигнорируйте это письмо.
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    console.log('✅ Verification email sent:', info.messageId);
+    return { success: true };
+  } catch (error) {
+    console.error('❌ Failed to send verification email:', error.message);
+    console.log('📧 Verification URL (fallback):', verificationUrl);
+    return { success: false, error: error.message };
   }
 };
 
-// Отправка recovery email
-exports.sendRecoveryEmail = async (email, username, vtNumber) => {
-  const mailOptions = {
-    from: process.env.EMAIL_FROM || 'noreply@vtalk.io',
-    to: email,
-    subject: 'Vtalk Account Recovery',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Account Recovery 🔑</h2>
-        <p>Your Vtalk account credentials:</p>
-        
-        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Username:</strong> ${username}</p>
-          <p><strong>VT-ID:</strong> ${vtNumber}</p>
-          <p><strong>Email:</strong> ${email}</p>
-        </div>
-        
-        <p>You can login using any of these credentials along with your password.</p>
-        
-        <p style="color: #666; font-size: 14px; margin-top: 30px;">
-          If you forgot your password, please contact support.
-        </p>
-        
-        <p style="color: #999; font-size: 12px; margin-top: 40px;">
-          If you didn't request this, please ignore this email.
-        </p>
-      </div>
-    `
-  };
-
-  // Если transporter настроен - отправляем реальное письмо
-  if (transporter) {
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('✅ Recovery email sent:', info.messageId);
-      return { success: true };
-    } catch (error) {
-      console.error('❌ Failed to send recovery email:', error);
-      console.log('📧 Recovery info:', { username, vtNumber, email });
-      return { success: false, error: error.message };
-    }
-  } else {
-    // Для разработки - просто логируем
-    console.log('📧 Recovery Email (SMTP not configured):');
-    console.log('  To:', email);
-    console.log('  Username:', username);
-    console.log('  VT-ID:', vtNumber);
+exports.sendRecoveryEmail = async (email, firstName, knNumber) => {
+  if (!transporter) {
+    console.log('📧 Recovery email (not configured):', { email, knNumber });
     return { success: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: FROM,
+      to: email,
+      subject: 'Восстановление доступа к Knoty',
+      html: `
+        <div style="font-family: system-ui, Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #F0F0F0;">
+          <div style="padding: 32px 40px 20px; text-align: center; border-bottom: 1px solid #F5F5F5;">
+            <img src="${process.env.API_BASE_URL}/public/knoty_logo.png" alt="Knoty" width="120" style="display: block; margin: 0 auto;" />
+          </div>
+          <div style="padding: 40px;">
+            <h2 style="margin: 0 0 12px; color: #1A1A1A; font-size: 22px;">Данные вашего аккаунта</h2>
+            <p style="color: #555; line-height: 1.6; margin: 0 0 20px;">Здравствуйте, ${firstName}!</p>
+            <div style="background: #F9F9F9; border-radius: 12px; padding: 20px; margin: 0 0 20px;">
+              <p style="margin: 0 0 8px; color: #333;"><strong>Email:</strong> ${email}</p>
+              <p style="margin: 0; color: #333;"><strong>Knoty-ID:</strong> ${knNumber}</p>
+            </div>
+            <p style="color: #999; font-size: 12px; margin: 0;">
+              Если вы не запрашивали восстановление доступа — проигнорируйте это письмо.
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    console.log('✅ Recovery email sent:', info.messageId);
+    return { success: true };
+  } catch (error) {
+    console.error('❌ Failed to send recovery email:', error.message);
+    return { success: false, error: error.message };
   }
 };

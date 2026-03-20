@@ -13,6 +13,10 @@ class DioClient {
   );
   static const String _tokenKey = 'auth_token';
 
+  /// Set by AuthController after init. Called when server returns 401
+  /// while a real (non-demo) token is present — user was deleted or banned.
+  static void Function()? onUnauthorized;
+
   static final DioClient _instance = DioClient._();
   factory DioClient() => _instance;
 
@@ -35,6 +39,16 @@ class DioClient {
           options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
+      },
+      onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          final token = await _storage.read(key: _tokenKey);
+          if (token != null && !token.startsWith('demo-')) {
+            await _storage.delete(key: _tokenKey);
+            onUnauthorized?.call();
+          }
+        }
+        handler.next(error);
       },
     ));
 

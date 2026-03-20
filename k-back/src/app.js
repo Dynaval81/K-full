@@ -32,8 +32,10 @@ app.use(cors({
 
 // Apply body parsers only to API routes — AdminJS uses formidable internally
 // and throws OldBodyParserUsedError if req._body is already set.
-app.use(/^\/api\//, express.json());
-app.use(/^\/api\//, express.urlencoded({ extended: true }));
+// NOTE: string prefix '/api' is used intentionally — Express regexp in app.use()
+// does not trigger body parsing correctly in Express 4.
+app.use('/api', express.json({ limit: '5mb' }));
+app.use('/api', express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Static assets (admin panel branding, logos)
 app.use('/public', express.static(require('path').join(__dirname, 'public')));

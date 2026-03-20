@@ -30,14 +30,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _lastNameCtrl        = TextEditingController();
   final _emailCtrl           = TextEditingController();
   final _passwordCtrl        = TextEditingController();
+  final _usernameCtrl        = TextEditingController();
   final _schoolSearchCtrl    = TextEditingController();
   final _classCtrl           = TextEditingController(); // ручной ввод класса
   final _knChildCtrl         = TextEditingController(); // родитель: KN ребёнка
   final _activationCodeCtrl  = TextEditingController(); // код KNOTY-XXXX-XXXX
 
-  bool _isLoading       = false;
-  bool _obscurePassword = true;
-  bool _hasActivationCode = false;
+  bool _isLoading            = false;
+  bool _obscurePassword      = true;
+  bool _hasActivationCode    = false;
+  bool _isSuggestingUsername = false;
+  int  _suggestCount         = 0; // track clicks: first = email hint, rest = random
+
+  // ── Per-field inline errors ───────────────────────────────────────────────
+  String? _firstNameError;
+  String? _lastNameError;
+  String? _emailError;
+  String? _passwordError;
+  String? _usernameError;
 
   // ── Школы (с API) ─────────────────────────────────────────────────────────
   String? _selectedSchool;
@@ -84,11 +94,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _lastNameCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _usernameCtrl.dispose();
     _schoolSearchCtrl.dispose();
     _classCtrl.dispose();
     _knChildCtrl.dispose();
     _activationCodeCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _suggestUsername() async {
+    if (_isSuggestingUsername) return;
+    setState(() => _isSuggestingUsername = true);
+    try {
+      // First click: suggest from email prefix. Subsequent clicks: pure random.
+      final isFirstSuggest = _suggestCount == 0;
+      final hint = isFirstSuggest && _emailCtrl.text.trim().isNotEmpty
+          ? _emailCtrl.text.trim().split('@').first
+          : null;
+      final result = await ApiService().suggestUsername(hint: hint);
+      if (mounted && result['username'] != null) {
+        _usernameCtrl.text = result['username'] as String;
+        setState(() {
+          _usernameError = null;
+          _suggestCount++;
+        });
+      }
+    } catch (_) {
+    } finally {
+      if (mounted) setState(() => _isSuggestingUsername = false);
+    }
   }
 
   // ── School search with debounce ───────────────────────────────────────────
@@ -124,16 +158,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     final l10n = AppLocalizations.of(context);
 
-    if (_firstNameCtrl.text.trim().isEmpty) { _err(l10n.registerErrorFirstName); return; }
-    if (_lastNameCtrl.text.trim().isEmpty)  { _err(l10n.registerErrorLastName); return; }
-    if (RegExp(r'^\d+$').hasMatch(_firstNameCtrl.text.trim()) ||
-        RegExp(r'^\d+$').hasMatch(_lastNameCtrl.text.trim())) {
-      _err(l10n.registerErrorNameDigitsOnly); return;
+    // Clear previous field errors
+    setState(() {
+      _firstNameError = null;
+      _lastNameError  = null;
+      _emailError     = null;
+      _passwordError  = null;
+      _usernameError  = null;
+    });
+
+    bool hasError = false;
+    if (_firstNameCtrl.text.trim().isEmpty) {
+      setState(() => _firstNameError = l10n.registerErrorFirstName);
+      hasError = true;
+    } else if (RegExp(r'^\d+$').hasMatch(_firstNameCtrl.text.trim())) {
+      setState(() => _firstNameError = l10n.registerErrorNameDigitsOnly);
+      hasError = true;
     }
-    if (_emailCtrl.text.trim().isEmpty)     { _err(l10n.loginErrorEmpty); return; }
+    if (_lastNameCtrl.text.trim().isEmpty) {
+      setState(() => _lastNameError = l10n.registerErrorLastName);
+      hasError = true;
+    } else if (RegExp(r'^\d+$').hasMatch(_lastNameCtrl.text.trim())) {
+      setState(() => _lastNameError = l10n.registerErrorNameDigitsOnly);
+      hasError = true;
+    }
+    if (_emailCtrl.text.trim().isEmpty) {
+      setState(() => _emailError = l10n.loginErrorEmpty);
+      hasError = true;
+    }
     if (_passwordCtrl.text.length < AppConstants.minPasswordLength) {
-      _err(l10n.registerPasswordHint); return;
+      setState(() => _passwordError = l10n.registerPasswordHint);
+      hasError = true;
     }
+    final uname = _usernameCtrl.text.trim();
+    if (uname.isNotEmpty) {
+      if (uname.length < 3) {
+        setState(() => _usernameError = l10n.registerUsernameMinLength);
+        hasError = true;
+      } else if (!RegExp(r'^[a-z0-9_]+$').hasMatch(uname.toLowerCase())) {
+        setState(() => _usernameError = l10n.registerUsernameInvalidChars);
+        hasError = true;
+      } else if (RegExp(r'^\d+$').hasMatch(uname)) {
+        setState(() => _usernameError = l10n.registerUsernameNoDigitsOnly);
+        hasError = true;
+      }
+    }
+    if (hasError) return;
 
     // Role-specific validation
     switch (_selectedRole) {
@@ -168,6 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ? _classCtrl.text.trim().isNotEmpty
                           ? _classCtrl.text.trim() : null
                       : null,
+        username: _usernameCtrl.text.trim().isNotEmpty ? _usernameCtrl.text.trim().toLowerCase() : null,
       );
 
       if (!mounted) return;
@@ -326,12 +397,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 AiryInputField(controller: _firstNameCtrl,
                                     label: l10n.registerFirstName,
                                     hint: l10n.registerFirstNameHint,
-                                    keyboardType: TextInputType.name),
+                                    keyboardType: TextInputType.name,
+                                    errorText: _firstNameError,
+                                    onChanged: (_) => setState(() => _firstNameError = null)),
                                 const SizedBox(height: 16),
                                 AiryInputField(controller: _lastNameCtrl,
                                     label: l10n.registerLastName,
                                     hint: l10n.registerLastNameHint,
-                                    keyboardType: TextInputType.name),
+                                    keyboardType: TextInputType.name,
+                                    errorText: _lastNameError,
+                                    onChanged: (_) => setState(() => _lastNameError = null)),
                                 const SizedBox(height: 16),
 
                                 // Role-specific fields
@@ -341,7 +416,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 AiryInputField(controller: _emailCtrl,
                                     label: l10n.registerEmailLabel,
                                     hint: l10n.registerEmailHint,
-                                    keyboardType: TextInputType.emailAddress),
+                                    keyboardType: TextInputType.emailAddress,
+                                    errorText: _emailError,
+                                    onChanged: (_) => setState(() => _emailError = null)),
+                                const SizedBox(height: 16),
+                                // Nickname
+                                AiryInputField(
+                                  controller: _usernameCtrl,
+                                  label: l10n.registerUsernameLabel,
+                                  hint: l10n.registerUsernameHint,
+                                  keyboardType: TextInputType.text,
+                                  errorText: _usernameError,
+                                  onChanged: (_) => setState(() => _usernameError = null),
+                                  prefixText: '@',
+                                  suffixIcon: _isSuggestingUsername
+                                      ? const SizedBox(
+                                          width: 20, height: 20,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(12),
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        )
+                                      : IconButton(
+                                          icon: const Icon(Icons.auto_awesome_outlined, size: 20),
+                                          tooltip: l10n.registerUsernameSuggest,
+                                          onPressed: _suggestUsername,
+                                        ),
+                                ),
                                 const SizedBox(height: 16),
                                 AiryInputField(
                                   controller: _passwordCtrl,
@@ -349,6 +450,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   hint: l10n.registerPasswordHint,
                                   obscureText: _obscurePassword,
                                   keyboardType: TextInputType.visiblePassword,
+                                  errorText: _passwordError,
+                                  onChanged: (_) => setState(() => _passwordError = null),
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _obscurePassword
@@ -410,8 +513,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Center(
                           child: RichText(
                             text: TextSpan(
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 14),
+                              style: TextStyle(
+                                  color: cs.onSurfaceVariant, fontSize: 14),
                               children: [
                                 TextSpan(text: l10n.registerHaveAccount),
                                 TextSpan(
@@ -680,7 +783,7 @@ class _RoleBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1),
+        color: const Color(0xFFE6B800).withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE6B800).withValues(alpha: 0.3)),
       ),
@@ -814,7 +917,7 @@ class _ActivationCodeToggle extends StatelessWidget {
           const SizedBox(width: 10),
           Flexible(child: Text(
             l10n.registerHasActivationCode,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A1A)),
+            style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
           )),
         ]),
       ),
