@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:knoty/core/network/dio_client.dart';
 import 'package:knoty/core/controllers/auth_controller.dart';
 import 'package:knoty/core/controllers/tab_visibility_controller.dart';
 import 'package:knoty/core/enums/user_role.dart';
@@ -331,7 +329,7 @@ class _TabToggle extends StatelessWidget {
         Container(
           width: 34, height: 34,
           decoration: BoxDecoration(
-            color: const Color(0xFFE6B800).withOpacity(0.10),
+            color: const Color(0xFFE6B800).withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: const Color(0xFFE6B800), size: 17),
@@ -385,12 +383,12 @@ class _ReportButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.outline.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 2))],
         ),
         child: Row(children: [
           Container(
             width: 40, height: 40,
-            decoration: BoxDecoration(color: Colors.red.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
             child: const Icon(Icons.bug_report_outlined, color: Colors.redAccent, size: 22),
           ),
           const SizedBox(width: 14),
@@ -420,21 +418,14 @@ class _ReportButton extends StatelessWidget {
   Future<void> _send(User? user, String text) async {
     if (text.isEmpty) return;
     try {
-      final token = await const FlutterSecureStorage().read(key: 'auth_token');
-      final body = {
+      await DioClient().dio.post('/bug-report', data: {
         'description': text,
         'appVersion': '1.0.0',
         'platform': 'android',
-        'logs': '=== USER ===\nuser=${user?.username ?? "unknown"}\n'
-            'email=${user?.email ?? "unknown"}\n'
-            'kn=${user?.knotyNumber ?? ""}\n'
+        'logs': '=== USER ===\nkn=${user?.knotyNumber ?? ""}\n'
+            'role=${user?.role.name ?? "unknown"}\n'
             '=== LOGS ===\n${AppLogger.instance.getLogs()}',
-      };
-      await http.post(
-        Uri.parse('https://hypermax.duckdns.org/api/v1/bug-report'),
-        headers: {'Content-Type': 'application/json', if (token != null) 'Authorization': 'Bearer $token'},
-        body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 15));
+      });
     } catch (e) {
       debugPrint('[REPORT] $e');
     }

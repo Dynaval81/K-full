@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,10 +13,15 @@ class DioClient {
     defaultValue: 'https://knoty.duckdns.org/api/v1',
   );
   static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
 
   /// Set by AuthController after init. Called when server returns 401
-  /// while a real (non-demo) token is present — user was deleted or banned.
+  /// and token refresh has failed — user was deleted, banned, or session expired.
   static void Function()? onUnauthorized;
+
+  // ── Refresh state (singleton-safe) ────────────────────────────────
+  bool _isRefreshing = false;
+  final List<Completer<String?>> _refreshQueue = [];
 
   static final DioClient _instance = DioClient._();
   factory DioClient() => _instance;
@@ -41,14 +47,94 @@ class DioClient {
         handler.next(options);
       },
       onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          final token = await _storage.read(key: _tokenKey);
-          if (token != null && !token.startsWith('demo-')) {
-            await _storage.delete(key: _tokenKey);
-            onUnauthorized?.call();
-          }
+        if (error.response?.statusCode != 401) {
+          handler.next(error);
+          return;
         }
-        handler.next(error);
+
+        final token = await _storage.read(key: _tokenKey);
+
+        // Skip demo tokens or missing token — just propagate
+        if (token == null || token.startsWith('demo-')) {
+          handler.next(error);
+          return;
+        }
+
+        // Prevent infinite loop if we already retried this request
+        if (error.requestOptions.extra['_retried'] == true) {
+          await _storage.delete(key: _tokenKey);
+          await _storage.delete(key: _refreshTokenKey);
+          onUnauthorized?.call();
+          handler.next(error);
+          return;
+        }
+
+        // If a refresh is already in progress, queue this request
+        if (_isRefreshing) {
+          final completer = Completer<String?>();
+          _refreshQueue.add(completer);
+          final newToken = await completer.future;
+          if (newToken != null) {
+            final opts = error.requestOptions;
+            opts.headers['Authorization'] = 'Bearer $newToken';
+            opts.extra['_retried'] = true;
+            try {
+              handler.resolve(await _dio.fetch(opts));
+            } catch (_) {
+              handler.next(error);
+            }
+          } else {
+            handler.next(error);
+          }
+          return;
+        }
+
+        _isRefreshing = true;
+        try {
+          final refreshToken = await _storage.read(key: _refreshTokenKey);
+          if (refreshToken == null) throw Exception('No refresh token stored');
+
+          final refreshDio = Dio(BaseOptions(
+            baseUrl: _baseUrl,
+            connectTimeout: const Duration(seconds: 15),
+            receiveTimeout: const Duration(seconds: 15),
+            headers: {'Content-Type': 'application/json'},
+          ));
+
+          final res = await refreshDio.post(
+            '/auth/refresh',
+            data: {'refreshToken': refreshToken},
+          );
+
+          final newAccessToken = res.data['data']['accessToken'] as String;
+          final newRefreshToken = res.data['data']['refreshToken'] as String;
+
+          await _storage.write(key: _tokenKey, value: newAccessToken);
+          await _storage.write(key: _refreshTokenKey, value: newRefreshToken);
+
+          // Resume queued requests
+          for (final c in _refreshQueue) {
+            c.complete(newAccessToken);
+          }
+          _refreshQueue.clear();
+
+          // Retry original request
+          final opts = error.requestOptions;
+          opts.headers['Authorization'] = 'Bearer $newAccessToken';
+          opts.extra['_retried'] = true;
+          handler.resolve(await _dio.fetch(opts));
+        } catch (_) {
+          for (final c in _refreshQueue) {
+            c.complete(null);
+          }
+          _refreshQueue.clear();
+          await _storage.delete(key: _tokenKey);
+          await _storage.delete(key: _refreshTokenKey);
+          onUnauthorized?.call();
+          handler.next(error);
+        } finally {
+          _isRefreshing = false;
+        }
       },
     ));
 

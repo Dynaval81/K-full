@@ -10,6 +10,7 @@ import 'package:knoty/core/network/dio_client.dart';
 /// from SharedPreferences when the server is unreachable.
 class ApiService {
   static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
   static const String _cacheUserKey = 'cache_user_data';
   static const String _cacheSchoolsKey = 'cache_schools';
 
@@ -61,9 +62,13 @@ class ApiService {
       });
       // Server returns accessToken (not token) in register response
       final token = res.data['data']?['accessToken'] ?? res.data['token'] ?? res.data['data']?['token'];
+      final refreshToken = res.data['data']?['refreshToken'] ?? res.data['refreshToken'];
       final userData = res.data['data']?['user'] ?? res.data['user'];
       if (token != null) {
         await _secureStorage.write(key: _tokenKey, value: token);
+      }
+      if (refreshToken != null) {
+        await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
       }
       return {'success': true, 'user': userData, 'token': token};
     } catch (e) {
@@ -82,9 +87,13 @@ class ApiService {
       });
       final token = res.data['token'] ?? res.data['data']?['token']
           ?? res.data['data']?['accessToken'];
+      final refreshToken = res.data['data']?['refreshToken'] ?? res.data['refreshToken'];
       final userData = res.data['user'] ?? res.data['data']?['user'];
       if (token != null) {
         await _secureStorage.write(key: _tokenKey, value: token);
+      }
+      if (refreshToken != null) {
+        await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
       }
       return {'success': true, 'user': userData, 'token': token};
     } on DioException catch (e) {
@@ -363,5 +372,6 @@ class ApiService {
 
   Future<void> logout() async {
     await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
   }
 }
